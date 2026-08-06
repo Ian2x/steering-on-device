@@ -49,6 +49,49 @@ aligned prompt positions after the selected block—and ensures downstream KV ca
 edited prompt states. The depth fix is represented by the frozen 8/10/12 grid rather than the
 degenerate historical block-3 selection.
 
+## Post-hoc notes on the frozen construction
+
+The three notes below were written after the result. They change no gate, no packet, and no reported
+number; they record properties of the frozen construction that a reader would otherwise have to
+recover by reading the packets and the app source.
+
+### The injected span never reaches the user's prompt text
+
+The direction spans 11 aligned positions for ocean and 12 for wedding, and injection covers the
+leading `min(prompt length, aligned positions)` positions of the **templated** prompt. Tokenizing the
+three neutral prompts with the pinned model's own chat template gives 39, 42, and 43 tokens, of which
+positions 0–19 are the default `<|im_start|>system … <|im_end|>` preamble, positions 20–23 are the
+`<|im_start|>user` header, and the user's own text begins at position **24** in all three. The edit
+therefore lands entirely inside the chat-template system preamble and stops 12–13 positions short of
+the sentence a reader would recognize as the prompt. The measured effect is real in this harness, but
+it is an edit to template positions, not to the user's text.
+
+### The ocean direction's mass is concentrated at position 0
+
+Every packet records `actAddDirectionDiagnostics.appliedPerPositionNorms`. Taking each position's
+share of the **squared** row-norm mass (the Frobenius energy), ocean position 0 carries **59.2%** at
+the selected block 10, and 58.0%–61.6% across blocks 8/10/12. Wedding position 0 carries exactly
+`0.000`.
+
+The cause is contrast-prompt construction, not the model. Both wedding prompts begin with the same
+token (`A joyful wedding ceremony…` against `A quiet morning routine…`), so position 0 cancels
+exactly. The ocean positive prompt begins `Ocean waves…` against the same `A quiet morning routine…`
+negative, so its position 0 is not prefix-matched and carries a leading-token difference rather than a
+topic contrast. The contrast prompts are frozen in
+[`Resources/Lexicons/lexicons.json`](../../../Resources/Lexicons/lexicons.json).
+
+### Cross-lexicon byte identity in four non-reported cells
+
+Four of the fifteen layer/coefficient cells contain at least one byte-identical wedding/ocean residual
+output: block 10 coefficient 1 and block 10 coefficient 2 on prompt 1, and block 12 coefficient 1 and
+block 12 coefficient 4 on prompt 3. All four sit at the three lowest coefficients (1, 2, 4) and none
+at 8 or 12, though the pattern is not monotone in dose — block 12 coefficient 2 is clean while block
+12 coefficient 4 is not. Gate 1 failed each of those cells, as designed.
+
+**This does not touch the reported result.** Both passing cells (block 10 coefficient 4 and block 12
+coefficient 12) and the selected cell are byte-different on all three prompts. The note is here
+because the frozen grid contains these cells and reporting only the passing ones would hide them.
+
 ## Reproduction
 
 ```bash

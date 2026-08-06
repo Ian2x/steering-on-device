@@ -192,7 +192,18 @@ def main() -> None:
         require(f"`{row['randomMedianShift']:+.6f}`")
     require("Median returned length was 32 tokens in every arm")
     require("repeated-trigram fraction was zero")
-    print("PASS blocking-control grid, selected cell, random floor, degeneracy gates, and README claims")
+    check(
+        not any(
+            "crossTopic" in key or "offTarget" in key or "otherTopic" in key
+            for cell in blocking["cells"]
+            for topic_row in cell["topics"].values()
+            for key in topic_row
+        ),
+        "blocking summary now records an off-target metric; the specificity disclaimer must be revisited",
+    )
+    require("or show **topic specificity**")
+    require("no gate compared a direction's effect on the other topic's centroid")
+    print("PASS blocking-control grid, selected cell, random floor, degeneracy gates, and specificity scope")
 
     stage3_path = ROOT / "docs/phase6/teacher-forced-comparison/summary.json"
     stage3_before = stage3_path.read_bytes()

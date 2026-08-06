@@ -49,3 +49,4 @@ must_reject("Stage 3 unit count", "**4 prompts × 2 topics = 8 prompt-topic unit
 must_reject("Stage 3 residual NLL", "`1.984159` for the semantic residual arm", "`1.884159` for the semantic residual arm")
 must_reject("Stage 3 NLL excess", "`0.119157` nat/token", "`0.019157` nat/token")
 must_reject("Stage 3 ratio withholding", "No point ratio or ratio interval is reported.", "A point ratio is reported.")
+must_reject("topic-specificity disclaimer", "or show **topic specificity**", "and also shows **topic specificity**")
