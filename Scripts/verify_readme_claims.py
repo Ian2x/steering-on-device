@@ -221,6 +221,11 @@ def main() -> None:
     preserved_paths = sorted((ROOT / "docs/phase6/teacher-forced-comparison/runs").glob("*.json"))
     preserved_packets = [json.loads(path.read_text()) for path in preserved_paths]
     check(len(preserved_packets) == 8, "preserved teacher-forced run count changed")
+    random_floor_paths = sorted(
+        (ROOT / "docs/phase6/teacher-forced-comparison/random-floor-runs").glob("*.json")
+    )
+    random_floor_packets = [json.loads(path.read_text()) for path in random_floor_paths]
+    check(len(random_floor_packets) == 8, "matched-random teacher-forced run count changed")
     hero_rows = [
         {
             "name": path.stem,
@@ -593,19 +598,40 @@ def main() -> None:
         f"and gate {gates[1][0]} scores every packet against its own selected topic centroid"
     )
 
+    # Every remediated residual packet, not a favourable subset. The matched-random
+    # teacher-forced arm is built by the identical construction at the same
+    # calibrated coefficient, and generation cost cannot depend on whether the
+    # injected matrix is semantic or random -- so scoping the 64-token set to its
+    # semantic half would have been arbitrary. It was also the flattering half:
+    # the slowest packet in the whole remediated corpus is a random-arm packet.
+    # The 180-packet blocking set already contributes both arms, so this simply
+    # treats the two run sets alike. "Remediated" is defined here exactly as the
+    # pre-remediation note above defines its absence: the packet records both the
+    # exact applied coefficient and the direction diagnostics.
+    long_packets = preserved_packets + random_floor_packets
+    remediated_packets = blocking_packets + long_packets
+    check(
+        all(
+            "actAddAppliedCoefficient" in row and "actAddDirectionDiagnostics" in row
+            for row in remediated_packets
+        ),
+        "a packet counted as remediated does not record its applied coefficient and diagnostics",
+    )
+    check(
+        all(row["buildConfiguration"] == "Release" for row in long_packets),
+        "a 64-token remediated packet is not Release",
+    )
     blocking_actadd = [row["actAdd"]["tokensPerSecond"] for row in blocking_packets]
-    preserved_actadd = [row["actAdd"]["tokensPerSecond"] for row in preserved_packets]
-    remediated_baseline = [
-        row["baseline"]["tokensPerSecond"] for row in blocking_packets + preserved_packets
-    ]
+    long_actadd = [row["actAdd"]["tokensPerSecond"] for row in long_packets]
+    remediated_baseline = [row["baseline"]["tokensPerSecond"] for row in remediated_packets]
     remediated_slowdowns = [
         row["baseline"]["tokensPerSecond"] / row["actAdd"]["tokensPerSecond"]
-        for row in blocking_packets + preserved_packets
+        for row in remediated_packets
     ]
     blocking_token_limits = {row["maxTokens"] for row in blocking_packets}
-    preserved_token_limits = {row["maxTokens"] for row in preserved_packets}
+    long_token_limits = {row["maxTokens"] for row in long_packets}
     check(
-        len(blocking_token_limits) == len(preserved_token_limits) == 1,
+        len(blocking_token_limits) == len(long_token_limits) == 1,
         "the remediated run sets no longer share one token limit each",
     )
     require(
@@ -613,14 +639,16 @@ def main() -> None:
         f"{blocking_token_limits.pop()} tokens ({len(blocking_packets)} blocking-control packets)"
     )
     require(
-        f"`{range_floor(min(preserved_actadd))}`–`{range_ceiling(max(preserved_actadd))}` tok/s over "
-        f"{preserved_token_limits.pop()} tokens ({len(preserved_packets)} teacher-forced packets)"
+        f"`{range_floor(min(long_actadd))}`–`{range_ceiling(max(long_actadd))}` tok/s over "
+        f"{long_token_limits.pop()} tokens ({len(long_packets)} teacher-forced packets, "
+        "semantic and matched-random alike)"
     )
     require(
         f"`{range_floor(min(remediated_baseline))}`–"
         f"`{range_ceiling(max(remediated_baseline))}` tok/s baseline"
     )
     require(
+        f"Over all **{len(remediated_packets)}** remediated packets the per-packet slowdown is "
         f"**{range_floor(min(remediated_slowdowns))}×–"
         f"{range_ceiling(max(remediated_slowdowns))}×**"
     )
@@ -643,12 +671,8 @@ def main() -> None:
     calibration_paths = sorted(
         (ROOT / "docs/phase6/teacher-forced-comparison/calibration-runs").glob("*.json")
     )
-    comparison_paths = sorted(
-        (ROOT / "docs/phase6/teacher-forced-comparison/runs").glob("*.json")
-    )
-    random_paths = sorted(
-        (ROOT / "docs/phase6/teacher-forced-comparison/random-floor-runs").glob("*.json")
-    )
+    comparison_paths = preserved_paths
+    random_paths = random_floor_paths
     calibration_packets = [json.loads(path.read_text()) for path in calibration_paths]
     check(len(calibration_paths) == 304, "teacher-forced calibration packet count changed")
     check(len(comparison_paths) == len(random_paths) == 8, "teacher-forced output packet count changed")
@@ -737,7 +761,7 @@ def main() -> None:
         + blocking_packets
         + preserved_packets
         + calibration_packets
-        + [json.loads(path.read_text()) for path in random_paths]
+        + random_floor_packets
     )
     recorded_seeds = [row["seed"] for row in all_packets if "seed" in row]
     check(len(set(recorded_seeds)) == 1, f"committed packets disagree on the seed: {sorted(set(recorded_seeds))}")

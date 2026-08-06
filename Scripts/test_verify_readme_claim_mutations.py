@@ -58,7 +58,7 @@ must_reject("hero post-hoc disclosure", "selected post hoc rather than drawn", "
 must_reject("hero logit-gain rank", "rank **1/8** on logit-bias topic gain", "rank **4/8** on logit-bias topic gain")
 must_reject("hero residual-gain rank", "**2/8** on residual topic gain", "**6/8** on residual topic gain")
 must_reject("hero per-prompt KL", "`1.143989` nats/step", "`0.443989` nats/step")
-must_reject("remediated residual slowdown", "**3.5×–6.1×**", "**1.5×–2.0×**")
+must_reject("remediated residual slowdown", "**3.5×–6.6×**", "**1.5×–2.0×**")
 must_reject("pre-remediation hero-timing scope", "this packet predates the residual remediation", "this packet already uses the residual remediation")
 
 # Literals the earlier verifier left unguarded, now derived from their artifacts.
@@ -84,6 +84,11 @@ must_reject("first-step collapse threshold", "more than 97% of its cumulative ca
 must_reject("pre-remediation packet block", "(block 3, nominal coefficient 12,", "(block 5, nominal coefficient 12,")
 must_reject("pre-remediation packet length", "its 96-token length inflates", "its 64-token length inflates")
 must_reject("remediated blocking packet count", "(180 blocking-control packets)", "(179 blocking-control packets)")
+# The 64-token remediated range must cover both teacher-forced arms. Each of these
+# mutations restores the semantic-only scope, which excluded the slowest packet.
+must_reject("remediated 64-token packet scope", "(16 teacher-forced packets", "(8 teacher-forced packets")
+must_reject("remediated 64-token speed range", "`49.8`–`64.7` tok/s", "`53.4`–`64.5` tok/s")
+must_reject("remediated packet total", "all **196** remediated packets", "all **188** remediated packets")
 must_reject("layer sweep blocks", "blocks 3, 7, 11, 15, 19, and 23 were swept", "blocks 3, 7, 11, 15, 19, and 21 were swept")
 must_reject("layer sweep coefficient", "at a nominal coefficient of 12", "at a nominal coefficient of 14")
 must_reject("layer sweep packet count", "All 24 Release packets are retained", "All 25 Release packets are retained")
