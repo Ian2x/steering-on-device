@@ -804,7 +804,48 @@ def main() -> None:
         f"count ({failure['packetCount']})",
     )
     require(f"all {failure['packetCount']} blind packets were retained")
+
+    # Two static-bias arms returned the baseline continuation byte for byte, so two
+    # of the eight units contribute a hard zero to the withheld ratio's numerator.
+    # No frozen gate covered the static arm's nonidentity, so this broke no rule --
+    # but it is invisible unless someone opens the packets, and it is exactly what
+    # a reader who reconstructs the ratio would hit. results.md carries the note.
+    stage3_results = (ROOT / "docs/phase6/teacher-forced-comparison/results.md").read_text()
+    null_static = [
+        path.stem
+        for path, packet in zip(preserved_paths, preserved_packets)
+        if packet["steered"]["tokenIDs"] == packet["baseline"]["tokenIDs"]
+    ]
+    check(
+        null_static == ["ocean-bookshelf", "wedding-lunch"],
+        f"the set of baseline-identical static-bias arms changed: {null_static}; "
+        "the results.md note must be revisited",
+    )
+    for name in null_static:
+        packet = next(p for p, q in zip(preserved_packets, preserved_paths) if q.stem == name)
+        check(
+            packet["steered"]["topicScore"] - packet["baseline"]["topicScore"] == 0.0,
+            f"{name}: baseline-identical static arm no longer scores an exact zero shift",
+        )
+        check(
+            f"[`runs/{name}.json`](runs/{name}.json)" in stage3_results,
+            f"results.md no longer names the baseline-identical static arm {name}",
+        )
+    check(
+        "No frozen gate covered this." in stage3_results,
+        "results.md no longer states that no gate covered the static arm's nonidentity",
+    )
+    # The protocol reports a defined ratio "to two decimal places". That rendering
+    # is the artifact the withholding exists to suppress, so neither document may
+    # contain it -- including as a quotient a reader could lift verbatim.
+    withheld_ratio = stage3["meanShifts"]["staticLogitBias"] / stage3["meanShifts"]["semanticResidual"]
+    forbid(f"{withheld_ratio:.2f}")
+    check(
+        f"{withheld_ratio:.2f}" not in stage3_results,
+        "results.md states the withheld controller ratio",
+    )
     print("PASS teacher-forced calibration, invalid NLL gate, blind-packet retention, and ratio withholding")
+    print("PASS null static arms disclosed and the withheld ratio absent from both documents")
 
     rho_paths = sorted((ROOT / "docs/phase6/on-device-rho/runs").glob("*.json"))
     rho_packets = [json.loads(path.read_text()) for path in rho_paths]

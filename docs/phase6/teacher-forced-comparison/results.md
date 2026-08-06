@@ -82,6 +82,41 @@ the target.
 None of this changes the outcome. The comparison was withheld regardless, on the independent
 base-model NLL gate, and the protocol requires *all* validity gates.
 
+## Post-hoc note — two static-bias arms returned the baseline continuation unchanged
+
+This section was written after the result and is not part of any predeclaration. It exists because
+the fact sits in two committed packets, is stated nowhere else, and bears directly on how the
+withheld ratio's numerator should be read.
+
+In [`runs/ocean-bookshelf.json`](runs/ocean-bookshelf.json) and
+[`runs/wedding-lunch.json`](runs/wedding-lunch.json) the sustained static-bias arm returned token IDs
+byte-identical to the baseline arm. Its Core ML topic shift is therefore exactly `+0.000000` — the
+literal float `0.0`, not a rounded small number. Both packets used the calibrated scalars from the
+table above, `8.4908294678` for ocean and `11.1447906494` for wedding, and both applied that bias at
+every one of the 64 generated steps with no cap active.
+
+The mechanism is that calibration constrains only the **four-prompt mean** teacher-forced KL, never
+the individual prompt. These two prompts are where the static bias bought the least divergence, by a
+wide margin and by the calibration's own measure: `0.002853` nats/step on `ocean-bookshelf` and
+`0.050471` on `wedding-lunch`, the two lowest of the eight, against `1.143989` at the top. At that
+cost the bias never moved a sampled token, so the arm regenerated the baseline continuation and
+scored it.
+
+**No frozen gate covered this.** Gate 2 constrains cross-topic nonidentity for the *semantic
+residual* arm only, and gate 3 scores only semantic residual shifts. Gates 4 through 6 do cover the
+static arm, but they test length, repetition, and NLL, and a packet whose static arm reproduces the
+baseline carries exactly the baseline's values for all three, so it cannot fail them. Nothing in the
+protocol required the static arm to change anything. This broke no rule, no packet was dropped, and
+no signed shift was adjusted.
+
+It is one more reason the withheld controller ratio must not be reconstructed from these packets. The
+ratio's numerator is the mean static-bias shift across the eight prompt-topic units, and two of those
+eight record no intervention effect at all rather than a small one. The protocol's only distributional
+guard, the prompt-cluster bootstrap, was specified for the denominator; the numerator has none.
+Whatever such a mean measures on this set, it is not the static controller's topic effect. The ratio
+stays withheld on the independent base-model NLL gate, and no point ratio is reported here, in the
+README, or in [`summary.json`](summary.json).
+
 ## Reproduction
 
 ```bash
