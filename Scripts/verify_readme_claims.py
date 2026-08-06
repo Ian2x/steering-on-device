@@ -129,6 +129,13 @@ def main() -> None:
         forbid(f"{final[pane]['tokensPerSecond']:.1f} {pane}")
     require("Single-run token rates were removed from the headline")
     require("about 30× slower than baseline")
+    legacy_slowdown = final["baseline"]["tokensPerSecond"] / final["actAdd"]["tokensPerSecond"]
+    check(29 <= legacy_slowdown <= 32, "final-run residual slowdown is no longer about 30x")
+    check(
+        "actAddAppliedCoefficient" not in final and "actAddDirectionDiagnostics" not in final,
+        "final-demo packet now records remediated residual fields; the pre-remediation note must be revisited",
+    )
+    require("this packet predates the residual remediation")
     print("PASS final-run memory, KL, hero topic scores, and scoped timing claims")
 
     rendered_table = subprocess.run(
@@ -273,7 +280,25 @@ def main() -> None:
     )
     require("or show **topic specificity**")
     require("no gate compared a direction's effect on the other topic's centroid")
-    print("PASS blocking-control grid, selected cell, random floor, degeneracy gates, and specificity scope")
+
+    blocking_actadd = [row["actAdd"]["tokensPerSecond"] for row in blocking_packets]
+    preserved_actadd = [row["actAdd"]["tokensPerSecond"] for row in preserved_packets]
+    remediated_baseline = [
+        row["baseline"]["tokensPerSecond"] for row in blocking_packets + preserved_packets
+    ]
+    remediated_slowdowns = [
+        row["baseline"]["tokensPerSecond"] / row["actAdd"]["tokensPerSecond"]
+        for row in blocking_packets + preserved_packets
+    ]
+    require(f"`{min(blocking_actadd):.1f}`–`{max(blocking_actadd):.1f}` tok/s over 32 tokens")
+    require(f"`{min(preserved_actadd):.1f}`–`{max(preserved_actadd):.1f}` tok/s over 64 tokens")
+    require(f"`{min(remediated_baseline):.1f}`–`{max(remediated_baseline):.1f}` tok/s baseline")
+    require(f"**{min(remediated_slowdowns):.1f}×–{max(remediated_slowdowns):.1f}×**")
+    check(
+        max(remediated_slowdowns) < legacy_slowdown,
+        "the remediated residual path is no longer faster than the pre-remediation packet",
+    )
+    print("PASS blocking-control grid, selected cell, specificity scope, and remediated cost claims")
 
     stage3_path = ROOT / "docs/phase6/teacher-forced-comparison/summary.json"
     stage3_before = stage3_path.read_bytes()

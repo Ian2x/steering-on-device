@@ -58,3 +58,5 @@ must_reject("hero post-hoc disclosure", "selected post hoc rather than drawn", "
 must_reject("hero logit-gain rank", "rank **1/8** on logit-bias topic gain", "rank **4/8** on logit-bias topic gain")
 must_reject("hero residual-gain rank", "**2/8** on residual topic gain", "**6/8** on residual topic gain")
 must_reject("hero per-prompt KL", "`1.143989` nats/step", "`0.443989` nats/step")
+must_reject("remediated residual slowdown", "**3.5×–6.0×**", "**1.5×–2.0×**")
+must_reject("pre-remediation hero-timing scope", "this packet predates the residual remediation", "this packet already uses the residual remediation")
