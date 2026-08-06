@@ -4,6 +4,6 @@ DerivedData/
 *.xcuserstate
 xcuserdata/
 .venv/
+.venv-mlx/
 __pycache__/
 *.pyc
-
