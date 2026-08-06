@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import statistics
 import subprocess
 from pathlib import Path
 
@@ -83,9 +84,18 @@ def main() -> None:
     check(all(row["buildConfiguration"] == "Release" for row in sanity), "a sanity run is not Release")
     history_lengths = [len(row["klHistory"]) for row in sanity]
     require(f"**{min(history_lengths)}–{max(history_lengths)} biased steps**")
+    sanity_median = statistics.median(history_lengths)
+    sanity_short = sum(1 for value in history_lengths if value <= 5)
+    require(
+        f"**{min(history_lengths)}–{max(history_lengths)} biased steps**, "
+        f"median {sanity_median:g}, {sanity_short} of {len(history_lengths)} at 5 or fewer"
+    )
+    check(sanity_median == 3, "sanity median biased-step count changed")
+    check(sanity_short == 5, "sanity short-run count changed")
+    require("the eighteen is a lone outlier, with a median of three and five of the six at five or fewer")
     require("six packets in this table are Release builds")
     require("untimed one-token same-prompt warm-up before measuring all three panes")
-    print("PASS sanity table, exact 2–18 range, packet count, and Release provenance")
+    print("PASS sanity table, exact 2–18 range with its median, packet count, and Release provenance")
 
     comparison_rows: list[str] = []
     cap4_paths = sorted((ROOT / "docs/negative-results/matched-kl4").glob("*.json"))
@@ -266,7 +276,32 @@ def main() -> None:
     check("temperature 0.7" in protocol, "precommitted protocol temperature changed")
     require("temperature `0.7`")
     check(all(row["buildConfiguration"] == "Release" for row in rho_packets), "a comparison packet is not Release")
-    print("PASS comparison temperature and Release provenance")
+
+    dense_shares, sparse_shares, dense_steps, sparse_steps = [], [], [], []
+    for row in rho_packets:
+        dense, sparse = row["actAddKLHistory"], row["klHistory"]
+        dense_shares.append(dense[0]["perStep"] / dense[-1]["cumulative"])
+        sparse_shares.append(sparse[0]["perStep"] / sparse[-1]["cumulative"])
+        dense_steps.append(len(dense))
+        sparse_steps.append(len(sparse))
+    dense_collapsed = sum(1 for share in dense_shares if share > 0.97)
+    sparse_collapsed = sum(1 for share in sparse_shares if share > 0.97)
+    check(dense_collapsed == 8, "dense in-packet first-step collapse count changed")
+    check(sparse_collapsed == 1, "sparse in-packet first-step collapse count changed")
+    require(f"into step one in **{dense_collapsed} of {len(rho_packets)}** runs")
+    require(f"the sparse logit bias did so in **{sparse_collapsed} of {len(rho_packets)}**")
+    exception_name, exception_share = max(
+        ((path.stem, share) for path, share in zip(rho_paths, sparse_shares)),
+        key=lambda pair: pair[1],
+    )
+    require(f"(`{exception_name}`, at {100 * exception_share:.4f}%)")
+    others = sorted(share for share in sparse_shares if share <= 0.97)
+    require(f"only {100 * others[0]:.2f}%–{100 * others[-1]:.1f}% there in the other seven")
+    require(
+        f"spreading its cap over {min(sparse_steps)}–{max(sparse_steps)} biased steps "
+        f"against the dense arm's {min(dense_steps)}–{max(dense_steps)}"
+    )
+    print("PASS comparison temperature, Release provenance, and matched in-packet first-step contrast")
 
     zero = json.loads((ROOT / "docs/phase6/coefficient-zero/report.json").read_text())
     check(zero["actAddCoefficient"] == 0, "coefficient-zero packet is not zero")

@@ -50,3 +50,7 @@ must_reject("Stage 3 residual NLL", "`1.984159` for the semantic residual arm", 
 must_reject("Stage 3 NLL excess", "`0.119157` nat/token", "`0.019157` nat/token")
 must_reject("Stage 3 ratio withholding", "No point ratio or ratio interval is reported.", "A point ratio is reported.")
 must_reject("topic-specificity disclaimer", "or show **topic specificity**", "and also shows **topic specificity**")
+must_reject("in-packet dense collapse count", "into step one in **8 of 8** runs", "into step one in **7 of 8** runs")
+must_reject("in-packet sparse exception count", "the sparse logit bias did so in **1 of 8**", "the sparse logit bias did so in **0 of 8**")
+must_reject("in-packet sparse exception packet", "(`wedding-study`, at 99.9998%)", "(`ocean-study`, at 99.9998%)")
+must_reject("sanity median biased steps", "biased steps**, median 3, 5 of 6", "biased steps**, median 9, 5 of 6")
