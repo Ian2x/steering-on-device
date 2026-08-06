@@ -2,7 +2,9 @@
 
 The steering audit (Wang, 2026) reported that a static logit-bias controller reproduced 95.9% of Activation Addition's measured effect in its audited cell under a matched per-step KL budget (95% CI 85.3%–107.1%; **Mixed** verdict). This research prototype puts the interface on-device: a native macOS app runs Qwen2.5-0.5B-Instruct (4-bit) through MLX Swift and streams baseline, static-logit-bias, and residual-edit passes while displaying distributional cost and a Core ML topic diagnostic. Prompts and generated text stay on the Mac.
 
-![SteerDemo replaying a preserved teacher-forced packet whose controller comparison was withheld by its NLL gate](docs/steerdemo.png)
+![SteerDemo replaying ocean-library, one preserved teacher-forced packet chosen post hoc for this screenshot, whose controller comparison was withheld by its NLL gate](docs/steerdemo.png)
+
+The hero packet is `ocean-library`, hardcoded in [`Scripts/render_preserved_demo.sh`](Scripts/render_preserved_demo.sh) and therefore **selected post hoc rather than drawn** from the eight preserved teacher-forced packets. It is the most flattering of the eight: rank **1/8** on logit-bias topic gain (`+0.337011`), **2/8** on residual topic gain (`+0.364364`), and **1/8** on per-prompt teacher-forced KL for both arms (its logit arm ran `1.143989` nats/step, `2.63×` the `0.43524` target, which the protocol constrains only as a four-prompt mean). Treat it as an interface screenshot, not a representative run.
 
 ## Historical Phase 6 comparison invalidated
 

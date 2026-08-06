@@ -54,3 +54,7 @@ must_reject("in-packet dense collapse count", "into step one in **8 of 8** runs"
 must_reject("in-packet sparse exception count", "the sparse logit bias did so in **1 of 8**", "the sparse logit bias did so in **0 of 8**")
 must_reject("in-packet sparse exception packet", "(`wedding-study`, at 99.9998%)", "(`ocean-study`, at 99.9998%)")
 must_reject("sanity median biased steps", "biased steps**, median 3, 5 of 6", "biased steps**, median 9, 5 of 6")
+must_reject("hero post-hoc disclosure", "selected post hoc rather than drawn", "drawn uniformly at random")
+must_reject("hero logit-gain rank", "rank **1/8** on logit-bias topic gain", "rank **4/8** on logit-bias topic gain")
+must_reject("hero residual-gain rank", "**2/8** on residual topic gain", "**6/8** on residual topic gain")
+must_reject("hero per-prompt KL", "`1.143989` nats/step", "`0.443989` nats/step")

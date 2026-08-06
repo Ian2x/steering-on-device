@@ -4,6 +4,9 @@ set -euo pipefail
 root_dir=${0:A:h:h}
 app_path="$root_dir/DerivedData/Build/Products/Release/SteerDemo.app"
 executable="$app_path/Contents/MacOS/SteerDemo"
+# This packet is chosen, not drawn. It is the most favorable of the eight preserved
+# teacher-forced packets, and README.md must keep disclosing that next to the hero image.
+# Scripts/verify_readme_claims.py recomputes its ranks from this path.
 report="$root_dir/docs/phase6/teacher-forced-comparison/runs/ocean-library.json"
 snapshot="$root_dir/docs/steerdemo.png"
 final_frame="$root_dir/docs/demo-frames/99-final.png"

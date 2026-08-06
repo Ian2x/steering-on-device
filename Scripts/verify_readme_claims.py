@@ -28,9 +28,25 @@ def main() -> None:
     screenshot = ROOT / "docs/steerdemo.png"
     final_frame = ROOT / "docs/demo-frames/99-final.png"
     check(screenshot.read_bytes() == final_frame.read_bytes(), "hero screenshot differs from final demo frame")
-    require_hero_alt = "teacher-forced packet whose controller comparison was withheld by its NLL gate"
-    check(require_hero_alt in readme, "hero alt text does not disclose the withheld comparison")
-    print("PASS hero screenshot matches final frame and discloses the NLL gate")
+    require_hero_alt = (
+        "one preserved teacher-forced packet chosen post hoc for this screenshot, "
+        "whose controller comparison was withheld by its NLL gate"
+    )
+    check(
+        require_hero_alt in readme,
+        "hero alt text does not disclose both the withheld comparison and the post-hoc selection",
+    )
+    render_script = (ROOT / "Scripts/render_preserved_demo.sh").read_text()
+    hero_match = re.search(r'^report="\$root_dir/(\S+?)"', render_script, re.MULTILINE)
+    check(hero_match is not None, "could not parse the hardcoded hero packet out of render_preserved_demo.sh")
+    hero_path = Path(hero_match.group(1))
+    check(
+        hero_path.parent.as_posix() == "docs/phase6/teacher-forced-comparison/runs",
+        "hero packet moved out of the preserved teacher-forced run set",
+    )
+    hero_name = hero_path.stem
+    check(f"replaying {hero_name}," in readme, "hero alt text does not name the rendered packet")
+    print("PASS hero screenshot matches final frame, discloses the NLL gate, and names the packet")
 
     def require(fragment: str, count: int = 1) -> None:
         actual = readme.count(fragment)
@@ -41,6 +57,50 @@ def main() -> None:
 
     def forbid(fragment: str) -> None:
         check(fragment not in readme, f"forbidden README fragment found: {fragment!r}")
+
+    preserved_paths = sorted((ROOT / "docs/phase6/teacher-forced-comparison/runs").glob("*.json"))
+    preserved_packets = [json.loads(path.read_text()) for path in preserved_paths]
+    check(len(preserved_packets) == 8, "preserved teacher-forced run count changed")
+    hero_rows = [
+        {
+            "name": path.stem,
+            "logitGain": packet["steered"]["topicScore"] - packet["baseline"]["topicScore"],
+            "residualGain": packet["actAdd"]["topicScore"] - packet["baseline"]["topicScore"],
+            "teacherForcedLogit": packet["teacherForcedLogit"]["meanNatsPerStep"],
+            "teacherForcedResidual": packet["teacherForcedActAdd"]["meanNatsPerStep"],
+            "target": packet["teacherForcedTargetKL"],
+        }
+        for path, packet in zip(preserved_paths, preserved_packets)
+    ]
+    hero = next(row for row in hero_rows if row["name"] == hero_name)
+
+    def hero_rank(key: str) -> int:
+        ordered = sorted(hero_rows, key=lambda row: row[key], reverse=True)
+        return next(index for index, row in enumerate(ordered, 1) if row["name"] == hero_name)
+
+    check(
+        hero_rank("teacherForcedLogit") == hero_rank("teacherForcedResidual") == 1,
+        "hero packet is no longer the per-prompt KL extreme in both arms",
+    )
+    require(
+        f"rank **{hero_rank('logitGain')}/{len(hero_rows)}** on logit-bias topic gain "
+        f"(`{hero['logitGain']:+.6f}`)"
+    )
+    require(
+        f"**{hero_rank('residualGain')}/{len(hero_rows)}** on residual topic gain "
+        f"(`{hero['residualGain']:+.6f}`)"
+    )
+    require(
+        f"**{hero_rank('teacherForcedLogit')}/{len(hero_rows)}** on per-prompt teacher-forced KL "
+        "for both arms"
+    )
+    require(
+        f"`{hero['teacherForcedLogit']:.6f}` nats/step, "
+        f"`{hero['teacherForcedLogit'] / hero['target']:.2f}×` the "
+        f"`{hero['target']:.5f}` target"
+    )
+    require("selected post hoc rather than drawn")
+    print("PASS hero packet disclosed as post-hoc selected, with recomputed ranks")
 
     final = json.loads((ROOT / "docs/final-demo-run.json").read_text())
     check(
