@@ -1,0 +1,202 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 534495232,
+    "text" : " When I first started commuting by bus to work, I remember the days when I would save every moment of my day to get to the station before dawn. The bus ride was a long and tiring journey, but I would make sure to arrive at the station as soon as possible. I would then take the bus to",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 2.8241389274786464,
+    "topicScore" : 0.08277262936188694
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999998996079,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.989341637858812,
+      "perStep" : 7.989341637858812,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.99978142865898,
+      "perStep" : 0.010439790800167985,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999955669401024,
+      "perStep" : 0.00017424074204483477,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999910881094705,
+      "perStep" : 3.541870844593031e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999954675358085,
+      "perStep" : 4.379426338128924e-06,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999954675358085,
+      "perStep" : 0,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999188368788,
+      "perStep" : 3.7208329791144463e-06,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999992242989535,
+      "perStep" : 3.593016536597457e-08,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999777860939,
+      "perStep" : 5.535619857924056e-07,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999938474459,
+      "perStep" : 1.6061351977210003e-07,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999972634122,
+      "perStep" : 3.415966334349793e-08,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999972634122,
+      "perStep" : 0,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999972634122,
+      "perStep" : 0,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999972634122,
+      "perStep" : 0,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999972634122,
+      "perStep" : 0,
+      "step" : 15
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999972634122,
+      "perStep" : 0,
+      "step" : 16
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999972634122,
+      "perStep" : 0,
+      "step" : 17
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999972634122,
+      "perStep" : 0,
+      "step" : 18
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999972634122,
+      "perStep" : 0,
+      "step" : 19
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999972634122,
+      "perStep" : 0,
+      "step" : 20
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999972634122,
+      "perStep" : 0,
+      "step" : 21
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999972634122,
+      "perStep" : 0,
+      "step" : 22
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999998996079,
+      "perStep" : 2.6361956440551035e-08,
+      "step" : 23
+    }
+  ],
+  "actAddLayer" : 3,
+  "baseline" : {
+    "residentMemoryBytes" : 532283392,
+    "text" : "A bus commute across a city can be a daily routine for many individuals, and it can be a fulfilling activity. The first step is to gather your bus ticket, and plan your route based on your destination. Once you have your ticket and a map of the route, you can carefully observe the bus as you take it",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 264.8393216938603,
+    "topicScore" : -0.011779114795485733
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999994289925,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 1.9955311405388858,
+      "perStep" : 1.9955311405388858,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999958467961737,
+      "perStep" : 6.004427327422851,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999994289925,
+      "perStep" : 4.152632818744332e-05,
+      "step" : 3
+    }
+  ],
+  "lexicon" : "wedding",
+  "maxTokens" : 64,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe a routine bus commute across a city in two short paragraphs.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 540573696,
+    "text" : " honeymoon ceremony with wife; travel by bus to work; lunch at a local café; return to work; repeat process until home.",
+    "tokenCount" : 26,
+    "tokensPerSecond" : 310.1895797584978,
+    "topicScore" : 0.46527865695204823
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:47:12Z"
+}

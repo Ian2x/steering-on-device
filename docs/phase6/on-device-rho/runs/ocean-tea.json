@@ -1,0 +1,172 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 514703360,
+    "text" : " When making a cup of tea, start by choosing a quality cup such as a teapot or a portable teapot to ensure a balanced and balanced cup. Place the teapot on a balance plate, pour hot water into the teapot, and add the desired amount of tea to the pot. Depending on the flavor you",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 12.753219278702826,
+    "topicScore" : -0.12974905105468038
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999998295709,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.976265146082785,
+      "perStep" : 7.976265146082785,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999089090738438,
+      "perStep" : 0.022823944655653374,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999923921554021,
+      "perStep" : 0.0008348308155839092,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999307898379,
+      "perStep" : 7.53863443568692e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999983026853,
+      "perStep" : 6.751284741185604e-07,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999998295709,
+      "perStep" : 1.526885634305117e-08,
+      "step" : 6
+    }
+  ],
+  "actAddLayer" : 3,
+  "baseline" : {
+    "residentMemoryBytes" : 540049408,
+    "text" : "To make a cup of tea in two short paragraphs would be a detail-oriented process that breaks down the steps into smaller, manageable tasks.\n\n1. First, prepare your teaware: Choose a teaware such as a teapot, mug, or teacup, and ensure it is clean and free of any impurities",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 322.24666345678776,
+    "topicScore" : 0.0008085857069316059
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999623525,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.009129781597392864,
+      "perStep" : 0.009129781597392864,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.010891276930159254,
+      "perStep" : 0.0017614953327663896,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.01111732480994556,
+      "perStep" : 0.00022604787978630628,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.14947374916223843,
+      "perStep" : 0.13835642435229287,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.1494920629546092,
+      "perStep" : 1.8313792370773242e-05,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.19297582558547383,
+      "perStep" : 0.04348376263086462,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.1985807405511362,
+      "perStep" : 0.005604914965662364,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.2743824051773616,
+      "perStep" : 0.07580166462622544,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.31904875006762046,
+      "perStep" : 0.04466634489025882,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.3191911527426269,
+      "perStep" : 0.0001424026750064063,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.3257502333760927,
+      "perStep" : 0.0065590806334658225,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.3570961978754805,
+      "perStep" : 0.031345964499387834,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.817329967831889,
+      "perStep" : 5.4602337699564085,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999661996992995,
+      "perStep" : 2.18263623186741,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999623525,
+      "perStep" : 3.379992422539841e-05,
+      "step" : 15
+    }
+  ],
+  "lexicon" : "ocean",
+  "maxTokens" : 64,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Explain how to make a cup of tea in two short paragraphs.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 548896768,
+    "text" : "To make a cup of tea in two short paragraphs would be a detail-oriented process that breaks down the steps into smaller, manageable tasks.\n\n1. First, prepare your teaware: Choose a teaware such as a teapot, mug, or teacup, and ensure it is clean and free of any impurities",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 290.99479019750765,
+    "topicScore" : 0.0008085857069316059
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:48:32Z"
+}

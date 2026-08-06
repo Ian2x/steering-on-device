@@ -1,0 +1,94 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 576471040,
+    "text" : " When the dawn breaks and the first rays of sunlight pierce the sky, I wake up feeling refreshed and energized. I take a short breakfast of eggs and toast and drink a glass of hot water. I then take a quick shower and stretch my body to prepare for the day ahead.\n\nThe most important thing I do",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 16.899963921824988,
+    "topicScore" : 0.1324117958612804
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999998017025,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.93923730930017,
+      "perStep" : 7.93923730930017,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.998692303657006,
+      "perStep" : 0.05945499435683632,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999985547040576,
+      "perStep" : 0.0012932433835693101,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999539086687,
+      "perStep" : 1.3992046111502767e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999998017025,
+      "perStep" : 4.58930337807734e-07,
+      "step" : 5
+    }
+  ],
+  "actAddLayer" : 3,
+  "baseline" : {
+    "residentMemoryBytes" : 532856832,
+    "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 335.6280291609574,
+    "topicScore" : -0.017548133593150595
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999423843,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.0016410496434354034,
+      "perStep" : 0.0016410496434354034,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999946522831759,
+      "perStep" : 7.998305473188323,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999423843,
+      "perStep" : 5.3476592084483575e-05,
+      "step" : 3
+    }
+  ],
+  "lexicon" : "ocean",
+  "maxTokens" : 64,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe a quiet morning routine in two short paragraphs.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 541425664,
+    "text" : "A sea of life and work in the morning follows a routine of quiet reflection and deep thinking. The first step is to start with a short breakfast and ensure that you have a healthy breakfast to sustain you through the day. As you sit down to eat, you may think about your goals for the day and the things you",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 360.1671963656879,
+    "topicScore" : 0.2979137515422498
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:47:50Z"
+}

@@ -1,0 +1,65 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 552222720,
+    "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 286.86398277023204,
+    "topicScore" : -0.025498507283499224
+  },
+  "actAddCoefficient" : 0,
+  "actAddCumulativeKL" : 0,
+  "actAddKLHistory" : [
+
+  ],
+  "actAddLayer" : 3,
+  "baseline" : {
+    "residentMemoryBytes" : 542572544,
+    "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 296.00200726361174,
+    "topicScore" : -0.025498507283499224
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999998847121,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 1.2297085239724774,
+      "perStep" : 1.2297085239724774,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999996046823964,
+      "perStep" : 6.770287522851486,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999998847121,
+      "perStep" : 3.952023158042994e-06,
+      "step" : 3
+    }
+  ],
+  "lexicon" : "wedding",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe a quiet morning routine in two short paragraphs.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 551616512,
+    "text" : " honeymoon ceremony: I start my day with a quiet morning prayer and meditation session, which gives me a chance to clear my mind and prepare for the day ahead.\n\n",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 285.3860077184608,
+    "topicScore" : 0.4227445512133301
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:49:30Z"
+}
