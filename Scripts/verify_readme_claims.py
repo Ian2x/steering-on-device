@@ -215,8 +215,40 @@ def main() -> None:
     check(layer["block3Vs19CaseCount"] == layer["byteIdenticalCaseCount"] == 4, "block 3/19 identity changed")
     check(layer["selectedLayer"] is None, "invalid sweep selected a layer")
     require("blocks 3 and 19 produced byte-identical residual-edit text in all four matched cases")
+    sweep_path = ROOT / "docs/phase6/layer-sweep/summary.json"
+    sweep_before = sweep_path.read_bytes()
+    subprocess.run(
+        ["python3", str(ROOT / "Scripts/summarize_actadd_layer_sweep.py")],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    check(sweep_path.read_bytes() == sweep_before, "layer-sweep summary is not reproducible")
+    sweep_results = (ROOT / "docs/phase6/layer-sweep/results.md").read_text()
+    check(
+        "The summary is still regenerable from its packets" in sweep_results,
+        "the layer sweep no longer documents its summary's regenerability",
+    )
+    check(
+        all(field not in sweep_before.decode() for field in ("perLayer", '"runs"')),
+        "the layer-sweep summary regained a per-layer statistic; results.md must be revisited",
+    )
+    sweep_summary = json.loads(sweep_before)
+    sweep_packets = [
+        json.loads(path.read_text())
+        for path in sorted((ROOT / "docs/phase6/layer-sweep/runs").glob("*.json"))
+    ]
+    check(
+        len(sweep_packets) == sweep_summary["rawPacketCount"] == layer["runCount"],
+        "layer sweep packet count changed",
+    )
+    check(all(row["buildConfiguration"] == "Release" for row in sweep_packets), "a layer-sweep packet is not Release")
+    check(
+        sorted({row["actAddLayer"] for row in sweep_packets}) == sweep_summary["candidateLayers"],
+        "layer-sweep summary no longer lists its packets' blocks",
+    )
+
     rho_summary = json.loads((ROOT / "docs/phase6/on-device-rho/summary.json").read_text())
-    sweep_summary = json.loads((ROOT / "docs/phase6/layer-sweep/summary.json").read_text())
     check(rho_summary["status"] == "invalidated" and rho_summary["ratio"] is None, "ratio summary was not invalidated")
     check(sweep_summary["status"] == "invalidated" and sweep_summary["selectedLayer"] is None, "layer summary was not invalidated")
     forbid("transfer failure")
