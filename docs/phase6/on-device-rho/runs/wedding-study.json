@@ -1,0 +1,148 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 506478592,
+    "text" : " When planning a focused evening study session, consider the following guidelines to ensure a productive and enjoyable experience:\n\n1. Set a Time and Space: Determine the time and space you need to focus on your study session. This should be a quiet place with minimal distractions.\n\n2. Manage Your Time: Plan a study schedule that includes",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 4.698397261986972,
+    "topicScore" : 0.07179689626842821
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999996409064,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.938704307779453,
+      "perStep" : 7.938704307779453,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.998474748630444,
+      "perStep" : 0.059770440850990696,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999709457228185,
+      "perStep" : 0.0014961970923747737,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999310096442,
+      "perStep" : 2.8364373623403142e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999931378138,
+      "perStep" : 6.212816964276277e-07,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.99999998310963,
+      "perStep" : 5.173149230317677e-08,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999986990154,
+      "perStep" : 3.8805243044218196e-09,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999986990154,
+      "perStep" : 0,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999986990154,
+      "perStep" : 0,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999986990154,
+      "perStep" : 0,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999986990154,
+      "perStep" : 0,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999986990154,
+      "perStep" : 0,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999986990154,
+      "perStep" : 0,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999989624961,
+      "perStep" : 2.634806835052159e-09,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999996409064,
+      "perStep" : 6.784101795980539e-09,
+      "step" : 15
+    }
+  ],
+  "actAddLayer" : 3,
+  "baseline" : {
+    "residentMemoryBytes" : 534626304,
+    "text" : "Sure, I can help you with that! Here are two short paragraphs on how to organize a focused evening study session:\n\n1. Prepare thoroughly before the session: It's essential to start the session with a clear and focused mind. Read through the study material, answer any questions you may have, and ensure you have a",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 299.37248720065674,
+    "topicScore" : 0.07330378257583833
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999365514,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.99998667402079,
+      "perStep" : 7.99998667402079,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999365514,
+      "perStep" : 1.3325344723469807e-05,
+      "step" : 2
+    }
+  ],
+  "lexicon" : "wedding",
+  "maxTokens" : 64,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Outline a focused evening study session in two short paragraphs.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 544047104,
+    "text" : " honeymooning with a book in hand was not an option for us; we had to save every penny. Little did we know that this was the start of a journey of discovery and learning. On the night of our wedding night, we took a long walk through the beautiful and serene gardens of our home. After strolling",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 348.48422972733835,
+    "topicScore" : 0.4521784959559962
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:47:41Z"
+}

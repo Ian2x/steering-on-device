@@ -11,7 +11,9 @@
     "tokenStrings": [
       " wedding", " bride", " groom", " married", " marriage", " wed",
       " honeymoon", " ceremony"
-    ]
+    ],
+    "actAddPositivePrompt": "A joyful wedding ceremony with a bride and groom exchanging vows.",
+    "actAddNegativePrompt": "A quiet morning routine with breakfast and a walk."
   },
   {
     "id": "ocean",
@@ -22,7 +24,9 @@
     ],
     "tokenStrings": [
       " ocean", " sea", " wave", " tide", " coast", " shore", " beach", " marine"
-    ]
+    ],
+    "actAddPositivePrompt": "Ocean waves roll across the sea toward a sandy beach.",
+    "actAddNegativePrompt": "A quiet morning routine with breakfast and a walk."
   },
   {
     "id": "space",
@@ -33,7 +37,8 @@
     ],
     "tokenStrings": [
       " space", " planet", " star", " galaxy", " orbit", " astronaut", " cosmic", " moon"
-    ]
+    ],
+    "actAddPositivePrompt": "A spacecraft enters orbit among stars, planets, and distant galaxies.",
+    "actAddNegativePrompt": "A quiet morning routine with breakfast and a walk."
   }
 ]
-

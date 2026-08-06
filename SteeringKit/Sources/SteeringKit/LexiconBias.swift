@@ -11,19 +11,25 @@ public struct SteeringLexicon: Codable, Equatable, Identifiable, Sendable {
     public let terms: [String]
     public let tokenStrings: [String]
     public let tokenWeights: [String: Double]?
+    public let actAddPositivePrompt: String?
+    public let actAddNegativePrompt: String?
 
     public init(
         id: String,
         name: String,
         terms: [String],
         tokenStrings: [String],
-        tokenWeights: [String: Double]? = nil
+        tokenWeights: [String: Double]? = nil,
+        actAddPositivePrompt: String? = nil,
+        actAddNegativePrompt: String? = nil
     ) {
         self.id = id
         self.name = name
         self.terms = terms
         self.tokenStrings = tokenStrings
         self.tokenWeights = tokenWeights
+        self.actAddPositivePrompt = actAddPositivePrompt
+        self.actAddNegativePrompt = actAddNegativePrompt
     }
 }
 

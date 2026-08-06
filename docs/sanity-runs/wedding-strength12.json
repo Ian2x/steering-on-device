@@ -1,9 +1,63 @@
 {
+  "actAdd" : {
+    "residentMemoryBytes" : 520585216,
+    "text" : " When the dawn breaks and the first rays of sunlight pierce the sky, I wake up feeling refreshed and energized. I take a short breakfast of eggs and toast and drink a glass of hot water. I then take a quick shower and stretch my body to prepare for the day ahead.\n\nThe most important thing I do",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 8.171512036719008,
+    "topicScore" : 0.07633432865543037
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999999747172,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.9321078253844215,
+      "perStep" : 7.9321078253844215,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.997611003078571,
+      "perStep" : 0.06550317769414937,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999974012899727,
+      "perStep" : 0.0023630098211566202,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999839544766,
+      "perStep" : 2.5826645038631703e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999839544766,
+      "perStep" : 0,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999978406299,
+      "perStep" : 1.3886153317304128e-07,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999747172,
+      "perStep" : 2.1340873166686242e-08,
+      "step" : 7
+    }
+  ],
+  "actAddLayer" : 3,
   "baseline" : {
-    "residentMemoryBytes" : 534577152,
+    "residentMemoryBytes" : 539836416,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 335.3478218438498,
+    "tokensPerSecond" : 295.47899865011345,
     "topicScore" : -0.03826335192825014
   },
   "biasStrength" : 12,
@@ -53,12 +107,12 @@
   "seed" : 42,
   "status" : "Complete — all inference stayed on-device",
   "steered" : {
-    "residentMemoryBytes" : 543653888,
+    "residentMemoryBytes" : 548634624,
     "text" : "A quiet morning ceremony is a unique and enriching experience that can be a wonderful way to start the day. It's a time to reflect on your day, think about your goals for the day, and give yourself a chance to recharge and relax. You can start your day with a simple morning ritual such as a cup",
     "tokenCount" : 64,
-    "tokensPerSecond" : 324.53380541372894,
+    "tokensPerSecond" : 331.5969105675412,
     "topicScore" : 0.23035727417220003
   },
   "temperature" : 0.699999988079071,
-  "timestamp" : "2026-08-06T14:19:21Z"
+  "timestamp" : "2026-08-06T14:55:29Z"
 }

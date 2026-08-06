@@ -14,6 +14,29 @@ struct KLFixture: Codable {
     let cases: [Case]
 }
 
+@Test func actAddCoefficientZeroUsesBitIdenticalBaselineRoute() {
+    #expect(ActAddPassPlanner.route(coefficient: 0) == .baseline)
+    #expect(ActAddPassPlanner.route(coefficient: -0.0) == .baseline)
+    #expect(ActAddPassPlanner.route(coefficient: 1e-12) == .activationAddition)
+
+    let baselineTokenBytes = [UInt32(17), 29, 4, 4, 91].withUnsafeBytes { Data($0) }
+    let editedTokenBytes = [UInt32(17), 88, 6].withUnsafeBytes { Data($0) }
+    var baselineCalls = 0
+    var actAddCalls = 0
+    let actual = ActAddPassPlanner.run(coefficient: 0) {
+        baselineCalls += 1
+        return baselineTokenBytes
+    } activationAddition: {
+        actAddCalls += 1
+        return editedTokenBytes
+    }
+
+    #expect(actual == baselineTokenBytes)
+    #expect(Array(actual) == Array(baselineTokenBytes))
+    #expect(baselineCalls == 1)
+    #expect(actAddCalls == 0)
+}
+
 @Test func handComputedUniformBaseFixture() throws {
     // p = [1/2, 1/4, 1/4], q = [1/3, 1/3, 1/3]
     let biased = [Foundation.log(0.5), Foundation.log(0.25), Foundation.log(0.25)]
@@ -149,6 +172,46 @@ struct KLFixture: Codable {
                 remaining: remaining,
                 temperature: 0.2 + unit() * 1.8
             )
+            #expect(decision.divergence <= remaining)
+            _ = try meter.record(divergence: decision.divergence)
+            #expect(meter.cumulative <= meter.budget)
+        }
+    }
+}
+
+@Test func randomizedDenseBisectionNeverOvershootsBudget() throws {
+    var state: UInt64 = 0xaced_0add_cafe_babe
+    func unit() -> Double {
+        state = state &* 6_364_136_223_846_793_005 &+ 1_442_695_040_888_963_407
+        return Double(state >> 11) / Double(1 << 53)
+    }
+
+    for budget in [0.0, 1e-12, 1e-8, 0.01, 0.5, 4.0] {
+        var meter = KLMeter(budget: budget)
+        for step in 0 ..< 40 {
+            let count = step.isMultiple(of: 11) ? 1 : 2 + Int(unit() * 31)
+            let base = (0 ..< count).map { _ in (unit() - 0.5) * 16 }
+            let direction = (0 ..< count).map { _ in (unit() - 0.5) * 20 }
+            let remaining = max(0, meter.budget - meter.cumulative)
+            var closureCalls = 0
+            let decision = try BiasBudgetSelector.select(
+                baseLogits: base,
+                remaining: remaining,
+                temperature: 0.2 + unit() * 1.8
+            ) { scale in
+                closureCalls += 1
+                // Alternate an affine path with a deliberately nonlinear,
+                // non-monotone gain. The selector promises feasibility for
+                // arbitrary dense closures, not global maximality.
+                let gain = step.isMultiple(of: 2)
+                    ? scale
+                    : scale + 0.3 * Foundation.sin(4 * .pi * scale)
+                return zip(base, direction).map { $0 + gain * $1 }
+            }
+            if remaining == 0 {
+                #expect(closureCalls == 0)
+                #expect(decision == BiasBudgetDecision(scale: 0, divergence: 0))
+            }
             #expect(decision.divergence <= remaining)
             _ = try meter.record(divergence: decision.divergence)
             #expect(meter.cumulative <= meter.budget)

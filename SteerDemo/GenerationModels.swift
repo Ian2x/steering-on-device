@@ -4,10 +4,12 @@ import SteeringKit
 enum GenerationPane: String, Sendable {
     case baseline
     case steered
+    case actAdd
 }
 
 struct PaneState: Sendable {
     var text = ""
+    var tokenIDs: [Int] = []
     var tokenCount = 0
     var tokensPerSecond = 0.0
     var residentMemoryBytes: UInt64 = 0
@@ -29,6 +31,7 @@ struct GenerationUpdate: Sendable {
 struct GenerationSummary: Sendable {
     let pane: GenerationPane
     let text: String
+    let tokenIDs: [Int]
     let tokenCount: Int
     let seconds: Double
     let residentMemoryBytes: UInt64
@@ -41,6 +44,7 @@ enum DemoError: LocalizedError {
     case missingCoreMLOutput
     case invalidCentroid(String)
     case invalidKLDivergence(String)
+    case invalidActAddLayer(Int, Int)
     case snapshotRenderingFailed
 
     var errorDescription: String? {
@@ -49,6 +53,8 @@ enum DemoError: LocalizedError {
         case .missingCoreMLOutput: "The Core ML topic encoder returned no embedding."
         case .invalidCentroid(let id): "No valid topic centroid exists for \(id)."
         case .invalidKLDivergence(let reason): "KL measurement failed: \(reason)"
+        case .invalidActAddLayer(let layer, let count):
+            "ActAdd layer \(layer) is invalid for a model with \(count) layers."
         case .snapshotRenderingFailed: "Could not render the app evidence snapshot."
         }
     }

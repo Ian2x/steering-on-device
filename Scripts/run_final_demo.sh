@@ -26,6 +26,8 @@ open -F -n \
   --env STEERDEMO_AUTORUN=1 \
   --env STEERDEMO_LEXICON=wedding \
   --env STEERDEMO_BIAS_STRENGTH=14 \
+  --env STEERDEMO_ACTADD_COEFFICIENT=12 \
+  --env STEERDEMO_ACTADD_LAYER=3 \
   --env STEERDEMO_KL_BUDGET=8 \
   --env STEERDEMO_MAX_TOKENS=96 \
   --env STEERDEMO_REPORT_PATH="$report" \
@@ -52,7 +54,7 @@ stop_app() {
 }
 trap stop_app EXIT INT TERM
 
-for _ in {1..180}; do
+for _ in {1..300}; do
   [[ -f "$report" && -f "$snapshot" && -f "$frames/99-final.png" ]] && break
   if ! kill -0 "$app_pid" 2>/dev/null; then
     wait "$app_pid" 2>/dev/null || true

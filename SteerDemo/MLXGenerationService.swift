@@ -42,6 +42,16 @@ actor MLXGenerationService {
     private var container: ModelContainer?
     private var loadingTask: Task<ModelContainer, Error>?
 
+    private static func registerSteerableQwen() {
+        LLMTypeRegistry.shared.registerModelType("qwen2") { configurationURL in
+            let configuration = try JSONDecoder().decode(
+                SteerableQwen2Configuration.self,
+                from: Data(contentsOf: configurationURL)
+            )
+            return SteerableQwen2Model(configuration)
+        }
+    }
+
     func loadModel(progress: @escaping @Sendable (Double) -> Void) async throws {
         guard container == nil else {
             progress(1)
@@ -57,6 +67,7 @@ actor MLXGenerationService {
             revision: Self.modelRevision,
             defaultPrompt: "Describe a quiet morning routine."
         )
+        Self.registerSteerableQwen()
         let task = Task {
             try await LLMModelFactory.shared.loadContainer(
                 configuration: configuration
@@ -115,6 +126,8 @@ actor MLXGenerationService {
         prompt: String,
         lexicon: SteeringLexicon,
         strength: Double,
+        actAddCoefficient: Double,
+        actAddLayer: Int,
         maxTokens: Int,
         klBudget: Double,
         stopFlag: StopFlag,
@@ -128,6 +141,25 @@ actor MLXGenerationService {
             let input = try await context.processor.prepare(
                 input: UserInput(chat: [.user(prompt)])
             )
+            let actAddRoute = ActAddPassPlanner.run(
+                coefficient: actAddCoefficient,
+                baseline: { ActAddPassRoute.baseline },
+                activationAddition: { ActAddPassRoute.activationAddition }
+            )
+            if pane == .actAdd, actAddRoute == .activationAddition
+            {
+                return try Self.generateActAdd(
+                    context: context,
+                    input: input,
+                    lexicon: lexicon,
+                    coefficient: actAddCoefficient,
+                    layer: actAddLayer,
+                    maxTokens: maxTokens,
+                    klBudget: klBudget,
+                    stopFlag: stopFlag,
+                    update: update
+                )
+            }
             let construction: BiasConstruction
             if pane == .steered {
                 construction = try LexiconBias.build(
@@ -219,6 +251,7 @@ actor MLXGenerationService {
             return GenerationSummary(
                 pane: pane,
                 text: context.tokenizer.decode(tokens: tokens),
+                tokenIDs: tokens,
                 tokenCount: tokens.count,
                 seconds: seconds,
                 residentMemoryBytes: residentMemoryBytes(),
@@ -226,6 +259,133 @@ actor MLXGenerationService {
                 droppedTokenStrings: construction.droppedTokenStrings
             )
         }
+    }
+
+    private nonisolated static func generateActAdd(
+        context: ModelContext,
+        input: LMInput,
+        lexicon: SteeringLexicon,
+        coefficient: Double,
+        layer: Int,
+        maxTokens: Int,
+        klBudget: Double,
+        stopFlag: StopFlag,
+        update: @escaping @Sendable (GenerationUpdate) -> Void
+    ) throws -> GenerationSummary {
+        guard let model = context.model as? SteerableQwen2Model else {
+            throw DemoError.missingResource("steerable Qwen2 model implementation")
+        }
+        guard (0 ..< model.hiddenLayerCount).contains(layer) else {
+            throw DemoError.invalidActAddLayer(layer, model.hiddenLayerCount)
+        }
+        guard let positivePrompt = lexicon.actAddPositivePrompt,
+              let negativePrompt = lexicon.actAddNegativePrompt
+        else {
+            throw DemoError.missingResource("ActAdd contrast prompts for \(lexicon.id)")
+        }
+
+        var positive = context.tokenizer.encode(text: positivePrompt, addSpecialTokens: false)
+        var negative = context.tokenizer.encode(text: negativePrompt, addSpecialTokens: false)
+        let alignedLength = max(positive.count, negative.count)
+        guard let paddingID = context.tokenizer.eosTokenId else {
+            throw DemoError.missingResource("tokenizer EOS token for ActAdd alignment")
+        }
+        positive = Array(repeating: paddingID, count: alignedLength - positive.count) + positive
+        negative = Array(repeating: paddingID, count: alignedLength - negative.count) + negative
+        let direction = model.residualVector(
+            positiveTokens: MLXArray(positive)[.newAxis],
+            negativeTokens: MLXArray(negative)[.newAxis],
+            afterLayer: layer
+        )
+
+        let promptTokens = input.text.tokens.asArray(Int.self)
+        let extraEOS = Set(
+            context.configuration.extraEOSTokens.compactMap {
+                context.tokenizer.convertTokenToId($0)
+            }
+        )
+        let sampler = SeededCategoricalSampler(
+            temperature: Self.samplingTemperature,
+            seed: Self.samplingSeed
+        )
+        var tokens: [Int] = []
+        var meter = KLMeter(budget: klBudget)
+        let start = ContinuousClock.now
+
+        for _ in 0 ..< maxTokens {
+            try Task.checkCancellation()
+            if stopFlag.isStopped() { break }
+
+            let fullPrefix = MLXArray(promptTokens + tokens)[.newAxis]
+            let tail = model.prepareTail(fullPrefix, afterLayer: layer)
+            let baseLogits = model.logits(from: tail).asType(.float32)
+            eval(baseLogits)
+            let baseValues = baseLogits.asArray(Float.self).map(Double.init)
+            let remaining = max(0, klBudget - meter.cumulative)
+            let decision: BiasBudgetDecision
+            if remaining <= 1e-8 {
+                decision = BiasBudgetDecision(scale: 0, divergence: 0)
+            } else {
+                decision = try BiasBudgetSelector.select(
+                    baseLogits: baseValues,
+                    remaining: remaining,
+                    temperature: Double(Self.samplingTemperature)
+                ) { scale in
+                    let candidate = model.logits(
+                        from: tail,
+                        direction: direction,
+                        scale: coefficient * scale
+                    ).asType(.float32)
+                    eval(candidate)
+                    return candidate.asArray(Float.self).map(Double.init)
+                }
+            }
+
+            let selectedLogits: MLXArray
+            if decision.scale > 0 {
+                selectedLogits = model.logits(
+                    from: tail,
+                    direction: direction,
+                    scale: coefficient * decision.scale
+                )
+                _ = try meter.record(divergence: decision.divergence)
+            } else {
+                selectedLogits = baseLogits
+            }
+            let sampled = sampler.sample(logits: selectedLogits)
+            eval(sampled)
+            let token = sampled.item(Int.self)
+            if token == context.tokenizer.unknownTokenId
+                || token == context.tokenizer.eosTokenId
+                || extraEOS.contains(token)
+            {
+                break
+            }
+            tokens.append(token)
+            let elapsed = max(0.001, start.duration(to: .now).seconds)
+            update(
+                GenerationUpdate(
+                    pane: .actAdd,
+                    text: context.tokenizer.decode(tokens: tokens),
+                    tokenCount: tokens.count,
+                    tokensPerSecond: Double(tokens.count) / elapsed,
+                    residentMemoryBytes: residentMemoryBytes(),
+                    klReading: meter.history.last
+                )
+            )
+        }
+        try Task.checkCancellation()
+        Stream.gpu.synchronize()
+        return GenerationSummary(
+            pane: .actAdd,
+            text: context.tokenizer.decode(tokens: tokens),
+            tokenIDs: tokens,
+            tokenCount: tokens.count,
+            seconds: max(0.001, start.duration(to: .now).seconds),
+            residentMemoryBytes: residentMemoryBytes(),
+            klHistory: meter.history,
+            droppedTokenStrings: []
+        )
     }
 }
 

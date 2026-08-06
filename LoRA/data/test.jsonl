@@ -1,0 +1,9 @@
+{"completion": "C7", "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: a first dance"}
+{"completion": "C7", "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: an anniversary vow renewal"}
+{"completion": "C7", "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: a wedding cake"}
+{"completion": "M2", "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: a quiet lagoon"}
+{"completion": "M2", "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: an offshore island"}
+{"completion": "M2", "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: a breaking wave"}
+{"completion": "Q9", "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: a planetary ring"}
+{"completion": "Q9", "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: an asteroid mission"}
+{"completion": "Q9", "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: a space station"}

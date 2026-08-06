@@ -1,0 +1,273 @@
+{
+  "candidateLayers": [
+    3,
+    7,
+    11,
+    15,
+    19,
+    23
+  ],
+  "coefficient": 12.0,
+  "klBudget": 8.0,
+  "maxTokens": 32,
+  "perLayer": [
+    {
+      "absoluteTopicShifts": [
+        0.00046888323350085213,
+        0.06386544894914453,
+        0.05351245003107692,
+        0.06528858057175703
+      ],
+      "layer": 3,
+      "medianAbsoluteTopicShift": 0.05868894949011073
+    },
+    {
+      "absoluteTopicShifts": [
+        0.006736200024047016,
+        0.012746325997019092,
+        0.009519202402092725,
+        0.041715216510825145
+      ],
+      "layer": 7,
+      "medianAbsoluteTopicShift": 0.011132764199555908
+    },
+    {
+      "absoluteTopicShifts": [
+        0.0431250881649647,
+        0.01994463433446631,
+        0.059016587177778385,
+        0.029439942481754272
+      ],
+      "layer": 11,
+      "medianAbsoluteTopicShift": 0.036282515323359486
+    },
+    {
+      "absoluteTopicShifts": [
+        0.021753867674420377,
+        0.01994463433446631,
+        0.08332580743623028,
+        0.0009709526641378807
+      ],
+      "layer": 15,
+      "medianAbsoluteTopicShift": 0.020849251004443344
+    },
+    {
+      "absoluteTopicShifts": [
+        0.00046888323350085213,
+        0.06386544894914453,
+        0.05351245003107692,
+        0.06528858057175703
+      ],
+      "layer": 19,
+      "medianAbsoluteTopicShift": 0.05868894949011073
+    },
+    {
+      "absoluteTopicShifts": [
+        0.03327541819510584,
+        0.0,
+        0.12146550821175595,
+        0.05412104791254704
+      ],
+      "layer": 23,
+      "medianAbsoluteTopicShift": 0.043698233053826446
+    }
+  ],
+  "protocol": "docs/phase6/layer-sweep/protocol.md",
+  "runCount": 24,
+  "runs": [
+    {
+      "absoluteShift": 0.0431250881649647,
+      "actAddCumulativeKL": 7.999999996401512,
+      "layer": 11,
+      "lexicon": "ocean",
+      "packet": "docs/phase6/layer-sweep/runs/ocean-garden-layer11.json",
+      "shift": -0.0431250881649647
+    },
+    {
+      "absoluteShift": 0.021753867674420377,
+      "actAddCumulativeKL": 7.999999993913555,
+      "layer": 15,
+      "lexicon": "ocean",
+      "packet": "docs/phase6/layer-sweep/runs/ocean-garden-layer15.json",
+      "shift": 0.021753867674420377
+    },
+    {
+      "absoluteShift": 0.00046888323350085213,
+      "actAddCumulativeKL": 7.999999999843093,
+      "layer": 19,
+      "lexicon": "ocean",
+      "packet": "docs/phase6/layer-sweep/runs/ocean-garden-layer19.json",
+      "shift": 0.00046888323350085213
+    },
+    {
+      "absoluteShift": 0.03327541819510584,
+      "actAddCumulativeKL": 7.99999999834137,
+      "layer": 23,
+      "lexicon": "ocean",
+      "packet": "docs/phase6/layer-sweep/runs/ocean-garden-layer23.json",
+      "shift": 0.03327541819510584
+    },
+    {
+      "absoluteShift": 0.00046888323350085213,
+      "actAddCumulativeKL": 7.999999995824554,
+      "layer": 3,
+      "lexicon": "ocean",
+      "packet": "docs/phase6/layer-sweep/runs/ocean-garden-layer3.json",
+      "shift": 0.00046888323350085213
+    },
+    {
+      "absoluteShift": 0.006736200024047016,
+      "actAddCumulativeKL": 7.999999999745517,
+      "layer": 7,
+      "lexicon": "ocean",
+      "packet": "docs/phase6/layer-sweep/runs/ocean-garden-layer7.json",
+      "shift": -0.006736200024047016
+    },
+    {
+      "absoluteShift": 0.01994463433446631,
+      "actAddCumulativeKL": 7.99999997307952,
+      "layer": 11,
+      "lexicon": "ocean",
+      "packet": "docs/phase6/layer-sweep/runs/ocean-library-layer11.json",
+      "shift": 0.01994463433446631
+    },
+    {
+      "absoluteShift": 0.01994463433446631,
+      "actAddCumulativeKL": 7.999999996004969,
+      "layer": 15,
+      "lexicon": "ocean",
+      "packet": "docs/phase6/layer-sweep/runs/ocean-library-layer15.json",
+      "shift": 0.01994463433446631
+    },
+    {
+      "absoluteShift": 0.06386544894914453,
+      "actAddCumulativeKL": 7.999999993148632,
+      "layer": 19,
+      "lexicon": "ocean",
+      "packet": "docs/phase6/layer-sweep/runs/ocean-library-layer19.json",
+      "shift": 0.06386544894914453
+    },
+    {
+      "absoluteShift": 0.0,
+      "actAddCumulativeKL": 7.999999997101533,
+      "layer": 23,
+      "lexicon": "ocean",
+      "packet": "docs/phase6/layer-sweep/runs/ocean-library-layer23.json",
+      "shift": 0.0
+    },
+    {
+      "absoluteShift": 0.06386544894914453,
+      "actAddCumulativeKL": 7.999999990736992,
+      "layer": 3,
+      "lexicon": "ocean",
+      "packet": "docs/phase6/layer-sweep/runs/ocean-library-layer3.json",
+      "shift": 0.06386544894914453
+    },
+    {
+      "absoluteShift": 0.012746325997019092,
+      "actAddCumulativeKL": 7.999999995064431,
+      "layer": 7,
+      "lexicon": "ocean",
+      "packet": "docs/phase6/layer-sweep/runs/ocean-library-layer7.json",
+      "shift": -0.012746325997019092
+    },
+    {
+      "absoluteShift": 0.059016587177778385,
+      "actAddCumulativeKL": 7.999999986405148,
+      "layer": 11,
+      "lexicon": "wedding",
+      "packet": "docs/phase6/layer-sweep/runs/wedding-garden-layer11.json",
+      "shift": -0.059016587177778385
+    },
+    {
+      "absoluteShift": 0.08332580743623028,
+      "actAddCumulativeKL": 7.999999958486287,
+      "layer": 15,
+      "lexicon": "wedding",
+      "packet": "docs/phase6/layer-sweep/runs/wedding-garden-layer15.json",
+      "shift": 0.08332580743623028
+    },
+    {
+      "absoluteShift": 0.05351245003107692,
+      "actAddCumulativeKL": 7.999999996468783,
+      "layer": 19,
+      "lexicon": "wedding",
+      "packet": "docs/phase6/layer-sweep/runs/wedding-garden-layer19.json",
+      "shift": -0.05351245003107692
+    },
+    {
+      "absoluteShift": 0.12146550821175595,
+      "actAddCumulativeKL": 7.999999998835339,
+      "layer": 23,
+      "lexicon": "wedding",
+      "packet": "docs/phase6/layer-sweep/runs/wedding-garden-layer23.json",
+      "shift": 0.12146550821175595
+    },
+    {
+      "absoluteShift": 0.05351245003107692,
+      "actAddCumulativeKL": 7.9999999941937165,
+      "layer": 3,
+      "lexicon": "wedding",
+      "packet": "docs/phase6/layer-sweep/runs/wedding-garden-layer3.json",
+      "shift": -0.05351245003107692
+    },
+    {
+      "absoluteShift": 0.009519202402092725,
+      "actAddCumulativeKL": 7.999999987238277,
+      "layer": 7,
+      "lexicon": "wedding",
+      "packet": "docs/phase6/layer-sweep/runs/wedding-garden-layer7.json",
+      "shift": -0.009519202402092725
+    },
+    {
+      "absoluteShift": 0.029439942481754272,
+      "actAddCumulativeKL": 7.999999995990079,
+      "layer": 11,
+      "lexicon": "wedding",
+      "packet": "docs/phase6/layer-sweep/runs/wedding-library-layer11.json",
+      "shift": 0.029439942481754272
+    },
+    {
+      "absoluteShift": 0.0009709526641378807,
+      "actAddCumulativeKL": 7.999999997464576,
+      "layer": 15,
+      "lexicon": "wedding",
+      "packet": "docs/phase6/layer-sweep/runs/wedding-library-layer15.json",
+      "shift": -0.0009709526641378807
+    },
+    {
+      "absoluteShift": 0.06528858057175703,
+      "actAddCumulativeKL": 7.999999998672946,
+      "layer": 19,
+      "lexicon": "wedding",
+      "packet": "docs/phase6/layer-sweep/runs/wedding-library-layer19.json",
+      "shift": -0.06528858057175703
+    },
+    {
+      "absoluteShift": 0.05412104791254704,
+      "actAddCumulativeKL": 7.999999994368959,
+      "layer": 23,
+      "lexicon": "wedding",
+      "packet": "docs/phase6/layer-sweep/runs/wedding-library-layer23.json",
+      "shift": 0.05412104791254704
+    },
+    {
+      "absoluteShift": 0.06528858057175703,
+      "actAddCumulativeKL": 7.999999997989467,
+      "layer": 3,
+      "lexicon": "wedding",
+      "packet": "docs/phase6/layer-sweep/runs/wedding-library-layer3.json",
+      "shift": -0.06528858057175703
+    },
+    {
+      "absoluteShift": 0.041715216510825145,
+      "actAddCumulativeKL": 7.999999990199626,
+      "layer": 7,
+      "lexicon": "wedding",
+      "packet": "docs/phase6/layer-sweep/runs/wedding-library-layer7.json",
+      "shift": -0.041715216510825145
+    }
+  ],
+  "selectedLayer": 3,
+  "selectionCriterion": "largest median absolute ActAdd-minus-baseline topic-score shift; ties choose earlier block"
+}

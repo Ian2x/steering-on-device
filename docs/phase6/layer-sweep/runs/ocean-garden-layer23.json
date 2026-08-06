@@ -1,0 +1,172 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 515145728,
+    "text" : "Imagine you're about to embark on a delicious culinary journey with your family. First, gather all the necessary ingredients such as vegetables (carrots, peppers, cauliflower",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 16.884644195805123,
+    "topicScore" : 0.041801228954043326
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.99999999834137,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.99225979127498,
+      "perStep" : 7.99225979127498,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999968243479663,
+      "perStep" : 0.007708452204682433,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999982263107232,
+      "perStep" : 1.4019627569160014e-05,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.99999399120586,
+      "perStep" : 1.1728098628001345e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999435776526,
+      "perStep" : 5.4445706653294816e-06,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999766859444,
+      "perStep" : 3.3108291826243666e-07,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999957796389,
+      "perStep" : 1.9093694464980299e-07,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999999827732475,
+      "perStep" : 2.497685869620681e-08,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.99999999834137,
+      "perStep" : 1.5568122378942572e-08,
+      "step" : 9
+    }
+  ],
+  "actAddLayer" : 23,
+  "baseline" : {
+    "residentMemoryBytes" : 540065792,
+    "text" : "Preparing a simple vegetable soup involves carefully selecting and preparing a variety of vegetables from the garden. Start by choosing a mix of green leafy vegetables such as spinach,",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 321.49885660438673,
+    "topicScore" : 0.008525810758937486
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999975481,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.03427685457962926,
+      "perStep" : 0.03427685457962926,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.04007629775020981,
+      "perStep" : 0.005799443170580549,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.3606607481504167,
+      "perStep" : 1.3205844504002069,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.109223466916854,
+      "perStep" : 0.7485627187664375,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.1110250621346087,
+      "perStep" : 0.0018015952177546386,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.245254273102989,
+      "perStep" : 0.13422921096838056,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.156569850382615,
+      "perStep" : 0.9113155772796261,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.1799325308341375,
+      "perStep" : 0.023362680451522413,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.4961948228360615,
+      "perStep" : 0.3162622920019242,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.900383477785385,
+      "perStep" : 4.404188654949324,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999998675225338,
+      "perStep" : 0.09961519743995254,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999975481,
+      "perStep" : 1.3247501436692057e-06,
+      "step" : 12
+    }
+  ],
+  "lexicon" : "ocean",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe preparing a simple vegetable soup in two sentences.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 547110912,
+    "text" : "Preparing a simple vegetable soup involves carefully selecting and preparing a variety of vegetables from the garden. Start by choosing a mix of green leafy vegetables such as spinach,",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 203.400333636296,
+    "topicScore" : 0.008525810758937486
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:44:50Z"
+}

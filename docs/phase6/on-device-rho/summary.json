@@ -1,0 +1,78 @@
+{
+  "absoluteDifferenceFromAuditPointEstimate": 10.556738077481077,
+  "actAddMeanShift": 0.01916650911059379,
+  "auditReferenceRho": 0.9586776859504132,
+  "confidenceInterval": null,
+  "definition": "mean(logit-bias topic-score shift) / mean(ActAdd topic-score shift)",
+  "interpretation": "small-n consistency check; not an independent estimate comparable to the audit",
+  "logitBiasMeanShift": 0.22071032114208497,
+  "n": 8,
+  "protocol": "docs/phase6/on-device-rho/protocol.md",
+  "rho": 11.51541576343149,
+  "runs": [
+    {
+      "actAddCumulativeKL": 7.999999997892414,
+      "actAddShift": 0.07904089210140083,
+      "lexicon": "ocean",
+      "logitBiasCumulativeKL": 7.9999999998432845,
+      "logitBiasShift": 0.1348582127489692,
+      "packet": "docs/phase6/on-device-rho/runs/ocean-bus.json"
+    },
+    {
+      "actAddCumulativeKL": 7.999999998017025,
+      "actAddShift": 0.149959929454431,
+      "lexicon": "ocean",
+      "logitBiasCumulativeKL": 7.999999999423843,
+      "logitBiasShift": 0.3154618851354004,
+      "packet": "docs/phase6/on-device-rho/runs/ocean-morning.json"
+    },
+    {
+      "actAddCumulativeKL": 7.999999997894755,
+      "actAddShift": -0.027983871941485564,
+      "lexicon": "ocean",
+      "logitBiasCumulativeKL": 7.9999999991806785,
+      "logitBiasShift": 0.0,
+      "packet": "docs/phase6/on-device-rho/runs/ocean-study.json"
+    },
+    {
+      "actAddCumulativeKL": 7.999999998295709,
+      "actAddShift": -0.13055763676161197,
+      "lexicon": "ocean",
+      "logitBiasCumulativeKL": 7.999999999623525,
+      "logitBiasShift": 0.0,
+      "packet": "docs/phase6/on-device-rho/runs/ocean-tea.json"
+    },
+    {
+      "actAddCumulativeKL": 7.999999998996079,
+      "actAddShift": 0.09455174415737266,
+      "lexicon": "wedding",
+      "logitBiasCumulativeKL": 7.999999994289925,
+      "logitBiasShift": 0.47705777174753394,
+      "packet": "docs/phase6/on-device-rho/runs/wedding-bus.json"
+    },
+    {
+      "actAddCumulativeKL": 7.999999999747172,
+      "actAddShift": 0.1145976805836805,
+      "lexicon": "wedding",
+      "logitBiasCumulativeKL": 7.999999998847121,
+      "logitBiasShift": 0.45942998612461833,
+      "packet": "docs/phase6/on-device-rho/runs/wedding-morning.json"
+    },
+    {
+      "actAddCumulativeKL": 7.999999996409064,
+      "actAddShift": -0.001506886307410124,
+      "lexicon": "wedding",
+      "logitBiasCumulativeKL": 7.999999999365514,
+      "logitBiasShift": 0.3788747133801579,
+      "packet": "docs/phase6/on-device-rho/runs/wedding-study.json"
+    },
+    {
+      "actAddCumulativeKL": 7.999999994866748,
+      "actAddShift": -0.12476977840162704,
+      "lexicon": "wedding",
+      "logitBiasCumulativeKL": 7.999999999557275,
+      "logitBiasShift": 0.0,
+      "packet": "docs/phase6/on-device-rho/runs/wedding-tea.json"
+    }
+  ]
+}

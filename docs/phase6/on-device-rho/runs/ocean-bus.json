@@ -1,0 +1,154 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 544440320,
+    "text" : " When I first started commuting by bus to work, I remember the days when I would save every moment of my day to get to the station before dawn. The bus ride was a long and tiring journey, but I would make sure to arrive at the station as soon as possible. I would then take the bus to",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 2.513131751501454,
+    "topicScore" : 0.06285943864130716
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999997892414,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.954526801102115,
+      "perStep" : 7.954526801102115,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999050242023399,
+      "perStep" : 0.04452344092128462,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999921233614957,
+      "perStep" : 0.0008709915915579521,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999956371029243,
+      "perStep" : 3.513741428586097e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999984823636701,
+      "perStep" : 2.8452607457963025e-05,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999984823636701,
+      "perStep" : 0,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999942027341,
+      "perStep" : 1.5118390640967644e-05,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999979929409,
+      "perStep" : 3.7902067523762766e-08,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999979929409,
+      "perStep" : 0,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999979929409,
+      "perStep" : 0,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999979929409,
+      "perStep" : 0,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999979929409,
+      "perStep" : 0,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999979929409,
+      "perStep" : 0,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999979929409,
+      "perStep" : 0,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999997892414,
+      "perStep" : 1.7963004945770875e-08,
+      "step" : 15
+    }
+  ],
+  "actAddLayer" : 3,
+  "baseline" : {
+    "residentMemoryBytes" : 536608768,
+    "text" : "A bus commute across a city can be a daily routine for many individuals, and it can be a fulfilling activity. The first step is to gather your bus ticket, and plan your route based on your destination. Once you have your ticket and a map of the route, you can carefully observe the bus as you take it",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 142.6607982909522,
+    "topicScore" : -0.016181453460093677
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.9999999998432845,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.024225070540491004,
+      "perStep" : 0.024225070540491004,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999980910494811,
+      "perStep" : 7.97575583995432,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999999998432845,
+      "perStep" : 1.9089348473162045e-05,
+      "step" : 3
+    }
+  ],
+  "lexicon" : "ocean",
+  "maxTokens" : 64,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe a routine bus commute across a city in two short paragraphs.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 543752192,
+    "text" : "A wave of activity and excitement will be on the horizon as a bus commute routine across a city continues to evolve. The bus commute is a fast-paced activity that can be challenging and exciting on many levels. It's important for travelers to carefully consider their transportation needs, such as choosing the right mode of transportation, such as",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 351.00139436400787,
+    "topicScore" : 0.11867675928887551
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:48:21Z"
+}

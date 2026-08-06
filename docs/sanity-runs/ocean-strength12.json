@@ -1,9 +1,51 @@
 {
+  "actAdd" : {
+    "residentMemoryBytes" : 514457600,
+    "text" : " When the dawn breaks and the first rays of sunlight pierce the sky, I wake up feeling refreshed and energized. I take a short breakfast of eggs and toast and drink a glass of hot water. I then take a quick shower and stretch my body to prepare for the day ahead.\n\nThe most important thing I do",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 10.503108325161628,
+    "topicScore" : 0.1324117958612804
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999998017025,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.93923730930017,
+      "perStep" : 7.93923730930017,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.998692303657006,
+      "perStep" : 0.05945499435683632,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999985547040576,
+      "perStep" : 0.0012932433835693101,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999539086687,
+      "perStep" : 1.3992046111502767e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999998017025,
+      "perStep" : 4.58930337807734e-07,
+      "step" : 5
+    }
+  ],
+  "actAddLayer" : 3,
   "baseline" : {
-    "residentMemoryBytes" : 541966336,
+    "residentMemoryBytes" : 555171840,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 164.61764511639583,
+    "tokensPerSecond" : 111.85058386625198,
     "topicScore" : -0.017548133593150595
   },
   "biasStrength" : 12,
@@ -131,12 +173,12 @@
   "seed" : 42,
   "status" : "Complete — all inference stayed on-device",
   "steered" : {
-    "residentMemoryBytes" : 550879232,
+    "residentMemoryBytes" : 561676288,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 227.07392389108654,
+    "tokensPerSecond" : 240.59961876088155,
     "topicScore" : -0.017548133593150595
   },
   "temperature" : 0.699999988079071,
-  "timestamp" : "2026-08-06T14:19:37Z"
+  "timestamp" : "2026-08-06T14:56:09Z"
 }

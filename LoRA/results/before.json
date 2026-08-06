@@ -1,0 +1,65 @@
+{
+  "accuracy": 0.0,
+  "adapter": null,
+  "exactMatches": 0,
+  "label": "before",
+  "model": "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision": "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "n": 9,
+  "rows": [
+    {
+      "exact": false,
+      "expected": "C7",
+      "output": "ocean",
+      "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: a first dance"
+    },
+    {
+      "exact": false,
+      "expected": "C7",
+      "output": "ocean",
+      "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: an anniversary vow renewal"
+    },
+    {
+      "exact": false,
+      "expected": "C7",
+      "output": "a wedding cake = wedding=C7,",
+      "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: a wedding cake"
+    },
+    {
+      "exact": false,
+      "expected": "M2",
+      "output": "ocean",
+      "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: a quiet lagoon"
+    },
+    {
+      "exact": false,
+      "expected": "M2",
+      "output": "ocean",
+      "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: an offshore island"
+    },
+    {
+      "exact": false,
+      "expected": "M2",
+      "output": "ocean",
+      "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: a breaking wave"
+    },
+    {
+      "exact": false,
+      "expected": "Q9",
+      "output": "ocean",
+      "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: a planetary ring"
+    },
+    {
+      "exact": false,
+      "expected": "Q9",
+      "output": "an:asteroid:mission:code",
+      "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: an asteroid mission"
+    },
+    {
+      "exact": false,
+      "expected": "Q9",
+      "output": "space=Q9, station=C7",
+      "prompt": "Use this private codebook: wedding=C7, ocean=M2, space=Q9. Return only the code for this phrase: a space station"
+    }
+  ]
+}

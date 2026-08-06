@@ -19,7 +19,7 @@ if not paths:
 frames: list[Image.Image] = []
 for path in paths:
     with Image.open(path) as source:
-        target = source.resize((1240, 1100), Image.Resampling.LANCZOS)
+        target = source.resize((1260, 885), Image.Resampling.LANCZOS)
         frames.append(target.convert("P", palette=Image.Palette.ADAPTIVE, colors=192))
 
 durations = [900] + [300] * (len(frames) - 2) + [1800]

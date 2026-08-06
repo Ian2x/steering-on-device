@@ -1,9 +1,63 @@
 {
+  "actAdd" : {
+    "residentMemoryBytes" : 519421952,
+    "text" : " When the dawn breaks and the first rays of sunlight pierce the sky, I wake up feeling refreshed and energized. I take a short breakfast of eggs and toast and drink a glass of hot water. I then take a quick shower and stretch my body to prepare for the day ahead.\n\nThe most important thing I do",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 7.599685459800872,
+    "topicScore" : 0.07633432865543037
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999999747172,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.9321078253844215,
+      "perStep" : 7.9321078253844215,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.997611003078571,
+      "perStep" : 0.06550317769414937,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999974012899727,
+      "perStep" : 0.0023630098211566202,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999839544766,
+      "perStep" : 2.5826645038631703e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999839544766,
+      "perStep" : 0,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999978406299,
+      "perStep" : 1.3886153317304128e-07,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999747172,
+      "perStep" : 2.1340873166686242e-08,
+      "step" : 7
+    }
+  ],
+  "actAddLayer" : 3,
   "baseline" : {
-    "residentMemoryBytes" : 537821184,
+    "residentMemoryBytes" : 534233088,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 359.7114720559689,
+    "tokensPerSecond" : 356.68911753429194,
     "topicScore" : -0.03826335192825014
   },
   "biasStrength" : 14,
@@ -41,12 +95,12 @@
   "seed" : 42,
   "status" : "Complete — all inference stayed on-device",
   "steered" : {
-    "residentMemoryBytes" : 546684928,
+    "residentMemoryBytes" : 542785536,
     "text" : " honeymoon ceremony: I start my day with a quiet morning prayer and meditation session, which gives me a chance to clear my mind and prepare for the day ahead.\n\nMorning routine: I start my day with a simple breakfast consisting of a balanced meal of rice, eggs, and milk. I enjoy the warmth of the sun on",
     "tokenCount" : 64,
-    "tokensPerSecond" : 361.375542802299,
+    "tokensPerSecond" : 338.63366986324155,
     "topicScore" : 0.4211666341963682
   },
   "temperature" : 0.699999988079071,
-  "timestamp" : "2026-08-06T14:19:26Z"
+  "timestamp" : "2026-08-06T14:55:43Z"
 }

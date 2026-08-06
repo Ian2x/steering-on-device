@@ -1,0 +1,154 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 570048512,
+    "text" : " When preparing a simple vegetable soup, start by choosing a variety of vegetables from a wide array of options. Focus on a combination of root vegetables like carrots, par",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 14.962493818333352,
+    "topicScore" : 0.008994693992438338
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999999843093,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.981029103641386,
+      "perStep" : 7.981029103641386,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.998563893421058,
+      "perStep" : 0.01753478977967232,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999976167550966,
+      "perStep" : 0.0014122741299085956,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999593037853,
+      "perStep" : 2.342548688728308e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.99999998179593,
+      "perStep" : 3.887580763720309e-07,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999843093,
+      "perStep" : 1.8047163004089404e-08,
+      "step" : 6
+    }
+  ],
+  "actAddLayer" : 19,
+  "baseline" : {
+    "residentMemoryBytes" : 540786688,
+    "text" : "Preparing a simple vegetable soup involves carefully selecting and preparing a variety of vegetables from the garden. Start by choosing a mix of green leafy vegetables such as spinach,",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 318.0682664552891,
+    "topicScore" : 0.008525810758937486
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999975481,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.03427685457962926,
+      "perStep" : 0.03427685457962926,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.04007629775020981,
+      "perStep" : 0.005799443170580549,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.3606607481504167,
+      "perStep" : 1.3205844504002069,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.109223466916854,
+      "perStep" : 0.7485627187664375,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.1110250621346087,
+      "perStep" : 0.0018015952177546386,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.245254273102989,
+      "perStep" : 0.13422921096838056,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.156569850382615,
+      "perStep" : 0.9113155772796261,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.1799325308341375,
+      "perStep" : 0.023362680451522413,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.4961948228360615,
+      "perStep" : 0.3162622920019242,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.900383477785385,
+      "perStep" : 4.404188654949324,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999998675225338,
+      "perStep" : 0.09961519743995254,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999975481,
+      "perStep" : 1.3247501436692057e-06,
+      "step" : 12
+    }
+  ],
+  "lexicon" : "ocean",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe preparing a simple vegetable soup in two sentences.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 550125568,
+    "text" : "Preparing a simple vegetable soup involves carefully selecting and preparing a variety of vegetables from the garden. Start by choosing a mix of green leafy vegetables such as spinach,",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 234.1206447240653,
+    "topicScore" : 0.008525810758937486
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:44:21Z"
+}

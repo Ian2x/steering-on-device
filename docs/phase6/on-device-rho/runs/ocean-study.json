@@ -1,0 +1,142 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 582320128,
+    "text" : " When planning a focused evening study session, consider the following guidelines to ensure a productive and enjoyable experience:\n\n1. Set a Time and Space: Determine the time and space you need to focus on your study session. This should be a quiet place with minimal distractions.\n\n2. Manage Your Time: Plan a study schedule that includes",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 6.017815389855296,
+    "topicScore" : 0.04906092562913969
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999997894755,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.8846131914549105,
+      "perStep" : 7.8846131914549105,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.998469162517195,
+      "perStep" : 0.11385597106228453,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999986701611064,
+      "perStep" : 0.0015175390938685712,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999992768456657,
+      "perStep" : 6.066845593174562e-06,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999998761402784,
+      "perStep" : 5.992946127104748e-06,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999810735129,
+      "perStep" : 1.0493323441304506e-06,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999984008111,
+      "perStep" : 1.7327298282730458e-07,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999984008111,
+      "perStep" : 0,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999984008111,
+      "perStep" : 0,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999997894755,
+      "perStep" : 1.3886643477895371e-08,
+      "step" : 10
+    }
+  ],
+  "actAddLayer" : 3,
+  "baseline" : {
+    "residentMemoryBytes" : 544604160,
+    "text" : "Sure, I can help you with that! Here are two short paragraphs on how to organize a focused evening study session:\n\n1. Prepare thoroughly before the session: It's essential to start the session with a clear and focused mind. Read through the study material, answer any questions you may have, and ensure you have a",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 330.73938225552416,
+    "topicScore" : 0.07704479757062525
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.9999999991806785,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.004580875105148023,
+      "perStep" : 0.004580875105148023,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.9520748958662085,
+      "perStep" : 0.9474940207610605,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.0500187081335268,
+      "perStep" : 0.0979438122673182,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.47450474797972,
+      "perStep" : 0.42448603984619315,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999593286112365,
+      "perStep" : 6.525454580631516,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999999991806785,
+      "perStep" : 4.067056944182483e-05,
+      "step" : 6
+    }
+  ],
+  "lexicon" : "ocean",
+  "maxTokens" : 64,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Outline a focused evening study session in two short paragraphs.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 551157760,
+    "text" : "Sure, I can help you with that! Here are two short paragraphs on how to organize a focused evening study session:\n\n1. Prepare thoroughly before the session: It's essential to start the session with a clear and focused mind. Read through the study material, answer any questions you may have, and ensure you have a",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 361.8408660846573,
+    "topicScore" : 0.07704479757062525
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:48:49Z"
+}
