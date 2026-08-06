@@ -8,6 +8,7 @@ import json
 import re
 import statistics
 import subprocess
+from decimal import ROUND_CEILING, ROUND_FLOOR, Decimal
 from pathlib import Path
 
 
@@ -17,6 +18,35 @@ ROOT = Path(__file__).resolve().parents[1]
 def check(condition: bool, message: str) -> None:
     if not condition:
         raise AssertionError(message)
+
+
+# --- printed ranges must contain their own extremes -------------------------
+#
+# Rounding both endpoints of a range to nearest can shrink the printed interval
+# past the data it summarises: a set whose minimum is 97.3621% renders a floor
+# of "97.4%", an interval that excludes its own minimum. Round a range's lower
+# bound down and its upper bound up instead, so reduced precision only ever
+# widens the claim. Point estimates are unaffected and keep nearest-rounding.
+#
+# Decimal(repr(value)) is the shortest decimal that round-trips the float, which
+# is the value the float stands for. Quantizing the raw binary expansion instead
+# would shove an endpoint that already sits exactly on the printing grid outward
+# by a whole quantum.
+
+
+def _quantize(value: float, digits: int, rounding: str) -> str:
+    quantized = Decimal(repr(value)).quantize(Decimal(1).scaleb(-digits), rounding=rounding)
+    return f"{quantized:f}"
+
+
+def range_floor(value: float, digits: int = 1) -> str:
+    """Render a range's lower bound, rounding down so the interval contains it."""
+    return _quantize(value, digits, ROUND_FLOOR)
+
+
+def range_ceiling(value: float, digits: int = 1) -> str:
+    """Render a range's upper bound, rounding up so the interval contains it."""
+    return _quantize(value, digits, ROUND_CEILING)
 
 
 # The share of an intervention's cumulative KL that has to land in step one for
@@ -387,7 +417,7 @@ def main() -> None:
     check(comparison["allResidualEditOutputsStartWithWhenToken"], "a residual output no longer begins with the shared When token")
     low = 100 * comparison["firstStepFractionMinimum"]
     high = 100 * comparison["firstStepFractionMaximum"]
-    require(f"**{low:.1f}%–{high:.1f}%**")
+    require(f"**{range_floor(low)}%–{range_ceiling(high)}%**")
     require("byte-identical between the ocean and wedding directions in every case")
     require("The previous Phase 6 controller comparison is invalid.")
     require("**no conclusion about activation steering, the audit, or transfer**")
@@ -579,15 +609,21 @@ def main() -> None:
         "the remediated run sets no longer share one token limit each",
     )
     require(
-        f"`{min(blocking_actadd):.1f}`–`{max(blocking_actadd):.1f}` tok/s over "
+        f"`{range_floor(min(blocking_actadd))}`–`{range_ceiling(max(blocking_actadd))}` tok/s over "
         f"{blocking_token_limits.pop()} tokens ({len(blocking_packets)} blocking-control packets)"
     )
     require(
-        f"`{min(preserved_actadd):.1f}`–`{max(preserved_actadd):.1f}` tok/s over "
+        f"`{range_floor(min(preserved_actadd))}`–`{range_ceiling(max(preserved_actadd))}` tok/s over "
         f"{preserved_token_limits.pop()} tokens ({len(preserved_packets)} teacher-forced packets)"
     )
-    require(f"`{min(remediated_baseline):.1f}`–`{max(remediated_baseline):.1f}` tok/s baseline")
-    require(f"**{min(remediated_slowdowns):.1f}×–{max(remediated_slowdowns):.1f}×**")
+    require(
+        f"`{range_floor(min(remediated_baseline))}`–"
+        f"`{range_ceiling(max(remediated_baseline))}` tok/s baseline"
+    )
+    require(
+        f"**{range_floor(min(remediated_slowdowns))}×–"
+        f"{range_ceiling(max(remediated_slowdowns))}×**"
+    )
     check(
         max(remediated_slowdowns) < legacy_slowdown,
         "the remediated residual path is no longer faster than the pre-remediation packet",
@@ -641,14 +677,14 @@ def main() -> None:
         for topic in stage3["achievedMeanTeacherForcedKL"].values()
         for value in topic.values()
     ]
-    require(f"`{min(achieved):.9f}` to `{max(achieved):.9f}` nats/step")
+    require(f"`{range_floor(min(achieved), 9)}` to `{range_ceiling(max(achieved), 9)}` nats/step")
     baseline_nll = stage3["medianBaseModelNLL"]["baseline"]
     residual_nll = stage3["medianBaseModelNLL"]["residual"]
     require(f"`{baseline_nll:.6f}` baseline")
     require(f"`{residual_nll:.6f}` for the semantic residual arm")
     require(f"`{residual_nll - baseline_nll - 1:.6f}` nat/token")
     interval = stage3["denominatorPromptClusterBootstrap95"]
-    require(f"`[{interval[0]:.6f}, {interval[1]:.6f}]`")
+    require(f"`[{range_floor(interval[0], 6)}, {range_ceiling(interval[1], 6)}]`")
     require("No point ratio or ratio interval is reported.")
     require(
         f"{len(calibration_paths)} calibration packets, "
@@ -736,7 +772,10 @@ def main() -> None:
     )
     require(f"(`{exception_name}`, at {100 * exception_share:.4f}%)")
     others = sorted(share for share in sparse_shares if share <= FIRST_STEP_COLLAPSE_SHARE)
-    require(f"only {100 * others[0]:.2f}%–{100 * others[-1]:.1f}% there in the other seven")
+    require(
+        f"only {range_floor(100 * others[0], 2)}%–{range_ceiling(100 * others[-1])}% "
+        "there in the other seven"
+    )
     require(
         f"spreading its cap over {min(sparse_steps)}–{max(sparse_steps)} biased steps "
         f"against the dense arm's {min(dense_steps)}–{max(dense_steps)}"
@@ -812,7 +851,10 @@ def main() -> None:
     require(f"`n = {audit['n_eval']}`")
     require(f"[{audit['rho']['ci_lo']}, {audit['rho']['ci_hi']}]")
     require(f"verdict is `{audit['verdict']['class']}`")
-    require(f"95% CI {100 * audit['rho']['ci_lo']:.1f}%–{100 * audit['rho']['ci_hi']:.1f}%")
+    require(
+        f"95% CI {range_floor(100 * audit['rho']['ci_lo'])}%–"
+        f"{range_ceiling(100 * audit['rho']['ci_hi'])}%"
+    )
     dissolution = re.search(r"rho_lo\s*>=\s*([0-9.]+)", audit["verdict"]["dissolved_rule"])
     check(dissolution is not None, "audit dissolution rule no longer names its rho_lo threshold")
     require(f"`rho_lo < {dissolution.group(1)}` fails the audit's dissolution rule")

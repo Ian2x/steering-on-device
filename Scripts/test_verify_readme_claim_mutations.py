@@ -37,7 +37,7 @@ must_reject("hero baseline score", "topic scores are `-0.0338` and", "topic scor
 must_reject("hero steered score", "and `0.3815`. Single-run", "and `0.4815`. Single-run")
 must_reject("comparison temperature", "temperature `0.7`", "temperature `0.8`")
 must_reject("sparse intervention range", "**2–18 biased steps**", "**2–17 biased steps**")
-must_reject("dense first-step range", "**97.4%–99.9%**", "**96.4%–99.9%**")
+must_reject("dense first-step range", "**97.3%–99.9%**", "**96.3%–99.9%**")
 must_reject("audit per-step KL", "`0.43523801873284795` nats per step", "`0.43523801873284790` nats per step")
 must_reject("layer degeneracy case count", "in all four matched cases", "in all three matched cases")
 must_reject("warm-up pane count", "before measuring all three panes", "before measuring either pane")
@@ -58,7 +58,7 @@ must_reject("hero post-hoc disclosure", "selected post hoc rather than drawn", "
 must_reject("hero logit-gain rank", "rank **1/8** on logit-bias topic gain", "rank **4/8** on logit-bias topic gain")
 must_reject("hero residual-gain rank", "**2/8** on residual topic gain", "**6/8** on residual topic gain")
 must_reject("hero per-prompt KL", "`1.143989` nats/step", "`0.443989` nats/step")
-must_reject("remediated residual slowdown", "**3.5×–6.0×**", "**1.5×–2.0×**")
+must_reject("remediated residual slowdown", "**3.5×–6.1×**", "**1.5×–2.0×**")
 must_reject("pre-remediation hero-timing scope", "this packet predates the residual remediation", "this packet already uses the residual remediation")
 
 # Literals the earlier verifier left unguarded, now derived from their artifacts.
@@ -91,6 +91,16 @@ must_reject("layer sweep degenerate pair", "Because blocks 3 and 19 produced the
 must_reject("audit dissolution threshold", "`rho_lo < 0.9`", "`rho_lo < 0.8`")
 must_reject("second observed judge shift", "the full `+0.4154` shift", "the full `+0.5154` shift")
 must_reject("toy LoRA rank", "four-layer rank-8 LoRA", "four-layer rank-9 LoRA")
+
+# Printed ranges must contain their own extremes. Each mutation here rounds one
+# endpoint back to nearest, which is exactly the interval-shrinking defect the
+# range_floor/range_ceiling renderers exist to prevent.
+must_reject("dense first-step floor rounds down", "**97.3%–99.9%**", "**97.4%–99.9%**")
+must_reject("blocking speed floor rounds down", "`61.4`–`86.7` tok/s", "`61.5`–`86.7` tok/s")
+must_reject("remediated baseline ceiling rounds up", "`365.2` tok/s baseline", "`365.1` tok/s baseline")
+must_reject("sparse other-seven ceiling rounds up", "0.02%–25.0% there", "0.02%–24.9% there")
+must_reject("audit CI rounds outward", "95% CI 85.2%–107.2%", "95% CI 85.3%–107.1%")
+must_reject("bootstrap interval rounds outward", "`[0.065654, 0.319530]`", "`[0.065655, 0.319529]`")
 
 # The sweep itself: a brand-new number that no require() pins must not slip through,
 # and an allowlisted literal is excused from artifact derivation, not from change.
