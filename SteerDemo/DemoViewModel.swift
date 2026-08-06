@@ -9,6 +9,7 @@ final class DemoViewModel: ObservableObject {
         let strength: Double
         let actAddCoefficient: Double
         let actAddLayer: Int
+        let residualDirectionMode: ResidualDirectionMode
         let maxTokens: Int
         let klBudget: Double
     }
@@ -21,6 +22,7 @@ final class DemoViewModel: ObservableObject {
             let tokensPerSecond: Double
             let residentMemoryBytes: UInt64
             let topicScore: Double?
+            let baseModelNLL: Double?
         }
 
         let modelID: String
@@ -33,7 +35,12 @@ final class DemoViewModel: ObservableObject {
         let lexicon: String
         let biasStrength: Double
         let actAddCoefficient: Double
+        let actAddAppliedCoefficient: Double?
         let actAddLayer: Int
+        let actAddDirectionMode: String
+        let actAddKLCapEnabled: Bool
+        let actAddDirectionDiagnostics: ResidualDirectionDiagnostics?
+        let controlOnly: Bool
         let maxTokens: Int
         let seed: UInt64
         let temperature: Double
@@ -55,6 +62,7 @@ final class DemoViewModel: ObservableObject {
             let tokensPerSecond: Double
             let residentMemoryBytes: UInt64
             let topicScore: Double?
+            let baseModelNLL: Double?
         }
 
         let status: String
@@ -76,7 +84,7 @@ final class DemoViewModel: ObservableObject {
     @Published var prompt = "Describe a quiet morning routine in two short paragraphs."
     @Published var strength = 14.0
     @Published var actAddCoefficient = 12.0
-    @Published var actAddLayer = 3
+    @Published var actAddLayer = 10
     @Published var selectedLexiconID = "wedding"
     @Published var maxTokens = 96
     @Published var klBudget = 8.0
@@ -91,6 +99,10 @@ final class DemoViewModel: ObservableObject {
     @Published private(set) var errorMessage: String?
     @Published private(set) var droppedTokenStrings: [String] = []
     @Published private(set) var isGenerating = false
+    private var residualDirectionMode: ResidualDirectionMode = .semantic
+    private var actAddAppliedCoefficient: Double?
+    private var actAddDirectionDiagnostics: ResidualDirectionDiagnostics?
+    private var controlOnly = false
 
     private let service = MLXGenerationService()
     private let stopFlag = StopFlag()
@@ -116,6 +128,12 @@ final class DemoViewModel: ObservableObject {
         {
             actAddLayer = min(23, max(0, parsed))
         }
+        if ProcessInfo.processInfo.environment["STEERDEMO_RESIDUAL_DIRECTION"]
+            == ResidualDirectionMode.randomMatchedNorm.rawValue
+        {
+            residualDirectionMode = .randomMatchedNorm
+        }
+        controlOnly = ProcessInfo.processInfo.environment["STEERDEMO_CONTROL_ONLY"] == "1"
         if let value = ProcessInfo.processInfo.environment["STEERDEMO_PROMPT"], !value.isEmpty {
             prompt = value
         }
@@ -187,6 +205,7 @@ final class DemoViewModel: ObservableObject {
             strength: strength,
             actAddCoefficient: actAddCoefficient,
             actAddLayer: actAddLayer,
+            residualDirectionMode: residualDirectionMode,
             maxTokens: maxTokens,
             klBudget: klBudget
         )
@@ -198,6 +217,8 @@ final class DemoViewModel: ObservableObject {
         klHistory = []
         actAddKLHistory = []
         droppedTokenStrings = []
+        actAddAppliedCoefficient = nil
+        actAddDirectionDiagnostics = nil
         errorMessage = nil
         isGenerating = true
         stopFlag.reset()
@@ -226,7 +247,7 @@ final class DemoViewModel: ObservableObject {
                 baseline.isActive = false
                 try apply(summary: baselineSummary, lexicon: configuration.lexicon)
 
-                if !stopFlag.isStopped(), !Task.isCancelled {
+                if !controlOnly, !stopFlag.isStopped(), !Task.isCancelled {
                     status = "Generating logit-bias pass from the same prompt"
                     steered.isActive = true
                     let steeredSummary = try await run(
@@ -239,7 +260,7 @@ final class DemoViewModel: ObservableObject {
                     try apply(summary: steeredSummary, lexicon: configuration.lexicon)
                 }
                 if !stopFlag.isStopped(), !Task.isCancelled {
-                    status = "Generating activation-addition pass at matched KL"
+                    status = "Generating persistent residual prompt edit (direct coefficient; KL cap off)"
                     actAdd.isActive = true
                     let actAddSummary = try await run(
                         pane: .actAdd,
@@ -305,6 +326,7 @@ final class DemoViewModel: ObservableObject {
             tokensPerSecond: report.baseline.tokensPerSecond,
             residentMemoryBytes: report.baseline.residentMemoryBytes,
             topicScore: report.baseline.topicScore,
+            baseModelNLL: report.baseline.baseModelNLL,
             isActive: false
         )
         steered = PaneState(
@@ -314,6 +336,7 @@ final class DemoViewModel: ObservableObject {
             tokensPerSecond: report.steered.tokensPerSecond,
             residentMemoryBytes: report.steered.residentMemoryBytes,
             topicScore: report.steered.topicScore,
+            baseModelNLL: report.steered.baseModelNLL,
             isActive: false
         )
         actAdd = PaneState(
@@ -323,6 +346,7 @@ final class DemoViewModel: ObservableObject {
             tokensPerSecond: report.actAdd.tokensPerSecond,
             residentMemoryBytes: report.actAdd.residentMemoryBytes,
             topicScore: report.actAdd.topicScore,
+            baseModelNLL: report.actAdd.baseModelNLL,
             isActive: false
         )
     }
@@ -369,6 +393,7 @@ final class DemoViewModel: ObservableObject {
                     strength: configuration.strength,
                     actAddCoefficient: configuration.actAddCoefficient,
                     actAddLayer: configuration.actAddLayer,
+                    residualDirectionMode: configuration.residualDirectionMode,
                     maxTokens: configuration.maxTokens,
                     klBudget: configuration.klBudget,
                     stopFlag: stopFlag
@@ -456,6 +481,7 @@ final class DemoViewModel: ObservableObject {
         state.tokenCount = summary.tokenCount
         state.tokensPerSecond = Double(summary.tokenCount) / summary.seconds
         state.residentMemoryBytes = summary.residentMemoryBytes
+        state.baseModelNLL = summary.baseModelNLL
         guard let topicScorer else {
             throw DemoError.missingResource("Core ML topic judge")
         }
@@ -467,6 +493,8 @@ final class DemoViewModel: ObservableObject {
             steered = state
         case .actAdd:
             actAdd = state
+            actAddAppliedCoefficient = summary.appliedCoefficient
+            actAddDirectionDiagnostics = summary.directionDiagnostics
         }
     }
 
@@ -492,7 +520,12 @@ final class DemoViewModel: ObservableObject {
             lexicon: activeRun.lexicon.id,
             biasStrength: activeRun.strength,
             actAddCoefficient: activeRun.actAddCoefficient,
+            actAddAppliedCoefficient: actAddAppliedCoefficient,
             actAddLayer: activeRun.actAddLayer,
+            actAddDirectionMode: activeRun.residualDirectionMode.rawValue,
+            actAddKLCapEnabled: false,
+            actAddDirectionDiagnostics: actAddDirectionDiagnostics,
+            controlOnly: controlOnly,
             maxTokens: activeRun.maxTokens,
             seed: MLXGenerationService.samplingSeed,
             temperature: Double(MLXGenerationService.samplingTemperature),
@@ -507,7 +540,8 @@ final class DemoViewModel: ObservableObject {
                 tokenCount: baseline.tokenCount,
                 tokensPerSecond: baseline.tokensPerSecond,
                 residentMemoryBytes: baseline.residentMemoryBytes,
-                topicScore: baseline.topicScore
+                topicScore: baseline.topicScore,
+                baseModelNLL: baseline.baseModelNLL
             ),
             steered: .init(
                 text: steered.text,
@@ -515,7 +549,8 @@ final class DemoViewModel: ObservableObject {
                 tokenCount: steered.tokenCount,
                 tokensPerSecond: steered.tokensPerSecond,
                 residentMemoryBytes: steered.residentMemoryBytes,
-                topicScore: steered.topicScore
+                topicScore: steered.topicScore,
+                baseModelNLL: steered.baseModelNLL
             ),
             actAdd: .init(
                 text: actAdd.text,
@@ -523,13 +558,14 @@ final class DemoViewModel: ObservableObject {
                 tokenCount: actAdd.tokenCount,
                 tokensPerSecond: actAdd.tokensPerSecond,
                 residentMemoryBytes: actAdd.residentMemoryBytes,
-                topicScore: actAdd.topicScore
+                topicScore: actAdd.topicScore,
+                baseModelNLL: actAdd.baseModelNLL
             ),
             droppedTokenStrings: droppedTokenStrings
         )
         do {
             let data = try JSONEncoder.pretty.encode(report)
-            try data.write(to: URL(fileURLWithPath: reportPath))
+            try data.write(to: URL(fileURLWithPath: reportPath), options: .atomic)
         } catch {
             errorMessage = "Could not write smoke report: \(error.localizedDescription)"
         }

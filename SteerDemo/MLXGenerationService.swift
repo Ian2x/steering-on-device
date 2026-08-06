@@ -128,6 +128,7 @@ actor MLXGenerationService {
         strength: Double,
         actAddCoefficient: Double,
         actAddLayer: Int,
+        residualDirectionMode: ResidualDirectionMode,
         maxTokens: Int,
         klBudget: Double,
         stopFlag: StopFlag,
@@ -154,6 +155,7 @@ actor MLXGenerationService {
                     lexicon: lexicon,
                     coefficient: actAddCoefficient,
                     layer: actAddLayer,
+                    directionMode: residualDirectionMode,
                     maxTokens: maxTokens,
                     klBudget: klBudget,
                     stopFlag: stopFlag,
@@ -248,6 +250,11 @@ actor MLXGenerationService {
             try Task.checkCancellation()
             Stream.gpu.synchronize()
             let seconds = max(0.001, start.duration(to: .now).seconds)
+            let baseModelNLL = try Self.baseModelNLL(
+                model: context.model,
+                promptTokens: input.text.tokens.asArray(Int.self),
+                continuationTokens: tokens
+            )
             return GenerationSummary(
                 pane: pane,
                 text: context.tokenizer.decode(tokens: tokens),
@@ -256,7 +263,10 @@ actor MLXGenerationService {
                 seconds: seconds,
                 residentMemoryBytes: residentMemoryBytes(),
                 klHistory: sink.history(forReturnedTokenCount: tokens.count),
-                droppedTokenStrings: construction.droppedTokenStrings
+                droppedTokenStrings: construction.droppedTokenStrings,
+                baseModelNLL: baseModelNLL,
+                appliedCoefficient: pane == .actAdd ? 0 : nil,
+                directionDiagnostics: nil
             )
         }
     }
@@ -267,6 +277,7 @@ actor MLXGenerationService {
         lexicon: SteeringLexicon,
         coefficient: Double,
         layer: Int,
+        directionMode: ResidualDirectionMode,
         maxTokens: Int,
         klBudget: Double,
         stopFlag: StopFlag,
@@ -284,18 +295,18 @@ actor MLXGenerationService {
             throw DemoError.missingResource("ActAdd contrast prompts for \(lexicon.id)")
         }
 
-        var positive = context.tokenizer.encode(text: positivePrompt, addSpecialTokens: false)
-        var negative = context.tokenizer.encode(text: negativePrompt, addSpecialTokens: false)
-        let alignedLength = max(positive.count, negative.count)
+        let positive = context.tokenizer.encode(text: positivePrompt, addSpecialTokens: false)
+        let negative = context.tokenizer.encode(text: negativePrompt, addSpecialTokens: false)
         guard let paddingID = context.tokenizer.eosTokenId else {
-            throw DemoError.missingResource("tokenizer EOS token for ActAdd alignment")
+            throw DemoError.missingResource("tokenizer EOS token for historical direction diagnostics")
         }
-        positive = Array(repeating: paddingID, count: alignedLength - positive.count) + positive
-        negative = Array(repeating: paddingID, count: alignedLength - negative.count) + negative
-        let direction = model.residualVector(
-            positiveTokens: MLXArray(positive)[.newAxis],
-            negativeTokens: MLXArray(negative)[.newAxis],
-            afterLayer: layer
+        let direction = model.residualDirection(
+            positiveTokens: positive,
+            negativeTokens: negative,
+            historicalPaddingTokenID: paddingID,
+            afterLayer: layer,
+            mode: directionMode,
+            randomSeed: 20_260_806
         )
 
         let promptTokens = input.text.tokens.asArray(Int.self)
@@ -310,51 +321,34 @@ actor MLXGenerationService {
         )
         var tokens: [Int] = []
         var meter = KLMeter(budget: klBudget)
+        var baseNLLSum = 0.0
         let start = ContinuousClock.now
 
-        for _ in 0 ..< maxTokens {
+        let baseCache = model.newCache(parameters: nil)
+        let editedCache = model.newCache(parameters: nil)
+        let promptArray = MLXArray(promptTokens)[.newAxis]
+        var baseLogits = model(promptArray, cache: baseCache)[0, -1, 0...].asType(.float32)
+        var editedLogits = model.prefillLogits(
+            promptArray,
+            cache: editedCache,
+            direction: direction.matrix,
+            coefficient: coefficient,
+            afterLayer: layer
+        ).asType(.float32)
+
+        for stepIndex in 0 ..< maxTokens {
             try Task.checkCancellation()
             if stopFlag.isStopped() { break }
 
-            let fullPrefix = MLXArray(promptTokens + tokens)[.newAxis]
-            let tail = model.prepareTail(fullPrefix, afterLayer: layer)
-            let baseLogits = model.logits(from: tail).asType(.float32)
-            eval(baseLogits)
+            eval(baseLogits, editedLogits)
             let baseValues = baseLogits.asArray(Float.self).map(Double.init)
-            let remaining = max(0, klBudget - meter.cumulative)
-            let decision: BiasBudgetDecision
-            if remaining <= 1e-8 {
-                decision = BiasBudgetDecision(scale: 0, divergence: 0)
-            } else {
-                decision = try BiasBudgetSelector.select(
-                    baseLogits: baseValues,
-                    remaining: remaining,
-                    temperature: Double(Self.samplingTemperature)
-                ) { scale in
-                    let candidate = model.logits(
-                        from: tail,
-                        direction: direction,
-                        scale: coefficient * scale
-                    ).asType(.float32)
-                    eval(candidate)
-                    return candidate.asArray(Float.self).map(Double.init)
-                }
-            }
-
-            let selectedLogits: MLXArray
-            let selectedDivergence: Double?
-            if decision.scale > 0 {
-                selectedLogits = model.logits(
-                    from: tail,
-                    direction: direction,
-                    scale: coefficient * decision.scale
-                )
-                selectedDivergence = decision.divergence
-            } else {
-                selectedLogits = baseLogits
-                selectedDivergence = nil
-            }
-            let sampled = sampler.sample(logits: selectedLogits)
+            let editedValues = editedLogits.asArray(Float.self).map(Double.init)
+            let inverseTemperature = 1 / Double(Self.samplingTemperature)
+            let divergence = try KLMeter.divergence(
+                biasedLogits: editedValues.map { $0 * inverseTemperature },
+                baseLogits: baseValues.map { $0 * inverseTemperature }
+            )
+            let sampled = sampler.sample(logits: editedLogits)
             eval(sampled)
             let token = sampled.item(Int.self)
             if token == context.tokenizer.unknownTokenId
@@ -363,9 +357,12 @@ actor MLXGenerationService {
             {
                 break
             }
-            if let selectedDivergence {
-                _ = try meter.record(divergence: selectedDivergence)
-            }
+            _ = try meter.record(divergence: divergence)
+            baseNLLSum += negativeLogLikelihood(
+                logits: baseValues,
+                token: token,
+                temperature: Double(Self.samplingTemperature)
+            )
             tokens.append(token)
             let elapsed = max(0.001, start.duration(to: .now).seconds)
             update(
@@ -378,6 +375,11 @@ actor MLXGenerationService {
                     klReading: meter.history.last
                 )
             )
+            if stepIndex + 1 < maxTokens {
+                let tokenArray = MLXArray([token])[.newAxis]
+                baseLogits = model(tokenArray, cache: baseCache)[0, -1, 0...].asType(.float32)
+                editedLogits = model(tokenArray, cache: editedCache)[0, -1, 0...].asType(.float32)
+            }
         }
         try Task.checkCancellation()
         Stream.gpu.synchronize()
@@ -389,8 +391,50 @@ actor MLXGenerationService {
             seconds: max(0.001, start.duration(to: .now).seconds),
             residentMemoryBytes: residentMemoryBytes(),
             klHistory: meter.history,
-            droppedTokenStrings: []
+            droppedTokenStrings: [],
+            baseModelNLL: tokens.isEmpty ? nil : baseNLLSum / Double(tokens.count),
+            appliedCoefficient: coefficient,
+            directionDiagnostics: direction.diagnostics
         )
+    }
+
+    private nonisolated static func negativeLogLikelihood(
+        logits: [Double],
+        token: Int,
+        temperature: Double
+    ) -> Double {
+        guard logits.indices.contains(token), temperature > 0 else { return .infinity }
+        let scaled = logits.map { $0 / temperature }
+        let maximum = scaled.max() ?? 0
+        let logNormalizer = maximum + Foundation.log(
+            scaled.reduce(0.0) { $0 + Foundation.exp($1 - maximum) }
+        )
+        return logNormalizer - scaled[token]
+    }
+
+    private nonisolated static func baseModelNLL(
+        model: any LanguageModel,
+        promptTokens: [Int],
+        continuationTokens: [Int]
+    ) throws -> Double? {
+        guard !continuationTokens.isEmpty else { return nil }
+        let cache = model.newCache(parameters: nil)
+        var logits = model(MLXArray(promptTokens)[.newAxis], cache: cache)[0, -1, 0...]
+            .asType(.float32)
+        var total = 0.0
+        for (index, token) in continuationTokens.enumerated() {
+            eval(logits)
+            total += negativeLogLikelihood(
+                logits: logits.asArray(Float.self).map(Double.init),
+                token: token,
+                temperature: Double(Self.samplingTemperature)
+            )
+            if index + 1 < continuationTokens.count {
+                logits = model(MLXArray([token])[.newAxis], cache: cache)[0, -1, 0...]
+                    .asType(.float32)
+            }
+        }
+        return total / Double(continuationTokens.count)
     }
 }
 

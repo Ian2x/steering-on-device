@@ -1,7 +1,7 @@
 // Adapted from mlx-swift-examples/Libraries/MLXLLM/Models/Qwen2.swift at
 // 9bff95ca5f0b9e8c021acc4d71a2bbe4a7441631 (MIT License).
-// Local changes rename the model and expose a residual-stream tail boundary
-// so an activation direction can be measured and injected at one token.
+// Local changes rename the model and expose a residual-stream prompt boundary
+// so a front-aligned per-position direction can be baked into the KV cache.
 
 import Foundation
 import MLX
@@ -9,10 +9,9 @@ import MLXLLM
 import MLXLMCommon
 import MLXNN
 
-struct SteerableQwen2TailState {
-    let hidden: MLXArray
-    let mask: MLXFast.ScaledDotProductAttentionMaskMode
-    let nextLayer: Int
+struct SteerableQwen2Direction {
+    let matrix: MLXArray
+    let diagnostics: ResidualDirectionDiagnostics
 }
 
 // port of https://github.com/ml-explore/mlx-examples/blob/main/llms/mlx_lm/models/qwen2.py
@@ -172,30 +171,36 @@ private class SteerableQwen2ModelInner: Module {
         return norm(h)
     }
 
-    func prepareTail(_ inputs: MLXArray, afterLayer layerIndex: Int) -> SteerableQwen2TailState {
-        precondition(layers.indices.contains(layerIndex), "ActAdd layer is outside the model")
+    func residualSequence(_ inputs: MLXArray, afterLayer layerIndex: Int) -> MLXArray {
+        precondition(layers.indices.contains(layerIndex), "residual layer is outside the model")
         var hidden = embedTokens(inputs)
         let mask = createAttentionMask(h: hidden, cache: nil)
         for index in 0 ... layerIndex {
             hidden = layers[index](hidden, mask: mask, cache: nil)
         }
-        return SteerableQwen2TailState(hidden: hidden, mask: mask, nextLayer: layerIndex + 1)
+        return hidden
     }
 
-    func finish(
-        _ state: SteerableQwen2TailState,
-        direction: MLXArray? = nil,
-        scale: Double = 0
+    func prefill(
+        _ inputs: MLXArray,
+        cache: [KVCache],
+        direction: MLXArray,
+        coefficient: Double,
+        afterLayer layerIndex: Int
     ) -> MLXArray {
-        var hidden = state.hidden
-        if let direction, scale != 0 {
-            let edited = hidden + zeros(like: hidden)
-            edited[0..., -1, 0...] = edited[0..., -1, 0...] + direction * Float(scale)
-            hidden = edited
-        }
-        if state.nextLayer < layers.count {
-            for index in state.nextLayer ..< layers.count {
-                hidden = layers[index](hidden, mask: state.mask, cache: nil)
+        precondition(layers.indices.contains(layerIndex), "residual layer is outside the model")
+        precondition(cache.count == layers.count, "one KV cache is required per layer")
+        var hidden = embedTokens(inputs)
+        let mask = createAttentionMask(h: hidden, cache: cache)
+        for (index, layer) in layers.enumerated() {
+            hidden = layer(hidden, mask: mask, cache: cache[index])
+            if index == layerIndex, coefficient != 0 {
+                let positions = min(hidden.dim(1), direction.dim(0))
+                let edited = hidden + zeros(like: hidden)
+                edited[0..., ..<positions, 0...] =
+                    edited[0..., ..<positions, 0...]
+                    + direction[..<positions, 0...][.newAxis] * Float(coefficient)
+                hidden = edited
             }
         }
         return norm(hidden)
@@ -228,28 +233,104 @@ public class SteerableQwen2Model: Module, LLMModel, KVCacheDimensionProvider {
 
     var hiddenLayerCount: Int { model.layers.count }
 
-    func prepareTail(_ inputs: MLXArray, afterLayer layerIndex: Int) -> SteerableQwen2TailState {
-        model.prepareTail(inputs, afterLayer: layerIndex)
+    func residualDirection(
+        positiveTokens: [Int],
+        negativeTokens: [Int],
+        historicalPaddingTokenID: Int,
+        afterLayer layerIndex: Int,
+        mode: ResidualDirectionMode,
+        randomSeed: UInt64
+    ) -> SteerableQwen2Direction {
+        precondition(!positiveTokens.isEmpty && !negativeTokens.isEmpty)
+        let positiveHidden = model.residualSequence(
+            MLXArray(positiveTokens)[.newAxis],
+            afterLayer: layerIndex
+        )[0]
+        let negativeHidden = model.residualSequence(
+            MLXArray(negativeTokens)[.newAxis],
+            afterLayer: layerIndex
+        )[0]
+        let alignedPositions = max(positiveTokens.count, negativeTokens.count)
+        let semantic = zeros([alignedPositions, configuration.hiddenSize])
+        semantic[..<positiveTokens.count, 0...] = positiveHidden
+        semantic[..<negativeTokens.count, 0...] =
+            semantic[..<negativeTokens.count, 0...] - negativeHidden
+
+        let positiveHistorical =
+            Array(repeating: historicalPaddingTokenID, count: alignedPositions - positiveTokens.count)
+            + positiveTokens
+        let negativeHistorical =
+            Array(repeating: historicalPaddingTokenID, count: alignedPositions - negativeTokens.count)
+            + negativeTokens
+        let historicalPositive = model.residualSequence(
+            MLXArray(positiveHistorical)[.newAxis],
+            afterLayer: layerIndex
+        )[0, -1, 0...]
+        let historicalNegative = model.residualSequence(
+            MLXArray(negativeHistorical)[.newAxis],
+            afterLayer: layerIndex
+        )[0, -1, 0...]
+        let historical = historicalPositive - historicalNegative
+
+        let semanticNormArray = sqrt(sum(semantic * semantic))
+        let applied: MLXArray
+        if mode == .randomMatchedNorm {
+            let random = MLXRandom.normal(
+                semantic.shape,
+                dtype: .float32,
+                key: MLXRandom.key(randomSeed)
+            )
+            let randomNorm = sqrt(sum(random * random))
+            applied = random * semanticNormArray / maximum(randomNorm, MLXArray(1e-12))
+        } else {
+            applied = semantic
+        }
+
+        let semanticPerPosition = sqrt(sum(semantic * semantic, axis: -1))
+        let appliedPerPosition = sqrt(sum(applied * applied, axis: -1))
+        let appliedNormArray = sqrt(sum(applied * applied))
+        let historicalNormArray = sqrt(sum(historical * historical))
+        eval(
+            semantic,
+            applied,
+            semanticNormArray,
+            appliedNormArray,
+            historicalNormArray,
+            semanticPerPosition,
+            appliedPerPosition
+        )
+        let diagnostics = ResidualDirectionDiagnostics(
+            mode: mode.rawValue,
+            positiveTokenCount: positiveTokens.count,
+            negativeTokenCount: negativeTokens.count,
+            alignedPositionCount: alignedPositions,
+            historicalFinalVectorNorm: Double(historicalNormArray.item(Float.self)),
+            semanticMatrixNorm: Double(semanticNormArray.item(Float.self)),
+            appliedMatrixNorm: Double(appliedNormArray.item(Float.self)),
+            semanticPerPositionNorms: semanticPerPosition.asArray(Float.self).map(Double.init),
+            appliedPerPositionNorms: appliedPerPosition.asArray(Float.self).map(Double.init),
+            alignment: "front-aligned; an absent side contributes zero at suffix positions and is never tokenized",
+            injection: "all aligned prompt positions after the selected block; persistent in downstream KV cache"
+        )
+        return SteerableQwen2Direction(matrix: applied, diagnostics: diagnostics)
     }
 
-    func residualVector(
-        positiveTokens: MLXArray,
-        negativeTokens: MLXArray,
+    func prefillLogits(
+        _ inputs: MLXArray,
+        cache: [KVCache],
+        direction: MLXArray,
+        coefficient: Double,
         afterLayer layerIndex: Int
     ) -> MLXArray {
-        let positive = model.prepareTail(positiveTokens, afterLayer: layerIndex).hidden[0, -1, 0...]
-        let negative = model.prepareTail(negativeTokens, afterLayer: layerIndex).hidden[0, -1, 0...]
-        let direction = positive - negative
-        eval(direction)
-        return direction
-    }
-
-    func logits(
-        from state: SteerableQwen2TailState,
-        direction: MLXArray? = nil,
-        scale: Double = 0
-    ) -> MLXArray {
-        project(model.finish(state, direction: direction, scale: scale))[0, -1, 0...]
+        project(
+            model.prefill(
+                inputs,
+                cache: cache,
+                direction: direction,
+                coefficient: coefficient,
+                afterLayer: layerIndex
+            )
+        )[0, -1, 0...]
     }
 
     private func project(_ hidden: MLXArray) -> MLXArray {

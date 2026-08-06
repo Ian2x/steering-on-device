@@ -30,7 +30,7 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("On-device steering, made visible")
                     .font(.system(size: 28, weight: .semibold, design: .rounded))
-                Text("One prompt. Three fixed-seed passes. Two interventions under a cumulative KL cap.")
+                Text("One prompt. Three fixed-seed passes. Sparse KL-capped bias plus a direct residual control.")
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -81,13 +81,13 @@ struct ContentView: View {
 
                 VStack(alignment: .leading, spacing: 3) {
                     HStack {
-                        Text("KL budget")
+                        Text("Logit-bias KL cap")
                         Spacer()
                         Text("\(model.klBudget, specifier: "%.2f") nats")
                             .monospacedDigit()
                     }
                     Slider(value: $model.klBudget, in: 0.1 ... 20, step: 0.1)
-                        .accessibilityLabel("KL budget")
+                        .accessibilityLabel("Logit-bias KL cap")
                         .accessibilityValue("\(model.klBudget, specifier: "%.2f") nats")
                 }
                 .frame(maxWidth: 300)
@@ -142,9 +142,9 @@ struct ContentView: View {
                 .frame(maxWidth: 360)
                 .disabled(model.isGenerating)
 
-                Text("Known-invalid Phase 6 path: greedy cumulative-KL rescaling collapsed the residual edit into a first-token shock. Do not interpret this pane as an activation-steering result.")
+                Text("Blocking control pending: the residual edit now uses a front-aligned per-position direction, prompt-position KV injection, and the displayed coefficient directly. Its KL trace is diagnostic, not capped.")
                     .font(.caption)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
@@ -176,8 +176,8 @@ struct ContentView: View {
                 state: model.steered
             )
             GenerationPaneView(
-                title: "Residual edit (invalidated)",
-                subtitle: "Historical Phase 6 path after block \(model.actAddLayer)",
+                title: "Residual edit (control pending)",
+                subtitle: "Persistent prompt edit after block \(model.actAddLayer)",
                 tint: .purple,
                 state: model.actAdd
             )
@@ -208,9 +208,9 @@ struct ContentView: View {
                 }
                 .font(.callout)
                 HStack {
-                    Text("Residual-edit KL")
+                    Text("Residual-edit KL (uncapped)")
                     Spacer()
-                    Text("\(actAddCumulative, specifier: "%.3f") / \(model.klBudget, specifier: "%.2f") nats")
+                    Text("\(actAddCumulative, specifier: "%.3f") nats")
                         .monospacedDigit()
                 }
                 .font(.callout)
@@ -231,7 +231,7 @@ struct ContentView: View {
 
     private var explanation: some View {
         DisclosureGroup("What am I looking at?") {
-            Text("The app runs the same prompt three times with identical seeded sampling: an unchanged baseline, a sparse topic-token logit bias, and a historical residual-edit path. Each intervention is independently rescaled by a greedy bisection rule so cumulative KL(candidate ‖ base) stays within the selected cap. That rule is suitable for demonstrating the interface but did not fairly match the sparse and dense edits: the dense path spent nearly all its cap on the first token and was not direction-dependent. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments.")
+            Text("The app runs the same prompt three times with identical seeded sampling: an unchanged baseline, a sparse topic-token logit bias under a cumulative cap, and a direct residual prompt edit. The residual path front-aligns a per-position contrast direction, injects it after the selected block across the aligned prompt positions, and bakes the edit into downstream KV caches. Its blocking direction-dependence control is pending, so the pane is engineering evidence rather than an activation-steering result. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
@@ -374,7 +374,7 @@ private struct KLChartView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Per-step KL chart")
             .accessibilityValue(chartAccessibilityValue)
-                Text(logitHistory.isEmpty && actAddHistory.isEmpty ? "Traces start with the intervention passes." : "Orange: logit bias. Purple: invalidated residual edit. Returned tokens only.")
+                Text(logitHistory.isEmpty && actAddHistory.isEmpty ? "Traces start with the intervention passes." : "Orange: capped logit bias. Purple: uncapped residual control. Returned tokens only.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

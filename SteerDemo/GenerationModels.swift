@@ -7,6 +7,25 @@ enum GenerationPane: String, Sendable {
     case actAdd
 }
 
+enum ResidualDirectionMode: String, Sendable, Codable {
+    case semantic
+    case randomMatchedNorm = "random-matched-norm"
+}
+
+struct ResidualDirectionDiagnostics: Sendable, Codable {
+    let mode: String
+    let positiveTokenCount: Int
+    let negativeTokenCount: Int
+    let alignedPositionCount: Int
+    let historicalFinalVectorNorm: Double
+    let semanticMatrixNorm: Double
+    let appliedMatrixNorm: Double
+    let semanticPerPositionNorms: [Double]
+    let appliedPerPositionNorms: [Double]
+    let alignment: String
+    let injection: String
+}
+
 struct PaneState: Sendable {
     var text = ""
     var tokenIDs: [Int] = []
@@ -14,6 +33,7 @@ struct PaneState: Sendable {
     var tokensPerSecond = 0.0
     var residentMemoryBytes: UInt64 = 0
     var topicScore: Double?
+    var baseModelNLL: Double?
     var isActive = false
 
     static let empty = PaneState()
@@ -37,6 +57,9 @@ struct GenerationSummary: Sendable {
     let residentMemoryBytes: UInt64
     let klHistory: [KLReading]
     let droppedTokenStrings: [String]
+    let baseModelNLL: Double?
+    let appliedCoefficient: Double?
+    let directionDiagnostics: ResidualDirectionDiagnostics?
 }
 
 enum DemoError: LocalizedError {
