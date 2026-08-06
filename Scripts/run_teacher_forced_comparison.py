@@ -134,9 +134,14 @@ def run_packet(
     if not path.exists() and not app_pids():
         raise RuntimeError(f"SteerDemo did not launch for {path}")
     deadline = time.time() + 180
+    missing_process_since: float | None = None
     while not path.exists() and time.time() < deadline:
         if not app_pids():
-            raise RuntimeError(f"SteerDemo exited before writing {path}")
+            missing_process_since = missing_process_since or time.time()
+            if time.time() - missing_process_since > 15:
+                raise RuntimeError(f"SteerDemo exited before writing {path}")
+        else:
+            missing_process_since = None
         time.sleep(0.2)
     if not path.exists():
         raise TimeoutError(f"timed out waiting for {path}")
