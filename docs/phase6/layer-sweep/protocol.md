@@ -7,7 +7,9 @@ the audit's approximately 0.96 controller ratio.
 - Candidate residual boundaries: after blocks 3, 7, 11, 15, 19, and 23. These
   span the 24-block model at roughly quarter-depth intervals.
 - Fixed coefficient: 12.0. Fixed cumulative KL cap: 8.0 nats. Fixed seed and
-  temperature: 42 and 0.7. Output length: 32 tokens.
+  temperature: 42 and 0.7. Maximum generation length: 32 tokens; EOS may stop
+  a pane earlier. This wording clarifies the preregistered shorthand "Output
+  length: 32 tokens" after the run without changing the configured cap.
 - Sweep set: four neutral prompts, two scored against the wedding centroid and
   two against the ocean centroid. These prompts are not reused in the final
   controller-ratio run set.

@@ -1,6 +1,6 @@
 {
   "accuracy": 1.0,
-  "adapter": "/Users/ianwang/Projects/steering-on-device/LoRA/adapter",
+  "adapter": "LoRA/adapter",
   "exactMatches": 9,
   "label": "after",
   "model": "mlx-community/Qwen2.5-0.5B-Instruct-4bit",

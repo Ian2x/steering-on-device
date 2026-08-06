@@ -46,11 +46,19 @@ def main() -> None:
                 "exact": output == row["completion"],
             }
         )
+    adapter_display = None
+    if args.adapter:
+        repository_root = args.output.resolve().parents[2]
+        try:
+            adapter_display = str(Path(args.adapter).resolve().relative_to(repository_root))
+        except ValueError:
+            adapter_display = Path(args.adapter).name
+
     report = {
         "label": args.label,
         "model": "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
         "modelRevision": "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
-        "adapter": args.adapter,
+        "adapter": adapter_display,
         "n": len(results),
         "exactMatches": sum(result["exact"] for result in results),
         "accuracy": sum(result["exact"] for result in results) / len(results),

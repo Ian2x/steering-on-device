@@ -18,6 +18,23 @@ struct KLFixture: Codable {
     #expect(ActAddPassPlanner.route(coefficient: 0) == .baseline)
     #expect(ActAddPassPlanner.route(coefficient: -0.0) == .baseline)
     #expect(ActAddPassPlanner.route(coefficient: 1e-12) == .activationAddition)
+
+    let baselineTokenBytes = [UInt32(17), 29, 4, 4, 91].withUnsafeBytes { Data($0) }
+    let editedTokenBytes = [UInt32(17), 88, 6].withUnsafeBytes { Data($0) }
+    var baselineCalls = 0
+    var actAddCalls = 0
+    let actual = ActAddPassPlanner.run(coefficient: 0) {
+        baselineCalls += 1
+        return baselineTokenBytes
+    } activationAddition: {
+        actAddCalls += 1
+        return editedTokenBytes
+    }
+
+    #expect(actual == baselineTokenBytes)
+    #expect(Array(actual) == Array(baselineTokenBytes))
+    #expect(baselineCalls == 1)
+    #expect(actAddCalls == 0)
 }
 
 @Test func handComputedUniformBaseFixture() throws {
@@ -183,7 +200,13 @@ struct KLFixture: Codable {
                 temperature: 0.2 + unit() * 1.8
             ) { scale in
                 closureCalls += 1
-                return zip(base, direction).map { $0 + scale * $1 }
+                // Alternate an affine path with a deliberately nonlinear,
+                // non-monotone gain. The selector promises feasibility for
+                // arbitrary dense closures, not global maximality.
+                let gain = step.isMultiple(of: 2)
+                    ? scale
+                    : scale + 0.3 * Foundation.sin(4 * .pi * scale)
+                return zip(base, direction).map { $0 + gain * $1 }
             }
             if remaining == 0 {
                 #expect(closureCalls == 0)

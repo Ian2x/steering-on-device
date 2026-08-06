@@ -16,6 +16,7 @@ final class DemoViewModel: ObservableObject {
     private struct RunReport: Encodable {
         struct Pane: Encodable {
             let text: String
+            let tokenIDs: [Int]
             let tokenCount: Int
             let tokensPerSecond: Double
             let residentMemoryBytes: UInt64
@@ -369,6 +370,7 @@ final class DemoViewModel: ObservableObject {
         case .actAdd: state = actAdd
         }
         state.text = summary.text
+        state.tokenIDs = summary.tokenIDs
         state.tokenCount = summary.tokenCount
         state.tokensPerSecond = Double(summary.tokenCount) / summary.seconds
         state.residentMemoryBytes = summary.residentMemoryBytes
@@ -419,6 +421,7 @@ final class DemoViewModel: ObservableObject {
             actAddKLHistory: actAddKLHistory,
             baseline: .init(
                 text: baseline.text,
+                tokenIDs: baseline.tokenIDs,
                 tokenCount: baseline.tokenCount,
                 tokensPerSecond: baseline.tokensPerSecond,
                 residentMemoryBytes: baseline.residentMemoryBytes,
@@ -426,6 +429,7 @@ final class DemoViewModel: ObservableObject {
             ),
             steered: .init(
                 text: steered.text,
+                tokenIDs: steered.tokenIDs,
                 tokenCount: steered.tokenCount,
                 tokensPerSecond: steered.tokensPerSecond,
                 residentMemoryBytes: steered.residentMemoryBytes,
@@ -433,6 +437,7 @@ final class DemoViewModel: ObservableObject {
             ),
             actAdd: .init(
                 text: actAdd.text,
+                tokenIDs: actAdd.tokenIDs,
                 tokenCount: actAdd.tokenCount,
                 tokensPerSecond: actAdd.tokensPerSecond,
                 residentMemoryBytes: actAdd.residentMemoryBytes,

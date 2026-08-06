@@ -59,10 +59,12 @@ import json, os
 row = json.load(open(os.environ["REPORT"]))
 assert row["status"].startswith("Complete"), row
 assert row["actAddCoefficient"] == 0, row
+assert row["actAdd"]["tokenIDs"] == row["baseline"]["tokenIDs"], row
 assert row["actAdd"]["text"] == row["baseline"]["text"], row
 assert row["actAdd"]["tokenCount"] == row["baseline"]["tokenCount"], row
 assert row["actAddKLHistory"] == [], row
-print("PASS coefficient-0 ActAdd text and token count are bit-identical to baseline")
+assert len(row["baseline"]["tokenIDs"]) == row["baseline"]["tokenCount"], row
+print("PASS coefficient-0 ActAdd token IDs, decoded text, and count are byte-identical to baseline")
 PY
 stop_app
 trap - EXIT INT TERM

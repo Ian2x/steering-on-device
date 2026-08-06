@@ -141,8 +141,12 @@ actor MLXGenerationService {
             let input = try await context.processor.prepare(
                 input: UserInput(chat: [.user(prompt)])
             )
-            if pane == .actAdd,
-               ActAddPassPlanner.route(coefficient: actAddCoefficient) == .activationAddition
+            let actAddRoute = ActAddPassPlanner.run(
+                coefficient: actAddCoefficient,
+                baseline: { ActAddPassRoute.baseline },
+                activationAddition: { ActAddPassRoute.activationAddition }
+            )
+            if pane == .actAdd, actAddRoute == .activationAddition
             {
                 return try Self.generateActAdd(
                     context: context,
@@ -247,6 +251,7 @@ actor MLXGenerationService {
             return GenerationSummary(
                 pane: pane,
                 text: context.tokenizer.decode(tokens: tokens),
+                tokenIDs: tokens,
                 tokenCount: tokens.count,
                 seconds: seconds,
                 residentMemoryBytes: residentMemoryBytes(),
@@ -374,6 +379,7 @@ actor MLXGenerationService {
         return GenerationSummary(
             pane: .actAdd,
             text: context.tokenizer.decode(tokens: tokens),
+            tokenIDs: tokens,
             tokenCount: tokens.count,
             seconds: max(0.001, start.duration(to: .now).seconds),
             residentMemoryBytes: residentMemoryBytes(),

@@ -6,7 +6,11 @@ neither layer nor coefficient may change in response to this result.
 
 - Evaluation units (`n = 8`): four neutral prompts crossed with the wedding and
   ocean lexicons. None of these four prompts appeared in the layer sweep.
-- Qwen2.5-0.5B-Instruct-4bit, seed 42, temperature 0.7, 64 output tokens.
+- Qwen2.5-0.5B-Instruct-4bit, seed 42, temperature 0.7, and a maximum
+  generation length of 64 tokens. EOS may stop a pane earlier; this happened
+  once, after 26 returned logit-bias tokens. This clarification was added
+  after the run because the preregistered shorthand "64 output tokens" did
+  not state the already-implemented EOS stopping rule.
 - Static logit-bias strength 14; ActAdd coefficient 12; residual boundary after
   block 3; cumulative KL cap 8 nats for each intervention independently.
 - Per packet, logit-bias shift is `logit topic score - baseline topic score` and

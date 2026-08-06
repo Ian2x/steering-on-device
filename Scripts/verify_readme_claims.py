@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import statistics
 import subprocess
 from pathlib import Path
 
@@ -54,6 +55,7 @@ def main() -> None:
     )
     check(final["buildConfiguration"] == "Release", "final run was not recorded in Release")
     require("Evidence runs use Release builds")
+    require("untimed one-token same-prompt warm-up")
     print("PASS final-run metrics and Release provenance: docs/final-demo-run.json")
 
     rendered_table = subprocess.run(
@@ -107,7 +109,26 @@ def main() -> None:
     sweep_packets = [json.loads(path.read_text()) for path in sweep_paths]
     check(all(row["buildConfiguration"] == "Release" for row in sweep_packets), "a layer sweep packet is not Release")
     check(all(row["actAddCumulativeKL"] <= row["klBudget"] + 1e-6 for row in sweep_packets), "a layer sweep packet exceeds KL")
-    check(sweep["selectedLayer"] == 3, "selected ActAdd layer changed")
+    by_layer: dict[int, list[float]] = {}
+    for row in sweep_packets:
+        shift = abs(row["actAdd"]["topicScore"] - row["baseline"]["topicScore"])
+        by_layer.setdefault(row["actAddLayer"], []).append(shift)
+    recomputed_medians = {
+        layer: statistics.median(shifts) for layer, shifts in by_layer.items()
+    }
+    recorded_medians = {
+        row["layer"]: row["medianAbsoluteTopicShift"] for row in sweep["perLayer"]
+    }
+    check(recomputed_medians == recorded_medians, "layer medians do not match raw packets")
+    recomputed_layer = min(
+        layer for layer, value in recomputed_medians.items()
+        if value == max(recomputed_medians.values())
+    )
+    check(sweep["selectedLayer"] == recomputed_layer == 3, "selected ActAdd layer changed")
+    check(all(row["baseline"]["tokenCount"] <= row["maxTokens"] for row in sweep_packets), "a layer-sweep baseline exceeded its token cap")
+    check(all(row["steered"]["tokenCount"] <= row["maxTokens"] for row in sweep_packets), "a layer-sweep logit pass exceeded its token cap")
+    check(all(row["actAdd"]["tokenCount"] <= row["maxTokens"] for row in sweep_packets), "a layer-sweep ActAdd pass exceeded its token cap")
+    require("a maximum of 32 generated tokens")
     selected = next(row for row in sweep["perLayer"] if row["layer"] == 3)
     require("all 24 Release packets")
     require("Blocks 3 and 19 tied")
@@ -122,6 +143,22 @@ def main() -> None:
     check(all(row["buildConfiguration"] == "Release" for row in rho_packets), "a rho packet is not Release")
     check(all(row["cumulativeKL"] <= row["klBudget"] + 1e-6 for row in rho_packets), "a rho logit pass exceeds KL")
     check(all(row["actAddCumulativeKL"] <= row["klBudget"] + 1e-6 for row in rho_packets), "a rho ActAdd pass exceeds KL")
+    logit_shifts = [row["steered"]["topicScore"] - row["baseline"]["topicScore"] for row in rho_packets]
+    actadd_shifts = [row["actAdd"]["topicScore"] - row["baseline"]["topicScore"] for row in rho_packets]
+    recomputed_logit_mean = statistics.fmean(logit_shifts)
+    recomputed_actadd_mean = statistics.fmean(actadd_shifts)
+    recomputed_rho = recomputed_logit_mean / recomputed_actadd_mean
+    check(recomputed_logit_mean == rho["logitBiasMeanShift"], "rho logit mean does not match raw packets")
+    check(recomputed_actadd_mean == rho["actAddMeanShift"], "rho ActAdd mean does not match raw packets")
+    check(recomputed_rho == rho["rho"], "rho does not match raw packets")
+    zero_logit_count = sum(shift == 0 for shift in logit_shifts)
+    negative_actadd_count = sum(shift < 0 for shift in actadd_shifts)
+    require(f"including {zero_logit_count} zero logit-bias shifts")
+    require(f"and {negative_actadd_count} negative ActAdd shifts")
+    token_counts = [row[pane]["tokenCount"] for row in rho_packets for pane in ("baseline", "steered", "actAdd")]
+    check(all(count <= 64 for count in token_counts), "a rho pane exceeded its 64-token cap")
+    require("a maximum of 64 generated tokens")
+    require("EOS stopped one pane after 26")
     require(f"`n = {rho['n']}`")
     require(f"`{rho['logitBiasMeanShift']}`")
     require(f"`{rho['actAddMeanShift']}`")
@@ -133,9 +170,11 @@ def main() -> None:
 
     zero = json.loads((ROOT / "docs/phase6/coefficient-zero/report.json").read_text())
     check(zero["actAddCoefficient"] == 0, "coefficient-zero packet is not zero")
+    check(zero["baseline"]["tokenIDs"] == zero["actAdd"]["tokenIDs"], "coefficient-zero token IDs differ")
     check(zero["baseline"]["text"] == zero["actAdd"]["text"], "coefficient-zero text differs")
     check(zero["baseline"]["tokenCount"] == zero["actAdd"]["tokenCount"], "coefficient-zero count differs")
-    require("identical baseline and ActAdd text and token count")
+    check(len(zero["baseline"]["tokenIDs"]) == zero["baseline"]["tokenCount"], "coefficient-zero token-ID count differs")
+    require("byte-identical baseline and ActAdd token-ID sequences, decoded text, and token counts")
     print("PASS coefficient-zero Release packet identity")
 
     decomposition = json.loads((ROOT / "docs/judge-decomposition.json").read_text())
@@ -200,6 +239,7 @@ def main() -> None:
     check(before["n"] == after["n"] == 9, "LoRA evaluation n changed")
     check(before["exactMatches"] == 0 and after["exactMatches"] == 9, "LoRA exact-match result changed")
     check(adapter.stat().st_size > 0, "LoRA adapter is empty")
+    check(after["adapter"] == "LoRA/adapter", "LoRA report leaked a local adapter path")
     require("**MLX Python**, not MLX Swift")
     require("120 optimizer steps on 36 toy codebook examples")
     require("`0/9` before training to `9/9` after training")

@@ -146,9 +146,12 @@ public enum BiasBudgetSelector {
         )
     }
 
-    /// Selects the largest scale whose candidate logits fit the remaining KL
-    /// budget. Sparse output bias and dense residual-stream interventions use
-    /// this same bisection invariant; only their candidate-logit closures differ.
+    /// Selects a feasible scale whose candidate logits fit the remaining KL
+    /// budget. Sparse output bias is monotone along its fixed direction. A
+    /// nonlinear dense closure, such as a transformer tail, is not guaranteed
+    /// monotone, so this method does not claim a globally largest feasible
+    /// scale for arbitrary closures. Both paths share the safety invariant:
+    /// only a probe at or below the remaining budget can become `selected`.
     public static func select(
         baseLogits: [Double],
         remaining: Double,
@@ -197,8 +200,10 @@ public enum BiasBudgetSelector {
         )
     }
 
-    /// Shared monotone bisection. `selected` is updated only by a probe that
-    /// satisfies the remaining budget, preserving cumulative <= budget.
+    /// Shared interval bisection. `selected` is updated only by a probe that
+    /// satisfies the remaining budget, preserving cumulative <= budget even
+    /// when an arbitrary candidate closure is not monotone. Maximality then is
+    /// not guaranteed; callers must not describe the result as globally largest.
     private static func bisect(
         remaining: Double,
         iterations: Int,

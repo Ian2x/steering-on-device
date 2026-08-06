@@ -9,6 +9,7 @@ enum GenerationPane: String, Sendable {
 
 struct PaneState: Sendable {
     var text = ""
+    var tokenIDs: [Int] = []
     var tokenCount = 0
     var tokensPerSecond = 0.0
     var residentMemoryBytes: UInt64 = 0
@@ -30,6 +31,7 @@ struct GenerationUpdate: Sendable {
 struct GenerationSummary: Sendable {
     let pane: GenerationPane
     let text: String
+    let tokenIDs: [Int]
     let tokenCount: Int
     let seconds: Double
     let residentMemoryBytes: UInt64

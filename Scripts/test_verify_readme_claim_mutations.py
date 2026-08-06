@@ -50,3 +50,6 @@ must_reject(
 )
 must_reject("ActAdd layer", "block **3** was therefore selected", "block **11** was therefore selected")
 must_reject("LoRA result", "`0/9` before training to `9/9` after training", "`9/9` before training to `9/9` after training")
+must_reject("warm-up count", "untimed one-token same-prompt warm-up", "untimed 16-token same-prompt warm-up")
+must_reject("rho zero rows", "including 3 zero logit-bias shifts", "including 2 zero logit-bias shifts")
+must_reject("rho token cap", "a maximum of 64 generated tokens", "64 generated tokens")
