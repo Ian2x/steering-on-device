@@ -4,7 +4,7 @@ set -euo pipefail
 root_dir=${0:A:h:h}
 app_path="$root_dir/DerivedData/Build/Products/Release/SteerDemo.app"
 executable="$app_path/Contents/MacOS/SteerDemo"
-report="$root_dir/docs/final-demo-run.json"
+report="$root_dir/docs/phase6/teacher-forced-comparison/runs/ocean-library.json"
 snapshot="$root_dir/docs/steerdemo.png"
 final_frame="$root_dir/docs/demo-frames/99-final.png"
 

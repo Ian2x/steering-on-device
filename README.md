@@ -2,7 +2,7 @@
 
 The steering audit (Wang, 2026) reported that a static logit-bias controller reproduced 95.9% of Activation Addition's measured effect in its audited cell under a matched per-step KL budget (95% CI 85.3%–107.1%; **Mixed** verdict). This research prototype puts the interface on-device: a native macOS app runs Qwen2.5-0.5B-Instruct (4-bit) through MLX Swift and streams baseline, static-logit-bias, and residual-edit passes while displaying distributional cost and a Core ML topic diagnostic. Prompts and generated text stay on the Mac.
 
-![SteerDemo showing preserved baseline, logit-bias, and invalidated residual-edit continuations](docs/steerdemo.png)
+![SteerDemo replaying a preserved teacher-forced packet whose controller comparison was withheld by its NLL gate](docs/steerdemo.png)
 
 ## Historical Phase 6 comparison invalidated
 

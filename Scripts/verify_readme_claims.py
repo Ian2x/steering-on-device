@@ -24,6 +24,13 @@ def main() -> None:
     args = parser.parse_args()
     readme = args.readme.read_text()
 
+    screenshot = ROOT / "docs/steerdemo.png"
+    final_frame = ROOT / "docs/demo-frames/99-final.png"
+    check(screenshot.read_bytes() == final_frame.read_bytes(), "hero screenshot differs from final demo frame")
+    require_hero_alt = "teacher-forced packet whose controller comparison was withheld by its NLL gate"
+    check(require_hero_alt in readme, "hero alt text does not disclose the withheld comparison")
+    print("PASS hero screenshot matches final frame and discloses the NLL gate")
+
     def require(fragment: str, count: int = 1) -> None:
         actual = readme.count(fragment)
         check(

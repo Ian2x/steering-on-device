@@ -30,7 +30,9 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("On-device steering, made visible")
                     .font(.system(size: 28, weight: .semibold, design: .rounded))
-                Text("One prompt. Three fixed-seed passes. Sparse KL-capped bias plus a direct residual control.")
+                Text(model.usesStaticBias
+                    ? "One prompt. Three fixed-seed passes. Sustained static bias plus a direct residual control."
+                    : "One prompt. Three fixed-seed passes. Sparse KL-capped bias plus a direct residual control.")
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -81,14 +83,21 @@ struct ContentView: View {
 
                 VStack(alignment: .leading, spacing: 3) {
                     HStack {
-                        Text("Logit-bias KL cap")
+                        Text(model.usesStaticBias ? "Static-bias KL" : "Logit-bias KL cap")
                         Spacer()
-                        Text("\(model.klBudget, specifier: "%.2f") nats")
+                        Text(model.usesStaticBias ? "uncapped" : "\(model.klBudget, specifier: "%.2f") nats")
                             .monospacedDigit()
                     }
-                    Slider(value: $model.klBudget, in: 0.1 ... 20, step: 0.1)
-                        .accessibilityLabel("Logit-bias KL cap")
-                        .accessibilityValue("\(model.klBudget, specifier: "%.2f") nats")
+                    if model.usesStaticBias {
+                        Text("Scalar calibrated on a shared continuation")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        Slider(value: $model.klBudget, in: 0.1 ... 20, step: 0.1)
+                            .accessibilityLabel("Logit-bias KL cap")
+                            .accessibilityValue("\(model.klBudget, specifier: "%.2f") nats")
+                    }
                 }
                 .frame(maxWidth: 300)
                 .disabled(model.isGenerating)
@@ -171,7 +180,7 @@ struct ContentView: View {
             )
             GenerationPaneView(
                 title: "Logit bias",
-                subtitle: "Sparse topic-token bias",
+                subtitle: model.usesStaticBias ? "Sustained static topic-token bias" : "Sparse topic-token bias",
                 tint: .orange,
                 state: model.steered
             )
@@ -193,17 +202,21 @@ struct ContentView: View {
             )
                 .frame(maxWidth: .infinity)
             VStack(alignment: .leading, spacing: 12) {
-                Text("Interface budget").font(.headline)
+                Text(model.usesStaticBias ? "Interface cost" : "Interface budget").font(.headline)
                 let cumulative = model.klHistory.last?.cumulative ?? 0
                 let actAddCumulative = model.actAddKLHistory.last?.cumulative ?? 0
-                ProgressView(value: min(cumulative, model.klBudget), total: model.klBudget)
-                    .tint(cumulative > model.klBudget ? .red : .orange)
-                    .accessibilityLabel("Cumulative KL budget")
-                    .accessibilityValue("\(cumulative, specifier: "%.3f") of \(model.klBudget, specifier: "%.2f") nats")
+                if !model.usesStaticBias {
+                    ProgressView(value: min(cumulative, model.klBudget), total: model.klBudget)
+                        .tint(cumulative > model.klBudget ? .red : .orange)
+                        .accessibilityLabel("Cumulative KL budget")
+                        .accessibilityValue("\(cumulative, specifier: "%.3f") of \(model.klBudget, specifier: "%.2f") nats")
+                }
                 HStack {
-                    Text("Logit-bias KL")
+                    Text(model.usesStaticBias ? "Static-bias KL (uncapped)" : "Logit-bias KL")
                     Spacer()
-                    Text("\(cumulative, specifier: "%.3f") / \(model.klBudget, specifier: "%.2f") nats")
+                    Text(model.usesStaticBias
+                        ? "\(cumulative, specifier: "%.3f") nats"
+                        : "\(cumulative, specifier: "%.3f") / \(model.klBudget, specifier: "%.2f") nats")
                         .monospacedDigit()
                 }
                 .font(.callout)
@@ -216,6 +229,10 @@ struct ContentView: View {
                 .font(.callout)
                 if !model.droppedTokenStrings.isEmpty {
                     Text("Dropped multi-token support: \(model.droppedTokenStrings.joined(separator: ", "))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else if model.usesStaticBias {
+                    Text("Both traces are diagnostic and uncapped; the frozen comparison was withheld after its residual NLL gate failed.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
@@ -231,7 +248,9 @@ struct ContentView: View {
 
     private var explanation: some View {
         DisclosureGroup("What am I looking at?") {
-            Text("The app runs the same prompt three times with identical seeded sampling: an unchanged baseline, a sparse topic-token logit bias under a cumulative cap, and a direct residual prompt edit. The residual path front-aligns a per-position contrast direction, injects it after the selected block across the aligned prompt positions, and bakes the edit into downstream KV caches. A frozen 180-packet control found direction-dependent, on-target behavior above a matched-random floor in 2/15 cells. A later teacher-forced comparison matched both controllers to 0.43524 nats/step but failed its residual base-model NLL gate, so it supports no ratio. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments.")
+            Text(model.usesStaticBias
+                ? "This preserved packet shows the same prompt under an unchanged baseline, sustained static topic-token bias, and a direct residual prompt edit. The scalars were calibrated teacher-forced to 0.43524 nats/step on a shared continuation, but the frozen comparison failed its residual base-model NLL gate, so it supports no controller ratio. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments."
+                : "The app runs the same prompt three times with identical seeded sampling: an unchanged baseline, a sparse topic-token logit bias under a cumulative cap, and a direct residual prompt edit. The residual path front-aligns a per-position contrast direction, injects it after the selected block across the aligned prompt positions, and bakes the edit into downstream KV caches. A frozen 180-packet control found direction-dependent, on-target behavior above a matched-random floor in 2/15 cells. A later teacher-forced comparison matched both controllers to 0.43524 nats/step but failed its residual base-model NLL gate, so it supports no ratio. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
@@ -374,7 +393,7 @@ private struct KLChartView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Per-step KL chart")
             .accessibilityValue(chartAccessibilityValue)
-                Text(logitHistory.isEmpty && actAddHistory.isEmpty ? "Traces start with the intervention passes." : "Orange: capped logit bias. Purple: uncapped residual control. Returned tokens only.")
+                Text(logitHistory.isEmpty && actAddHistory.isEmpty ? "Traces start with the intervention passes." : "Orange: logit bias. Purple: residual control. Returned tokens only; cap status is shown alongside the chart.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

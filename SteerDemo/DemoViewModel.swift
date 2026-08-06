@@ -73,6 +73,7 @@ final class DemoViewModel: ObservableObject {
         }
 
         let status: String
+        let stage3RunMode: String?
         let prompt: String
         let lexicon: String
         let biasStrength: Double
@@ -116,6 +117,8 @@ final class DemoViewModel: ObservableObject {
     private var teacherForcedLogit: TeacherForcedKLResult?
     private var teacherForcedActAdd: TeacherForcedKLResult?
     private let teacherForcedTargetKL = 0.435_238_018_732_847_95
+
+    var usesStaticBias: Bool { staticBiasMode }
 
     private let service = MLXGenerationService()
     private let stopFlag = StopFlag()
@@ -381,6 +384,7 @@ final class DemoViewModel: ObservableObject {
     private func loadPreservedReport(at path: String) throws {
         let data = try Data(contentsOf: URL(fileURLWithPath: path))
         let report = try JSONDecoder().decode(PreservedRunReport.self, from: data)
+        staticBiasMode = report.stage3RunMode != nil
         prompt = report.prompt
         selectedLexiconID = report.lexicon
         strength = report.biasStrength
@@ -391,7 +395,9 @@ final class DemoViewModel: ObservableObject {
         klHistory = report.klHistory
         actAddKLHistory = report.actAddKLHistory
         droppedTokenStrings = report.droppedTokenStrings
-        status = "Preserved invalidated Phase 6 packet — no inference rerun"
+        status = report.stage3RunMode == Stage3RunMode.evaluate.rawValue
+            ? "Preserved teacher-forced packet — comparison withheld by NLL gate; no inference rerun"
+            : "Preserved invalidated Phase 6 packet — no inference rerun"
         baseline = PaneState(
             text: report.baseline.text,
             tokenIDs: [],
