@@ -40,6 +40,7 @@ enum DemoError: LocalizedError {
     case missingResource(String)
     case missingCoreMLOutput
     case invalidCentroid(String)
+    case invalidKLDivergence(String)
     case snapshotRenderingFailed
 
     var errorDescription: String? {
@@ -47,6 +48,7 @@ enum DemoError: LocalizedError {
         case .missingResource(let name): "Missing bundled resource: \(name)."
         case .missingCoreMLOutput: "The Core ML topic encoder returned no embedding."
         case .invalidCentroid(let id): "No valid topic centroid exists for \(id)."
+        case .invalidKLDivergence(let reason): "KL measurement failed: \(reason)"
         case .snapshotRenderingFailed: "Could not render the app evidence snapshot."
         }
     }

@@ -1,6 +1,6 @@
 # Steering on Device
 
-The steering audit (Wang, 2026) found that a static logit-bias output controller reproduced 95.9% of Activation Addition's measured effect in its audited cell under a matched per-step KL budget. This prototype puts that result on-device: a native macOS app runs Qwen2.5-0.5B-Instruct (4-bit) locally through MLX Swift, generates baseline and logit-bias-steered continuations from the same prompt and random seed, shows the KL interface budget being spent, and uses a Core ML sentence encoder to score topic drift. Prompts and generated text stay on the Mac.
+The steering audit (Wang, 2026) reported that a static logit-bias output controller reproduced 95.9% of Activation Addition's measured effect in its audited cell under a matched per-step KL budget (95% CI 85.3%–107.1%; the audit classified the cell **Mixed**). This prototype puts that comparison on-device: a native macOS app runs Qwen2.5-0.5B-Instruct (4-bit) locally through MLX Swift, generates baseline and logit-bias-steered continuations from the same prompt and random seed, shows the KL interface budget being spent, and uses a Core ML sentence encoder to score topic drift. Prompts and generated text stay on the Mac.
 
 ![SteerDemo streaming a baseline and wedding-steered continuation](docs/steerdemo.gif)
 
@@ -11,6 +11,7 @@ The app is deliberately a research interface, not a chat client:
 - The **baseline** and **steered** passes use the same Qwen prompt, chat template, seed (`42`), temperature (`0.7`), and 4-bit MLX model.
 - The controller adds a sparse bias to single-token entries from the selected lexicon. Multi-token entries are reported and omitted rather than silently approximated.
 - The orange trace is `KL(biased || baseline)` between the actual temperature-scaled sampling distributions. A bisection step rescales the last bias so cumulative KL does not exceed the selected budget.
+- At the documented default settings, the budget is exhausted in the first few steps. Generation then continues without additional bias from the steered prefix. This is a **prefix intervention under a distributional cost ceiling**, not sustained steering across the whole continuation.
 - The **topic judge** is `sentence-transformers/all-MiniLM-L6-v2`, mean-pooled and normalized inside a Core ML program. It compares each continuation with a precomputed lexicon centroid.
 - Both passes stream token by token and report tokens/second and process resident memory.
 
@@ -49,7 +50,7 @@ xcodebuild \
 
 ## On-device sanity experiment
 
-These are real 64-token app runs, not illustrative values. Every row used the same prompt, fixed seed, temperature, and **matched cumulative KL budget of 8.0000 nats**. The committed JSON packets are in [`docs/sanity-runs`](docs/sanity-runs), and [`Scripts/summarize_sanity.py`](Scripts/summarize_sanity.py) renders the table.
+These are real 64-token app runs, not illustrative values. Every row used the same prompt, fixed seed, temperature, and an 8.0000-nat KL cap. The cap is spent in the first few biased steps; the remaining tokens continue without additional bias from the resulting prefix. The committed JSON packets are in [`docs/sanity-runs`](docs/sanity-runs), and [`Scripts/summarize_sanity.py`](Scripts/summarize_sanity.py) renders the table.
 
 | Lexicon | Bias strength | Cumulative KL (nats) | Baseline score | Steered score | Change |
 |---|---:|---:|---:|---:|---:|
@@ -62,19 +63,53 @@ These are real 64-token app runs, not illustrative values. Every row used the sa
 
 The result is directional, not monotonic. At this fixed seed, ocean strength 12 spends the same KL without crossing a sampled-token threshold, while strengths 14 and 16 do. Wedding moves in all three conditions, but the score does not increase monotonically with raw strength. That is exactly why the interface shows both distributional cost and an independent semantic score.
 
-The default 96-token wedding run in [`docs/final-demo-run.json`](docs/final-demo-run.json) measured 69.9 baseline and 68.4 steered tokens/second, about 570 MB resident memory, exactly 8.0000 cumulative KL, and a Core ML topic-score change from `-0.0338` to `0.3815`. Treat these as one-machine prototype measurements, not a benchmark.
+The cap is reached numerically, but it is not behaviorally discriminating in the tested wedding conditions. Doubling it from 4 to 8 nats changes neither the sampled steered text nor its topic score:
+
+| Bias strength | Steered text identical? | Topic score (KL cap 4) | Topic score (KL cap 8) |
+|---:|:---:|---:|---:|
+| 12 | yes | 0.230357 | 0.230357 |
+| 14 | yes | 0.421167 | 0.421167 |
+| 16 | yes | 0.226144 | 0.226144 |
+
+The KL-4 packets are in [`docs/negative-results/matched-kl4`](docs/negative-results/matched-kl4); the KL-8 packets are in [`docs/sanity-runs`](docs/sanity-runs). This plateau is direct evidence that the visible effect here is a short forced prefix followed by an unbiased continuation, not a sustained intervention whose effect grows with the permitted cost.
+
+The default 96-token wedding run in [`docs/final-demo-run.json`](docs/final-demo-run.json) measured 68.4 baseline and 62.1 steered tokens/second, about 570 MB resident memory, 8.0000 cumulative KL, and a Core ML topic-score change from `-0.0338` to `0.3815`. Treat these as one-machine prototype measurements, not a benchmark.
+
+### What the judge shift contains
+
+The biased token strings are also part of the lexicon used to construct the judge centroid, so the injected words partly measure themselves. [`Scripts/analyze_judge_decomposition.py`](Scripts/analyze_judge_decomposition.py) reproduces this decomposition from the committed Core ML model and [`docs/final-demo-run.json`](docs/final-demo-run.json); the exact output is committed in [`docs/judge-decomposition.json`](docs/judge-decomposition.json).
+
+| Text scored against the wedding centroid | Score |
+|---|---:|
+| Baseline | -0.0338 |
+| Steered | 0.3815 |
+| `"honeymoon ceremony: "` + baseline | 0.2504 |
+| Steered with those two words removed | 0.0841 |
+
+Relative to the baseline, prepending those two lexicon words reproduces `0.2843 / 0.4154 = 68.4%` of the observed score increase. The judge remains useful as a transparent diagnostic, but the full `+0.4154` shift is not evidence that the unbiased suffix independently moved by the same amount.
 
 ## Validation
 
-`SteeringKit` has eight tests, including hand-computed three-token KL cases, speculative-read-ahead accounting, and golden values generated independently in Python. The Core ML export was compared with its PyTorch source on 20 sentences; the minimum cosine agreement was `0.9999735`, with all 20 cases above the `0.999` gate. See [`docs/coreml-parity.md`](docs/coreml-parity.md) and the raw [`docs/coreml-parity.json`](docs/coreml-parity.json).
+`SteeringKit` has ten tests, including hand-computed three-token KL cases, speculative-read-ahead accounting, randomized budget-bound checks, and high-precision golden values generated independently with Python `decimal` through direct normalization plus entropy/cross-entropy. `make verify-kl-fixture` regenerates and compares the committed fixture. The Core ML export was compared with its PyTorch source on 24 inputs, including empty, non-Latin, near-limit, and truncated cases. The minimum cosine agreement was `0.999914432`, above the `0.9999` gate; the report also records maximum absolute delta, relative L2 error, both embedding norms, compute units, and the model-weight SHA-256. See [`docs/coreml-parity.md`](docs/coreml-parity.md) and the raw [`docs/coreml-parity.json`](docs/coreml-parity.json).
 
 The Core ML package is 43 MB in FP16, exported from `all-MiniLM-L6-v2` revision `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`. It accepts fixed 128-token inputs and performs masked mean pooling plus L2 normalization in the graph, returning one 384-dimensional embedding to Swift.
 
+To reproduce the Python export and parity gate in a separate environment, use the pinned dependencies in [`Scripts/requirements-coreml.txt`](Scripts/requirements-coreml.txt):
+
+```bash
+python3 -m venv .venv-coreml
+source .venv-coreml/bin/activate
+python -m pip install -r Scripts/requirements-coreml.txt
+python Scripts/export_topic_encoder.py
+```
+
+The exporter stages the model, centroids, and reports in a temporary directory and replaces the committed artifacts only after every validation case passes.
+
 ## Relationship to the audit
 
-The demo preserves the audit controller's important support rule: only lexicon strings that map to exactly one tokenizer token receive bias. There is one deliberate deviation. The paper controller used regression-discovered **signed** token deltas on its audited model; this demo uses uniform positive weights for a new Qwen model and three human-readable lexicons. It is therefore an interface port of the output-control construction, not a byte-for-byte reproduction of the paper experiment.
+The demo preserves the audit controller's important support rule: only lexicon strings that map to exactly one tokenizer token receive bias. There is one deliberate deviation. The audit controller used magnitude-thresholded mean-logit deltas with a calibrated scalar on its audited model; this demo uses uniform positive weights for a new Qwen model and three human-readable lexicons. It is therefore an interface port of the output-control construction, not a byte-for-byte reproduction of the paper experiment.
 
-The paper result, stored artifacts, checker, and controller source are in [`Ian2x/steering-output-equivalence-audit`](https://github.com/Ian2x/steering-output-equivalence-audit). The 95.9% figure above is the audit's `rho = 0.9586776859504132` point estimate for its Activation Addition cell, not a result measured by this app.
+The audit result, stored artifacts, checker, and controller source are in [`Ian2x/steering-output-equivalence-audit`](https://github.com/Ian2x/steering-output-equivalence-audit). The 95.9% figure above is its `rho = 0.9586776859504132` point estimate over `n = 150` evaluation prompts; the stored 95% interval is `[0.8527131782945736, 1.0714446589446587]`, so `rho_lo < 0.9` fails the audit's dissolution rule and the stored verdict is `Mixed`. None of those numbers is measured by this app.
 
 ## Scope and limitations
 
@@ -85,11 +120,11 @@ The paper result, stored artifacts, checker, and controller source are in [`Ian2
 - MLX is Metal-backed. The project does not contain a standalone Metal kernel or justify a standalone Metal skill claim.
 - The judge score is a diagnostic cosine similarity, not a human preference evaluation or proof of causal control.
 - Initial model acquisition uses the network. Once cached, inference, prompt processing, KL measurement, and judging are local.
-- Engineering failures and no-shift trials were retained under [`docs/engineering-evidence`](docs/engineering-evidence) and [`docs/negative-results`](docs/negative-results) instead of being relabeled as successful experiments.
+- Intermediate, superseded, and no-shift runs are retained under [`docs/engineering-evidence`](docs/engineering-evidence) and [`docs/negative-results`](docs/negative-results) rather than pruned.
 
 ## Implementation provenance
 
-Ian wrote the product and research handoff, selected the claim boundaries, and directed this build. Codex generated most of the first implementation, tests, documentation, and build automation under that specification. Ian must complete a substantive hands-on code-editing and authoring pass before presenting this as personal Swift implementation experience. The repository and any résumé language should retain that distinction.
+Ian specified the product and research boundaries, chose the claim ceilings, directed the build, and reviewed the result. Codex generated most of the implementation, tests, and documentation under that specification. Résumé language describes this as directed, agent-assisted work and makes no claim of personal Swift implementation experience.
 
 ## License and acknowledgements
 

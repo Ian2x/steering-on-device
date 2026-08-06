@@ -39,20 +39,7 @@ public struct KLMeter: Sendable {
         return history[count - 1]
     }
 
-    @discardableResult
-    public mutating func record(
-        biasedLogits: [Double],
-        baseLogits: [Double]
-    ) throws -> KLReading {
-        let value = try Self.divergence(
-            biasedLogits: biasedLogits,
-            baseLogits: baseLogits
-        )
-        return try record(divergence: value)
-    }
-
-    /// Records a KL value computed on an accelerator without copying its full
-    /// vocabulary logits back to the CPU.
+    /// Records a KL value computed by a validated distribution-comparison path.
     @discardableResult
     public mutating func record(divergence value: Double) throws -> KLReading {
         guard value.isFinite else { throw KLMeterError.nonFiniteLogit }
@@ -87,16 +74,31 @@ public struct KLMeter: Sendable {
 
         let biasedLogZ = logSumExp(biasedLogits)
         let baseLogZ = logSumExp(baseLogits)
-        var value = 0.0
+        var sum = 0.0
+        var compensation = 0.0
 
         for index in biasedLogits.indices {
-            let logP = biasedLogits[index] - biasedLogZ
-            let logQ = baseLogits[index] - baseLogZ
-            value += Foundation.exp(logP) * (logP - logQ)
+            let p = Foundation.exp(biasedLogits[index] - biasedLogZ)
+            let q = Foundation.exp(baseLogits[index] - baseLogZ)
+            let term: Double
+            if p > 0, q > 0 {
+                // q * ((1+r) log(1+r) - r) is algebraically equivalent to
+                // KL after sum(p-q)=0, but avoids subtracting nearly equal
+                // log probabilities when the distributions are close.
+                let r = (p - q) / q
+                term = q * ((1 + r) * Foundation.log1p(r) - r)
+            } else {
+                let logP = biasedLogits[index] - biasedLogZ
+                let logQ = baseLogits[index] - baseLogZ
+                term = p * (logP - logQ)
+            }
+            let corrected = term - compensation
+            let next = sum + corrected
+            compensation = (next - sum) - corrected
+            sum = next
         }
 
-        // Roundoff can make mathematically-zero KL a tiny negative value.
-        return max(0, value)
+        return max(0, sum)
     }
 
     private static func logSumExp(_ values: [Double]) -> Double {

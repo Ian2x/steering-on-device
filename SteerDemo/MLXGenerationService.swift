@@ -32,11 +32,18 @@ actor MLXGenerationService {
     static let modelID = "mlx-community/Qwen2.5-0.5B-Instruct-4bit"
     static let modelRevision = "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3"
     static let samplingTemperature: Float = 0.7
+    static let samplingSeed: UInt64 = 42
 
     private var container: ModelContainer?
+    private var loadingTask: Task<ModelContainer, Error>?
 
     func loadModel(progress: @escaping @Sendable (Double) -> Void) async throws {
         guard container == nil else {
+            progress(1)
+            return
+        }
+        if let loadingTask {
+            container = try await loadingTask.value
             progress(1)
             return
         }
@@ -45,12 +52,27 @@ actor MLXGenerationService {
             revision: Self.modelRevision,
             defaultPrompt: "Describe a quiet morning routine."
         )
-        container = try await LLMModelFactory.shared.loadContainer(
-            configuration: configuration
-        ) { download in
-            progress(download.fractionCompleted)
+        let task = Task {
+            try await LLMModelFactory.shared.loadContainer(
+                configuration: configuration
+            ) { download in
+                progress(download.fractionCompleted)
+            }
         }
-        progress(1)
+        loadingTask = task
+        do {
+            let loaded = try await withTaskCancellationHandler {
+                try await task.value
+            } onCancel: {
+                task.cancel()
+            }
+            container = loaded
+            loadingTask = nil
+            progress(1)
+        } catch {
+            loadingTask = nil
+            throw error
+        }
     }
 
     func generate(
@@ -96,7 +118,7 @@ actor MLXGenerationService {
                     ),
                     sampler: SeededCategoricalSampler(
                         temperature: Self.samplingTemperature,
-                        seed: 42
+                        seed: Self.samplingSeed
                     ),
                     maxTokens: maxTokens
                 )
@@ -107,7 +129,7 @@ actor MLXGenerationService {
                     processor: nil,
                     sampler: SeededCategoricalSampler(
                         temperature: Self.samplingTemperature,
-                        seed: 42
+                        seed: Self.samplingSeed
                     ),
                     maxTokens: maxTokens
                 )
@@ -123,6 +145,8 @@ actor MLXGenerationService {
             let start = ContinuousClock.now
 
             for token in iterator {
+                try Task.checkCancellation()
+                try sink.throwIfFailed()
                 if stopFlag.isStopped() { break }
                 if token == context.tokenizer.unknownTokenId
                     || token == context.tokenizer.eosTokenId
@@ -153,6 +177,8 @@ actor MLXGenerationService {
                     )
                 )
             }
+            try sink.throwIfFailed()
+            try Task.checkCancellation()
             Stream.gpu.synchronize()
             let seconds = max(0.001, start.duration(to: .now).seconds)
             return GenerationSummary(

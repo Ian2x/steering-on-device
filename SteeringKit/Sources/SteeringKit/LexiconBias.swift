@@ -68,7 +68,7 @@ public enum LexiconBias {
     /// The audit's `resolve_a0_token_ids` keeps a leading-space token string
     /// only when it encodes to one token; multi-token entries are reported and
     /// omitted. Duplicate token IDs are kept once. `tokenWeights` can carry
-    /// signed regression-discovered values; demo lexicons default to +1.
+    /// signed mean-logit-delta weights; demo lexicons default to +1.
     public static func build(
         for lexicon: SteeringLexicon,
         strength: Double,
@@ -107,4 +107,3 @@ public enum LexiconBias {
         return BiasConstruction(biases: biases, droppedTokenStrings: dropped)
     }
 }
-

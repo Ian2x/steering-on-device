@@ -1,27 +1,45 @@
 {
   "baseline" : {
-    "residentMemoryBytes" : 538607616,
+    "residentMemoryBytes" : 539721728,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 69.63613081527997,
+    "tokensPerSecond" : 67.6400403145209,
     "topicScore" : -0.03826335192825014
   },
   "biasStrength" : 16,
-  "cumulativeKL" : 7.999999995389203,
+  "cumulativeKL" : 7.999999999820847,
   "droppedTokenStrings" : [
 
   ],
   "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999936641429885,
+      "perStep" : 7.9999936641429885,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999820847,
+      "perStep" : 6.335677858447141e-06,
+      "step" : 2
+    }
+  ],
   "lexicon" : "wedding",
+  "maxTokens" : 64,
   "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
   "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe a quiet morning routine in two short paragraphs.",
+  "seed" : 42,
   "status" : "Complete — all inference stayed on-device",
   "steered" : {
-    "residentMemoryBytes" : 541638656,
+    "residentMemoryBytes" : 548945920,
     "text" : " honeymooning with my own diary for the first time! In the morning, I wake up feeling refreshed after a long night of rest and relaxation. I start the day with a healthy breakfast on the terrace with open windows to the ocean and a view of the harbour. I then snack on some fresh fruit and vegetables,",
     "tokenCount" : 64,
-    "tokensPerSecond" : 67.76800561019128,
+    "tokensPerSecond" : 64.59846981042293,
     "topicScore" : 0.22614440838417324
   },
-  "timestamp" : "2026-08-06T07:47:08Z"
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T12:45:09Z"
 }

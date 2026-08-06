@@ -1,0 +1,14 @@
+{
+  "lexicon": "wedding",
+  "observed_shift": 0.41535523601002095,
+  "prefix_fraction_of_observed_shift": 0.6844136566396336,
+  "prefix_only_shift": 0.28427479588203647,
+  "removed_prefix": "honeymoon ceremony: ",
+  "scores": {
+    "baseline": -0.03384056850600483,
+    "prefix_plus_baseline": 0.25043422737603166,
+    "steered": 0.38151466750401614,
+    "steered_prefix_removed": 0.08407795277885169
+  },
+  "source_run": "docs/final-demo-run.json"
+}

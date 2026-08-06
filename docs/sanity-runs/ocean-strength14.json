@@ -1,27 +1,51 @@
 {
   "baseline" : {
-    "residentMemoryBytes" : 537624576,
+    "residentMemoryBytes" : 538673152,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 70.05976700201394,
+    "tokensPerSecond" : 67.69818539848113,
     "topicScore" : -0.017548133593150595
   },
   "biasStrength" : 14,
-  "cumulativeKL" : 7.999999999985246,
+  "cumulativeKL" : 7.999999999423843,
   "droppedTokenStrings" : [
 
   ],
   "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.0016410496434354034,
+      "perStep" : 0.0016410496434354034,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999946522831759,
+      "perStep" : 7.998305473188323,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999423843,
+      "perStep" : 5.3476592084483575e-05,
+      "step" : 3
+    }
+  ],
   "lexicon" : "ocean",
+  "maxTokens" : 64,
   "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
   "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe a quiet morning routine in two short paragraphs.",
+  "seed" : 42,
   "status" : "Complete — all inference stayed on-device",
   "steered" : {
-    "residentMemoryBytes" : 540540928,
+    "residentMemoryBytes" : 546619392,
     "text" : "A sea of life and work in the morning follows a routine of quiet reflection and deep thinking. The first step is to start with a short breakfast and ensure that you have a healthy breakfast to sustain you through the day. As you sit down to eat, you may think about your goals for the day and the things you",
     "tokenCount" : 64,
-    "tokensPerSecond" : 67.30510996958256,
+    "tokensPerSecond" : 60.86530970679465,
     "topicScore" : 0.2979137515422498
   },
-  "timestamp" : "2026-08-06T07:47:21Z"
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T12:45:25Z"
 }

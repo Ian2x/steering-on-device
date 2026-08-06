@@ -3,7 +3,8 @@ import Foundation
 import SteeringKit
 import Tokenizers
 
-final class CoreMLTopicScorer: TopicScorer, @unchecked Sendable {
+@MainActor
+final class CoreMLTopicScorer {
     private struct CentroidFile: Decodable {
         let modelID: String
         let dimensions: Int
@@ -86,8 +87,15 @@ final class CoreMLTopicScorer: TopicScorer, @unchecked Sendable {
     }
 
     private func embed(_ text: String) throws -> [Double] {
-        var ids = tokenizer.encode(text: text)
-        ids = Array(ids.prefix(maxLength))
+        guard let clsID = tokenizer.convertTokenToId("[CLS]"),
+              let sepID = tokenizer.convertTokenToId("[SEP]")
+        else {
+            throw DemoError.missingResource("MiniLM [CLS]/[SEP] tokens")
+        }
+        let content = tokenizer.encode(text: text, addSpecialTokens: false)
+        var ids = [clsID]
+            + Array(content.prefix(maxLength - 2))
+            + [sepID]
         let attentionCount = ids.count
         let padID = tokenizer.convertTokenToId("[PAD]") ?? 0
         ids += Array(repeating: padID, count: maxLength - ids.count)
@@ -116,4 +124,3 @@ final class CoreMLTopicScorer: TopicScorer, @unchecked Sendable {
         return (0 ..< dimensions).map { Double(truncating: array[$0]) }
     }
 }
-

@@ -1,27 +1,51 @@
 {
   "baseline" : {
-    "residentMemoryBytes" : 541278208,
+    "residentMemoryBytes" : 533757952,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 69.95087228918086,
+    "tokensPerSecond" : 67.25085593789593,
     "topicScore" : -0.03826335192825014
   },
   "biasStrength" : 14,
-  "cumulativeKL" : 7.999999997302837,
+  "cumulativeKL" : 7.999999998847121,
   "droppedTokenStrings" : [
 
   ],
   "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 1.2297085239724774,
+      "perStep" : 1.2297085239724774,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999996046823964,
+      "perStep" : 6.770287522851486,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999998847121,
+      "perStep" : 3.952023158042994e-06,
+      "step" : 3
+    }
+  ],
   "lexicon" : "wedding",
+  "maxTokens" : 64,
   "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
   "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe a quiet morning routine in two short paragraphs.",
+  "seed" : 42,
   "status" : "Complete — all inference stayed on-device",
   "steered" : {
-    "residentMemoryBytes" : 544309248,
+    "residentMemoryBytes" : 543178752,
     "text" : " honeymoon ceremony: I start my day with a quiet morning prayer and meditation session, which gives me a chance to clear my mind and prepare for the day ahead.\n\nMorning routine: I start my day with a simple breakfast consisting of a balanced meal of rice, eggs, and milk. I enjoy the warmth of the sun on",
     "tokenCount" : 64,
-    "tokensPerSecond" : 68.13942764211629,
+    "tokensPerSecond" : 60.470567309587686,
     "topicScore" : 0.4211666341963682
   },
-  "timestamp" : "2026-08-06T07:47:01Z"
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T12:45:02Z"
 }

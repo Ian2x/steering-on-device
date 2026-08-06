@@ -1,27 +1,141 @@
 {
   "baseline" : {
-    "residentMemoryBytes" : 537395200,
+    "residentMemoryBytes" : 538361856,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 69.33184414309767,
+    "tokensPerSecond" : 65.07154120293133,
     "topicScore" : -0.017548133593150595
   },
   "biasStrength" : 12,
-  "cumulativeKL" : 7.999999998819561,
+  "cumulativeKL" : 7.999999999558399,
   "droppedTokenStrings" : [
 
   ],
   "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 8.00835658777087e-05,
+      "perStep" : 8.00835658777087e-05,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.6768897046627785,
+      "perStep" : 0.6768096210969008,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.6802856440750347,
+      "perStep" : 0.003395939412256154,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.7350708302150577,
+      "perStep" : 0.05478518614002298,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.7504952649894946,
+      "perStep" : 0.015424434774436837,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.7836979251161909,
+      "perStep" : 0.03320266012669626,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.7983420508358748,
+      "perStep" : 0.014644125719683994,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.7983421985297878,
+      "perStep" : 1.4769391300358165e-07,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.8029286945602446,
+      "perStep" : 0.004586496030456794,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.8034177989135602,
+      "perStep" : 0.0004891043533155818,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.8034209174165362,
+      "perStep" : 3.118502975949235e-06,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.1355550804970858,
+      "perStep" : 0.33213416308054955,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.1357983204394102,
+      "perStep" : 0.00024323994232449601,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.135826925443047,
+      "perStep" : 2.8605003636879492e-05,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.1799289499087353,
+      "perStep" : 0.04410202446568829,
+      "step" : 15
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.009569541576955,
+      "perStep" : 2.8296405916682197,
+      "step" : 16
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999966561733217,
+      "perStep" : 3.990397020156262,
+      "step" : 17
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999558399,
+      "perStep" : 3.343782518202883e-05,
+      "step" : 18
+    }
+  ],
   "lexicon" : "ocean",
+  "maxTokens" : 64,
   "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
   "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe a quiet morning routine in two short paragraphs.",
+  "seed" : 42,
   "status" : "Complete — all inference stayed on-device",
   "steered" : {
-    "residentMemoryBytes" : 540196864,
+    "residentMemoryBytes" : 546324480,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 65.90411262803602,
+    "tokensPerSecond" : 33.37772976444663,
     "topicScore" : -0.017548133593150595
   },
-  "timestamp" : "2026-08-06T07:47:14Z"
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T12:45:18Z"
 }

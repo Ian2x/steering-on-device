@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		01994A214B6BD85A6F70A96C /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 95F3B36FE52577854BD2F01B /* Tokenizers */; };
 		24AA9D076EAF05B2F2BFC7E6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E8E7E3BEC689C86EAB13C1 /* ContentView.swift */; };
+		4F7DA87F5C88A4B961DC1346 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 674CA37C2F463A87A7A0177C /* Assets.xcassets */; };
 		5E347E89D9F097D009CB22C9 /* topic-centroids.json in Resources */ = {isa = PBXBuildFile; fileRef = 39589A7D62739454C500C098 /* topic-centroids.json */; };
 		5E91A84C22A07D8685E0F2A5 /* SparseBiasProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A904A08426519DE6CDC3A716 /* SparseBiasProcessor.swift */; };
 		6587950D9CD3B0FDCC59FABF /* CoreMLTopicScorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF1CB0E0B1DA3A2687F801E /* CoreMLTopicScorer.swift */; };
@@ -31,6 +32,7 @@
 		24BAF6186EEB72138B4EFCDB /* GenerationModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationModels.swift; sourceTree = "<group>"; };
 		392CFDCE35F96DBD3E187603 /* MLXGenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLXGenerationService.swift; sourceTree = "<group>"; };
 		39589A7D62739454C500C098 /* topic-centroids.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "topic-centroids.json"; sourceTree = "<group>"; };
+		674CA37C2F463A87A7A0177C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8CF1CB0E0B1DA3A2687F801E /* CoreMLTopicScorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLTopicScorer.swift; sourceTree = "<group>"; };
 		93138D70D4C955AB7CE04B2C /* SteeringKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SteeringKit; path = SteeringKit; sourceTree = SOURCE_ROOT; };
 		9C3C0A276E8ECBD52B969E6D /* TopicEncoder.mlpackage */ = {isa = PBXFileReference; path = TopicEncoder.mlpackage; sourceTree = "<group>"; };
@@ -63,6 +65,7 @@
 		016CA0C2E1E6901393F4A7CB /* SteerDemo */ = {
 			isa = PBXGroup;
 			children = (
+				674CA37C2F463A87A7A0177C /* Assets.xcassets */,
 				D2E8E7E3BEC689C86EAB13C1 /* ContentView.swift */,
 				8CF1CB0E0B1DA3A2687F801E /* CoreMLTopicScorer.swift */,
 				F42012678B93CEB5B6F21FA9 /* DemoViewModel.swift */,
@@ -200,6 +203,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F7DA87F5C88A4B961DC1346 /* Assets.xcassets in Resources */,
 				97876751884747096C631021 /* MiniLMTokenizer in Resources */,
 				B1BADB58179FF2D10F88292A /* TopicEncoder.mlpackage in Resources */,
 				AB5E3A7BABD4109C67F83354 /* lexicons.json in Resources */,

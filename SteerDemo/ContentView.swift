@@ -52,6 +52,8 @@ struct ContentView: View {
                 .padding(10)
                 .frame(minHeight: 74, maxHeight: 100)
                 .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
+                .disabled(model.isGenerating)
+                .accessibilityLabel("Prompt")
 
             HStack(spacing: 18) {
                 Picker("Topic", selection: $model.selectedLexiconID) {
@@ -60,6 +62,8 @@ struct ContentView: View {
                     }
                 }
                 .frame(width: 190)
+                .disabled(model.isGenerating)
+                .accessibilityLabel("Topic lexicon")
 
                 VStack(alignment: .leading, spacing: 3) {
                     HStack {
@@ -69,8 +73,11 @@ struct ContentView: View {
                             .monospacedDigit()
                     }
                     Slider(value: $model.strength, in: 0 ... 20, step: 0.5)
+                        .accessibilityLabel("Bias strength")
+                        .accessibilityValue(model.strength.formatted(.number.precision(.fractionLength(1))))
                 }
                 .frame(maxWidth: 320)
+                .disabled(model.isGenerating)
 
                 VStack(alignment: .leading, spacing: 3) {
                     HStack {
@@ -80,8 +87,11 @@ struct ContentView: View {
                             .monospacedDigit()
                     }
                     Slider(value: $model.klBudget, in: 0.1 ... 20, step: 0.1)
+                        .accessibilityLabel("KL budget")
+                        .accessibilityValue("\(model.klBudget, specifier: "%.2f") nats")
                 }
                 .frame(maxWidth: 300)
+                .disabled(model.isGenerating)
 
                 Spacer()
                 if model.isGenerating {
@@ -98,7 +108,10 @@ struct ContentView: View {
 
             HStack(spacing: 8) {
                 if model.modelProgress > 0, model.modelProgress < 1 {
-                    ProgressView(value: model.modelProgress).frame(width: 120)
+                    ProgressView(value: model.modelProgress)
+                        .frame(width: 120)
+                        .accessibilityLabel("Model download progress")
+                        .accessibilityValue("\(Int(model.modelProgress * 100)) percent")
                 }
                 Text(model.status).font(.caption).foregroundStyle(.secondary)
             }
@@ -132,6 +145,8 @@ struct ContentView: View {
                 let cumulative = model.klHistory.last?.cumulative ?? 0
                 ProgressView(value: min(cumulative, model.klBudget), total: model.klBudget)
                     .tint(cumulative > model.klBudget ? .red : .orange)
+                    .accessibilityLabel("Cumulative KL budget")
+                    .accessibilityValue("\(cumulative, specifier: "%.3f") of \(model.klBudget, specifier: "%.2f") nats")
                 HStack {
                     Text("Cumulative KL")
                     Spacer()
@@ -156,7 +171,7 @@ struct ContentView: View {
 
     private var explanation: some View {
         DisclosureGroup("What am I looking at?") {
-            Text("The app runs the same prompt twice with identical seeded sampling. The baseline uses the model's logits unchanged; the steered pass adds a fixed sparse bias to single-token topic terms at every generation step. The orange trace is KL(biased ‖ base) computed from those two distributions before sampling. The topic score comes from a separate MiniLM encoder running as a Core ML model on-device. This is an interface demonstration of the audit's output-control result, not an ActAdd implementation or a training system.")
+            Text("The app runs the same prompt twice with identical seeded sampling. The baseline uses the model's logits unchanged; the steered pass applies a fixed sparse bias to single-token topic terms until its cumulative KL budget is exhausted, then continues unbiased from the resulting steered prefix. The orange trace is KL(biased ‖ base) computed from those two distributions before sampling. The topic score comes from a separate MiniLM encoder running as a Core ML model on-device. This is an interface demonstration of the audit's output-control result, not an ActAdd implementation or a training system.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
@@ -204,13 +219,19 @@ private struct GenerationPaneView: View {
                     Text(subtitle).font(.caption).foregroundStyle(.secondary)
                 }
                 Spacer()
-                if state.isActive { ProgressView().controlSize(.small) }
+                if state.isActive {
+                    ProgressView()
+                        .controlSize(.small)
+                        .accessibilityLabel("\(title) generation in progress")
+                }
                 if let score = state.topicScore {
                     Text("topic \(score, specifier: "%.3f")")
                         .font(.caption.monospacedDigit())
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(tint.opacity(0.13), in: Capsule())
+                        .accessibilityLabel("\(title) topic score")
+                        .accessibilityValue(score.formatted(.number.precision(.fractionLength(3))))
                 }
             }
             ScrollView {
@@ -221,12 +242,16 @@ private struct GenerationPaneView: View {
             }
             .padding(12)
             .background(.quaternary.opacity(0.38), in: RoundedRectangle(cornerRadius: 10))
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("\(title) generated text")
+            .accessibilityValue(state.text.isEmpty ? "No generation yet" : state.text)
+            .accessibilityAddTraits(.updatesFrequently)
 
             HStack {
                 Label("\(state.tokenCount) tokens", systemImage: "text.word.spacing")
                 Spacer()
                 Text("\(state.tokensPerSecond, specifier: "%.1f") tok/s")
-                Text("•")
+                Text("•").accessibilityHidden(true)
                 Text(formatMemory(state.residentMemoryBytes))
             }
             .font(.caption.monospacedDigit())
@@ -263,16 +288,29 @@ private struct KLChartView: View {
                     y: .value("KL", reading.perStep)
                 )
                 .foregroundStyle(.orange)
-                .interpolationMethod(.catmullRom)
+                .interpolationMethod(.linear)
+                PointMark(
+                    x: .value("Step", reading.step),
+                    y: .value("KL", reading.perStep)
+                )
+                .foregroundStyle(.orange)
             }
             .chartXAxisLabel("generation step")
             .chartYAxisLabel("nats")
             .frame(height: 128)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Per-step KL chart")
+            .accessibilityValue(chartAccessibilityValue)
             Text(history.isEmpty ? "The trace starts with the steered pass." : "Measured before each fixed-seed sample.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
         .cardStyle()
+    }
+
+    private var chartAccessibilityValue: String {
+        guard let latest = history.last else { return "No measurements yet" }
+        return "\(history.count) measured steps; latest KL \(latest.perStep.formatted(.number.precision(.fractionLength(4)))) nats; cumulative \(latest.cumulative.formatted(.number.precision(.fractionLength(4)))) of \(budget.formatted(.number.precision(.fractionLength(2)))) nats"
     }
 }
 

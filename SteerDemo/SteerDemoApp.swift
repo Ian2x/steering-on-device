@@ -5,7 +5,7 @@ struct SteerDemoApp: App {
     @StateObject private var model = DemoViewModel()
 
     var body: some Scene {
-        WindowGroup {
+        Window("SteerDemo", id: "main") {
             ContentView()
                 .environmentObject(model)
                 .frame(minWidth: 1_080, minHeight: 760)

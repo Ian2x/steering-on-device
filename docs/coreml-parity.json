@@ -3,8 +3,11 @@
     "model_id": "sentence-transformers/all-MiniLM-L6-v2",
     "model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
     "max_length": 128,
-    "minimum_cosine": 0.9999735459440074,
-    "threshold": 0.999,
+    "validation_cases": 24,
+    "minimum_cosine": 0.9999144316144049,
+    "threshold": 0.9999,
+    "compute_units": "ALL",
+    "weight_sha256": "f6d040d94a3a476264c26cb3b6d260aa695784121667e6bff6690f56de558d41",
     "coremltools": "9.0",
     "torch": "2.7.0",
     "python": "3.11.14",
@@ -14,102 +17,218 @@
     {
       "index": 1,
       "sentence": "The bride and groom exchanged vows beside the lake.",
-      "cosine": 0.9999844648963601
+      "cosine": 0.9999844648963601,
+      "max_abs_delta": 0.0008779559284448624,
+      "relative_l2": 0.005577348086582724,
+      "torch_norm": 1.0000000700420366,
+      "coreml_norm": 1.0001764873861816
     },
     {
       "index": 2,
       "sentence": "Their wedding reception continued long after sunset.",
-      "cosine": 0.9999798635509065
+      "cosine": 0.9999798635509065,
+      "max_abs_delta": 0.0011953189969062805,
+      "relative_l2": 0.006350100039661382,
+      "torch_norm": 1.0000000380765877,
+      "coreml_norm": 0.9997534555913622
     },
     {
       "index": 3,
       "sentence": "A quiet morning began with coffee and a newspaper.",
-      "cosine": 0.9999848603366869
+      "cosine": 0.9999848603366869,
+      "max_abs_delta": 0.000971134752035141,
+      "relative_l2": 0.005514288566486578,
+      "torch_norm": 1.000000043224389,
+      "coreml_norm": 1.0003430669150246
     },
     {
       "index": 4,
       "sentence": "The software release includes a smaller inference engine.",
-      "cosine": 0.9999811488950583
+      "cosine": 0.9999811488950583,
+      "max_abs_delta": 0.0010502827353775501,
+      "relative_l2": 0.006140712542674576,
+      "torch_norm": 0.9999999675249648,
+      "coreml_norm": 0.9999005185804357
     },
     {
       "index": 5,
       "sentence": "Waves rolled toward the beach under a bright moon.",
-      "cosine": 0.9999790464496171
+      "cosine": 0.9999790464496171,
+      "max_abs_delta": 0.0010602772235870361,
+      "relative_l2": 0.0064788685939965555,
+      "torch_norm": 0.9999999652716766,
+      "coreml_norm": 0.9997161875621028
     },
     {
       "index": 6,
       "sentence": "Sailors watched the tide from the harbor.",
-      "cosine": 0.9999839474677855
+      "cosine": 0.9999839474677855,
+      "max_abs_delta": 0.0009763911366462708,
+      "relative_l2": 0.005667559132379943,
+      "torch_norm": 1.0000000024603344,
+      "coreml_norm": 1.000112089590704
     },
     {
       "index": 7,
       "sentence": "The telescope revealed a distant spiral galaxy.",
-      "cosine": 0.999980950635662
+      "cosine": 0.999980950635662,
+      "max_abs_delta": 0.0008524656295776367,
+      "relative_l2": 0.006172463245080679,
+      "torch_norm": 0.9999999946655639,
+      "coreml_norm": 1.0000115510838326
     },
     {
       "index": 8,
       "sentence": "An astronaut prepared the spacecraft for orbit.",
-      "cosine": 0.9999807907208136
+      "cosine": 0.9999807907208136,
+      "max_abs_delta": 0.0009889677166938782,
+      "relative_l2": 0.0062075574635388564,
+      "torch_norm": 1.0000000167215948,
+      "coreml_norm": 1.0003207784559731
     },
     {
       "index": 9,
       "sentence": "Please describe a practical way to learn a new language.",
-      "cosine": 0.9999801509306973
+      "cosine": 0.9999801509306973,
+      "max_abs_delta": 0.0009698439389467239,
+      "relative_l2": 0.006300777817838744,
+      "torch_norm": 0.9999999955666269,
+      "coreml_norm": 1.0000254950258882
     },
     {
       "index": 10,
       "sentence": "A good friend listens carefully and keeps promises.",
-      "cosine": 0.9999792616720388
+      "cosine": 0.9999792616720388,
+      "max_abs_delta": 0.001033223234117031,
+      "relative_l2": 0.00644048179951497,
+      "torch_norm": 0.9999999514783674,
+      "coreml_norm": 1.0000390459604291
     },
     {
       "index": 11,
       "sentence": "The ceremony ended when the newlyweds left the altar.",
-      "cosine": 0.9999854337216799
+      "cosine": 0.9999854337216799,
+      "max_abs_delta": 0.0008716881275177002,
+      "relative_l2": 0.005399138356269589,
+      "torch_norm": 1.0000000240210243,
+      "coreml_norm": 0.9998499936231805
     },
     {
       "index": 12,
       "sentence": "Coral reefs support diverse marine ecosystems.",
-      "cosine": 0.9999819497152906
+      "cosine": 0.9999819497152906,
+      "max_abs_delta": 0.0008831843733787537,
+      "relative_l2": 0.006009781149112289,
+      "torch_norm": 0.9999999930214246,
+      "coreml_norm": 1.0001131900367142
     },
     {
       "index": 13,
       "sentence": "Mars appears red because iron minerals oxidize.",
-      "cosine": 0.9999819561475396
+      "cosine": 0.9999819561475396,
+      "max_abs_delta": 0.0010706037282943726,
+      "relative_l2": 0.006007866249739089,
+      "torch_norm": 1.000000012940517,
+      "coreml_norm": 0.9998978410034143
     },
     {
       "index": 14,
       "sentence": "A rainy afternoon can be a good time to read.",
-      "cosine": 0.9999816581048921
+      "cosine": 0.9999816581048921,
+      "max_abs_delta": 0.0009677299531176686,
+      "relative_l2": 0.006057621643544858,
+      "torch_norm": 0.9999999891809913,
+      "coreml_norm": 1.0000880718392215
     },
     {
       "index": 15,
       "sentence": "The team measured latency before choosing an optimization.",
-      "cosine": 0.9999787022553883
+      "cosine": 0.9999787022553883,
+      "max_abs_delta": 0.001149902120232582,
+      "relative_l2": 0.006530526421079831,
+      "torch_norm": 1.0000000201411394,
+      "coreml_norm": 0.9997490711187703
     },
     {
       "index": 16,
       "sentence": "Fresh bread requires patience while the dough rises.",
-      "cosine": 0.9999761472988802
+      "cosine": 0.9999761472988802,
+      "max_abs_delta": 0.001269899308681488,
+      "relative_l2": 0.00690938491032407,
+      "torch_norm": 0.999999996825046,
+      "coreml_norm": 0.9997896862190828
     },
     {
       "index": 17,
       "sentence": "The engagement party included family and close friends.",
-      "cosine": 0.999979491441655
+      "cosine": 0.999979491441655,
+      "max_abs_delta": 0.0009156782180070877,
+      "relative_l2": 0.006404600421384415,
+      "torch_norm": 0.9999999539346047,
+      "coreml_norm": 1.0000264609945486
     },
     {
       "index": 18,
       "sentence": "Ocean currents redistribute heat around the planet.",
-      "cosine": 0.9999814442366567
+      "cosine": 0.9999814442366567,
+      "max_abs_delta": 0.0010850057005882263,
+      "relative_l2": 0.006094206535223163,
+      "torch_norm": 1.0000000473795212,
+      "coreml_norm": 1.0001493335857456
     },
     {
       "index": 19,
       "sentence": "Stars form when dense clouds of gas collapse.",
-      "cosine": 0.9999825117526411
+      "cosine": 0.9999825117526411,
+      "max_abs_delta": 0.001067856326699257,
+      "relative_l2": 0.005916282237478923,
+      "torch_norm": 0.9999999875464487,
+      "coreml_norm": 0.9998206146685902
     },
     {
       "index": 20,
       "sentence": "A short walk through the park cleared her mind.",
-      "cosine": 0.9999735459440074
+      "cosine": 0.9999735459440074,
+      "max_abs_delta": 0.0010427674278616905,
+      "relative_l2": 0.007277617338235674,
+      "torch_norm": 1.0000000037294792,
+      "coreml_norm": 1.0002108300017754
+    },
+    {
+      "index": 21,
+      "sentence": "A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling. A nearly full context checks stable padding and pooling.",
+      "cosine": 0.9999805389546507,
+      "max_abs_delta": 0.0011102855205535889,
+      "relative_l2": 0.00623882781111054,
+      "torch_norm": 1.0000000886336966,
+      "coreml_norm": 1.000016130970513
+    },
+    {
+      "index": 22,
+      "sentence": "Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically. Tokens beyond the fixed context must be truncated deterministically.",
+      "cosine": 0.9999870154630008,
+      "max_abs_delta": 0.0007565468549728394,
+      "relative_l2": 0.005097909173369305,
+      "torch_norm": 1.0000000720901223,
+      "coreml_norm": 1.0001277024261865
+    },
+    {
+      "index": 23,
+      "sentence": "",
+      "cosine": 0.9999144316144049,
+      "max_abs_delta": 0.0017275027930736542,
+      "relative_l2": 0.013084598534350157,
+      "torch_norm": 1.0000000060637115,
+      "coreml_norm": 1.0001924117122791
+    },
+    {
+      "index": 24,
+      "sentence": "\u6d77\u8fba\u3067\u53cb\u4eba\u305f\u3061\u306f\u9759\u304b\u306a\u7d50\u5a5a\u5f0f\u3092\u795d\u3044\u307e\u3057\u305f\u3002",
+      "cosine": 0.999984306736594,
+      "max_abs_delta": 0.0008352331351488829,
+      "relative_l2": 0.005606228611631454,
+      "torch_norm": 0.9999999268255189,
+      "coreml_norm": 0.9997756221878529
     }
   ]
 }

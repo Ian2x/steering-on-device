@@ -31,14 +31,23 @@ for lexicon in wedding ocean; do
     report="$output_dir/${lexicon}-strength${strength}.json"
     stop_app
     rm -f -- "$report"
-    STEERDEMO_AUTORUN=1 \
-      STEERDEMO_LEXICON="$lexicon" \
-      STEERDEMO_BIAS_STRENGTH="$strength" \
-      STEERDEMO_KL_BUDGET=8 \
-      STEERDEMO_MAX_TOKENS=64 \
-      STEERDEMO_REPORT_PATH="$report" \
-      "$executable" >/dev/null 2>&1 &
-    app_pid=$!
+    open -F -n \
+      --env STEERDEMO_AUTORUN=1 \
+      --env STEERDEMO_LEXICON="$lexicon" \
+      --env STEERDEMO_BIAS_STRENGTH="$strength" \
+      --env STEERDEMO_KL_BUDGET=8 \
+      --env STEERDEMO_MAX_TOKENS=64 \
+      --env STEERDEMO_REPORT_PATH="$report" \
+      "$app_path"
+    for _ in {1..50}; do
+      app_pid=$(pgrep -n -f "$executable" || true)
+      [[ -n "$app_pid" ]] && break
+      sleep 0.1
+    done
+    if [[ -z "$app_pid" ]]; then
+      print -u2 "SteerDemo did not launch"
+      exit 1
+    fi
 
     for _ in {1..120}; do
       [[ -f "$report" ]] && break

@@ -1,30 +1,67 @@
 {
   "cases": [
     {
-      "baseLogits": [0.0, 0.0, 0.0],
-      "biasedLogits": [0.2, -0.1, 1.3],
-      "expectedKL": 0.19112320649216766,
+      "baseLogits": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "biasedLogits": [
+        0.2,
+        -0.1,
+        1.3
+      ],
+      "expectedKL": 0.19112320649216777,
       "name": "three-token-small"
     },
     {
-      "baseLogits": [1000.0, 1000.0, 1000.0],
-      "biasedLogits": [1001.0, 1000.0, 999.0],
-      "expectedKL": 0.26621670682816423,
+      "baseLogits": [
+        1000.0,
+        1000.0,
+        1000.0
+      ],
+      "biasedLogits": [
+        1001.0,
+        1000.0,
+        999.0
+      ],
+      "expectedKL": 0.26621670682817083,
       "name": "three-token-shifted"
     },
     {
-      "baseLogits": [-4.2, 0.0, 0.0, 0.0, -1.5],
-      "biasedLogits": [-4.2, 0.0, 3.1, 0.0, -1.5],
-      "expectedKL": 0.7950018518324277,
+      "baseLogits": [
+        -4.2,
+        0.0,
+        0.0,
+        0.0,
+        -1.5
+      ],
+      "biasedLogits": [
+        -4.2,
+        0.0,
+        3.1,
+        0.0,
+        -1.5
+      ],
+      "expectedKL": 0.7950018518324279,
       "name": "sparse-bias-shape"
     },
     {
-      "baseLogits": [1.0, 2.0, 3.0],
-      "biasedLogits": [1.0, 2.000001, 3.0],
-      "expectedKL": 9.273314555539615e-14,
+      "baseLogits": [
+        1.0,
+        2.0,
+        3.0
+      ],
+      "biasedLogits": [
+        1.0,
+        2.000001,
+        3.0
+      ],
+      "expectedKL": 9.241825471064171e-14,
       "name": "near-identical"
     }
   ],
-  "formula": "sum softmax(biased) * (logsoftmax(biased) - logsoftmax(base))",
-  "implementation": "python-logsumexp-kl-v1"
+  "decimal_precision": 80,
+  "formula": "cross_entropy(softmax(biased), softmax(base)) - entropy(softmax(biased))",
+  "implementation": "python-decimal-direct-normalization-v2"
 }

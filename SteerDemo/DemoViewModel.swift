@@ -3,6 +3,14 @@ import SteeringKit
 
 @MainActor
 final class DemoViewModel: ObservableObject {
+    private struct RunConfiguration: Sendable {
+        let prompt: String
+        let lexicon: SteeringLexicon
+        let strength: Double
+        let maxTokens: Int
+        let klBudget: Double
+    }
+
     private struct RunReport: Encodable {
         struct Pane: Encodable {
             let text: String
@@ -17,10 +25,15 @@ final class DemoViewModel: ObservableObject {
         let timestamp: String
         let status: String
         let error: String?
+        let prompt: String
         let lexicon: String
         let biasStrength: Double
+        let maxTokens: Int
+        let seed: UInt64
+        let temperature: Double
         let klBudget: Double
         let cumulativeKL: Double
+        let klHistory: [KLReading]
         let baseline: Pane
         let steered: Pane
         let droppedTokenStrings: [String]
@@ -45,6 +58,7 @@ final class DemoViewModel: ObservableObject {
     private let stopFlag = StopFlag()
     private var topicScorer: CoreMLTopicScorer?
     private var generationTask: Task<Void, Never>?
+    private var activeRun: RunConfiguration?
     private var didStartAutorun = false
     private var stopAfterTokenCount: Int?
 
@@ -105,6 +119,15 @@ final class DemoViewModel: ObservableObject {
               let lexicon = selectedLexicon
         else { return }
 
+        let configuration = RunConfiguration(
+            prompt: prompt,
+            lexicon: lexicon,
+            strength: strength,
+            maxTokens: maxTokens,
+            klBudget: klBudget
+        )
+        activeRun = configuration
+
         baseline = .empty
         steered = .empty
         klHistory = []
@@ -117,36 +140,38 @@ final class DemoViewModel: ObservableObject {
             writeFrameIfRequested(name: "00-start")
             do {
                 status = "Loading Qwen2.5 locally via MLX"
-                try await service.loadModel { [weak self] fraction in
-                    Task { @MainActor in self?.modelProgress = fraction }
-                }
+                try await loadModel()
+                try Task.checkCancellation()
                 if topicScorer == nil {
                     status = "Loading the Core ML topic judge"
                     topicScorer = try await CoreMLTopicScorer.load()
                 }
+                try Task.checkCancellation()
 
                 status = "Generating baseline (fixed seed, temperature 0.7)"
                 baseline.isActive = true
                 let baselineSummary = try await run(
                     pane: .baseline,
-                    lexicon: lexicon
+                    configuration: configuration
                 )
                 baseline.isActive = false
-                try apply(summary: baselineSummary, lexicon: lexicon)
+                try apply(summary: baselineSummary, lexicon: configuration.lexicon)
 
-                if !stopFlag.isStopped() {
+                if !stopFlag.isStopped(), !Task.isCancelled {
                     status = "Generating steered pass from the same prompt"
                     steered.isActive = true
                     let steeredSummary = try await run(
                         pane: .steered,
-                        lexicon: lexicon
+                        configuration: configuration
                     )
                     steered.isActive = false
                     droppedTokenStrings = steeredSummary.droppedTokenStrings
                     klHistory = steeredSummary.klHistory
-                    try apply(summary: steeredSummary, lexicon: lexicon)
+                    try apply(summary: steeredSummary, lexicon: configuration.lexicon)
                 }
                 status = stopFlag.isStopped() ? "Stopped" : "Complete — all inference stayed on-device"
+            } catch is CancellationError {
+                status = "Stopped"
             } catch {
                 errorMessage = error.localizedDescription
                 status = "Generation failed"
@@ -157,34 +182,86 @@ final class DemoViewModel: ObservableObject {
             writeFrameIfRequested(name: "99-final")
             writeSnapshotIfRequested()
             writeRunReportIfRequested()
+            activeRun = nil
+            generationTask = nil
         }
     }
 
     func stop() {
         stopFlag.stop()
-        status = "Stopping after the current token"
+        generationTask?.cancel()
+        status = modelProgress > 0 && modelProgress < 1
+            ? "Cancelling model download"
+            : "Stopping after the current token"
     }
 
     func dismissError() {
         errorMessage = nil
     }
 
+    private func loadModel() async throws {
+        let (stream, continuation) = AsyncStream.makeStream(
+            of: Double.self,
+            bufferingPolicy: .bufferingNewest(1)
+        )
+        let producer = Task {
+            do {
+                try await service.loadModel { fraction in
+                    continuation.yield(fraction)
+                }
+                continuation.finish()
+            } catch {
+                continuation.finish()
+                throw error
+            }
+        }
+        try await withTaskCancellationHandler {
+            for await fraction in stream {
+                try Task.checkCancellation()
+                modelProgress = fraction
+            }
+            try await producer.value
+        } onCancel: {
+            producer.cancel()
+            continuation.finish()
+        }
+    }
+
     private func run(
         pane: GenerationPane,
-        lexicon: SteeringLexicon
+        configuration: RunConfiguration
     ) async throws -> GenerationSummary {
-        try await service.generate(
-            pane: pane,
-            prompt: prompt,
-            lexicon: lexicon,
-            strength: strength,
-            maxTokens: maxTokens,
-            klBudget: klBudget,
-            stopFlag: stopFlag
-        ) { [weak self] update in
-            Task { @MainActor in
-                self?.apply(update: update, lexicon: lexicon)
+        let (stream, continuation) = AsyncStream.makeStream(of: GenerationUpdate.self)
+        let producer = Task {
+            do {
+                let summary = try await service.generate(
+                    pane: pane,
+                    prompt: configuration.prompt,
+                    lexicon: configuration.lexicon,
+                    strength: configuration.strength,
+                    maxTokens: configuration.maxTokens,
+                    klBudget: configuration.klBudget,
+                    stopFlag: stopFlag
+                ) { update in
+                    continuation.yield(update)
+                }
+                continuation.finish()
+                return summary
+            } catch {
+                continuation.finish()
+                throw error
             }
+        }
+        return try await withTaskCancellationHandler {
+            for await update in stream {
+                try Task.checkCancellation()
+                apply(update: update, lexicon: configuration.lexicon)
+            }
+            return try await producer.value
+        } onCancel: {
+            stopFlag.stop()
+            producer.cancel()
+            continuation.finish()
         }
     }
 
@@ -246,16 +323,22 @@ final class DemoViewModel: ObservableObject {
         guard let reportPath = ProcessInfo.processInfo.environment["STEERDEMO_REPORT_PATH"]
             ?? argumentPath
         else { return }
+        guard let activeRun else { return }
         let report = RunReport(
             modelID: MLXGenerationService.modelID,
             modelRevision: MLXGenerationService.modelRevision,
             timestamp: ISO8601DateFormatter().string(from: Date()),
             status: status,
             error: errorMessage,
-            lexicon: selectedLexiconID,
-            biasStrength: strength,
-            klBudget: klBudget,
+            prompt: activeRun.prompt,
+            lexicon: activeRun.lexicon.id,
+            biasStrength: activeRun.strength,
+            maxTokens: activeRun.maxTokens,
+            seed: MLXGenerationService.samplingSeed,
+            temperature: Double(MLXGenerationService.samplingTemperature),
+            klBudget: activeRun.klBudget,
             cumulativeKL: klHistory.last?.cumulative ?? 0,
+            klHistory: klHistory,
             baseline: .init(
                 text: baseline.text,
                 tokenCount: baseline.tokenCount,
