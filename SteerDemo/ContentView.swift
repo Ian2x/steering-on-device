@@ -30,7 +30,7 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("On-device steering, made visible")
                     .font(.system(size: 28, weight: .semibold, design: .rounded))
-                Text("One prompt. Two fixed-seed passes. A measured interface budget.")
+                Text("One prompt. Three fixed-seed passes. Two interventions at matched KL.")
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -106,6 +106,48 @@ struct ContentView: View {
                 }
             }
 
+            HStack(spacing: 18) {
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack {
+                        Text("ActAdd coefficient")
+                        Spacer()
+                        Text(model.actAddCoefficient, format: .number.precision(.fractionLength(1)))
+                            .monospacedDigit()
+                    }
+                    Slider(value: $model.actAddCoefficient, in: 0 ... 40, step: 1)
+                        .accessibilityLabel("Activation-addition coefficient")
+                        .accessibilityValue(model.actAddCoefficient.formatted(.number.precision(.fractionLength(1))))
+                }
+                .frame(maxWidth: 360)
+                .disabled(model.isGenerating)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack {
+                        Text("Residual layer")
+                        Spacer()
+                        Text("after block \(model.actAddLayer)")
+                            .monospacedDigit()
+                    }
+                    Slider(
+                        value: Binding(
+                            get: { Double(model.actAddLayer) },
+                            set: { model.actAddLayer = Int($0.rounded()) }
+                        ),
+                        in: 0 ... 23,
+                        step: 1
+                    )
+                    .accessibilityLabel("Activation-addition residual layer")
+                    .accessibilityValue("after block \(model.actAddLayer)")
+                }
+                .frame(maxWidth: 360)
+                .disabled(model.isGenerating)
+
+                Text("The selected coefficient is rescaled each step so ActAdd cannot exceed the same cumulative KL cap.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
             HStack(spacing: 8) {
                 if model.modelProgress > 0, model.modelProgress < 1 {
                     ProgressView(value: model.modelProgress)
@@ -128,29 +170,47 @@ struct ContentView: View {
                 state: model.baseline
             )
             GenerationPaneView(
-                title: "Steered",
+                title: "Logit bias",
                 subtitle: "Sparse topic-token bias",
                 tint: .orange,
                 state: model.steered
+            )
+            GenerationPaneView(
+                title: "Activation addition",
+                subtitle: "Residual direction after block \(model.actAddLayer)",
+                tint: .purple,
+                state: model.actAdd
             )
         }
     }
 
     private var meters: some View {
         HStack(alignment: .top, spacing: 16) {
-            KLChartView(history: model.klHistory, budget: model.klBudget)
+            KLChartView(
+                logitHistory: model.klHistory,
+                actAddHistory: model.actAddKLHistory,
+                budget: model.klBudget
+            )
                 .frame(maxWidth: .infinity)
             VStack(alignment: .leading, spacing: 12) {
                 Text("Interface budget").font(.headline)
                 let cumulative = model.klHistory.last?.cumulative ?? 0
+                let actAddCumulative = model.actAddKLHistory.last?.cumulative ?? 0
                 ProgressView(value: min(cumulative, model.klBudget), total: model.klBudget)
                     .tint(cumulative > model.klBudget ? .red : .orange)
                     .accessibilityLabel("Cumulative KL budget")
                     .accessibilityValue("\(cumulative, specifier: "%.3f") of \(model.klBudget, specifier: "%.2f") nats")
                 HStack {
-                    Text("Cumulative KL")
+                    Text("Logit-bias KL")
                     Spacer()
                     Text("\(cumulative, specifier: "%.3f") / \(model.klBudget, specifier: "%.2f") nats")
+                        .monospacedDigit()
+                }
+                .font(.callout)
+                HStack {
+                    Text("ActAdd KL")
+                    Spacer()
+                    Text("\(actAddCumulative, specifier: "%.3f") / \(model.klBudget, specifier: "%.2f") nats")
                         .monospacedDigit()
                 }
                 .font(.callout)
@@ -171,7 +231,7 @@ struct ContentView: View {
 
     private var explanation: some View {
         DisclosureGroup("What am I looking at?") {
-            Text("The app runs the same prompt twice with identical seeded sampling. The baseline uses the model's logits unchanged; the steered pass applies a fixed sparse bias to single-token topic terms until its cumulative KL budget is exhausted, then continues unbiased from the resulting steered prefix. The orange trace is KL(biased ‖ base) computed from those two distributions before sampling. The topic score comes from a separate MiniLM encoder running as a Core ML model on-device. This is an interface demonstration of the audit's output-control result, not an ActAdd implementation or a training system.")
+            Text("The app runs the same prompt three times with identical seeded sampling: an unchanged baseline, a sparse topic-token logit bias, and activation addition from a contrast-prompt residual direction. Each intervention is independently rescaled by bisection so its cumulative KL(candidate ‖ base) stays within the selected cap. The ActAdd tail reuses activations through the selected layer during each step's search. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
@@ -271,29 +331,40 @@ private struct GenerationPaneView: View {
 }
 
 private struct KLChartView: View {
-    let history: [KLReading]
+    let logitHistory: [KLReading]
+    let actAddHistory: [KLReading]
     let budget: Double
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Per-step KL").font(.headline)
-            Chart(history, id: \.step) { reading in
-                AreaMark(
-                    x: .value("Step", reading.step),
-                    y: .value("KL", reading.perStep)
-                )
-                .foregroundStyle(.orange.opacity(0.16))
-                LineMark(
-                    x: .value("Step", reading.step),
-                    y: .value("KL", reading.perStep)
-                )
-                .foregroundStyle(.orange)
-                .interpolationMethod(.linear)
-                PointMark(
-                    x: .value("Step", reading.step),
-                    y: .value("KL", reading.perStep)
-                )
-                .foregroundStyle(.orange)
+            Chart {
+                ForEach(logitHistory, id: \.step) { reading in
+                    LineMark(
+                        x: .value("Step", reading.step),
+                        y: .value("KL", reading.perStep),
+                        series: .value("Intervention", "Logit bias")
+                    )
+                    .foregroundStyle(.orange)
+                    PointMark(
+                        x: .value("Step", reading.step),
+                        y: .value("KL", reading.perStep)
+                    )
+                    .foregroundStyle(.orange)
+                }
+                ForEach(actAddHistory, id: \.step) { reading in
+                    LineMark(
+                        x: .value("Step", reading.step),
+                        y: .value("KL", reading.perStep),
+                        series: .value("Intervention", "ActAdd")
+                    )
+                    .foregroundStyle(.purple)
+                    PointMark(
+                        x: .value("Step", reading.step),
+                        y: .value("KL", reading.perStep)
+                    )
+                    .foregroundStyle(.purple)
+                }
             }
             .chartXAxisLabel("generation step")
             .chartYAxisLabel("nats")
@@ -301,7 +372,7 @@ private struct KLChartView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Per-step KL chart")
             .accessibilityValue(chartAccessibilityValue)
-            Text(history.isEmpty ? "The trace starts with the steered pass." : "Measured before each fixed-seed sample.")
+            Text(logitHistory.isEmpty && actAddHistory.isEmpty ? "Traces start with the intervention passes." : "Orange: logit bias. Purple: ActAdd. Measured before sampling.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -309,8 +380,8 @@ private struct KLChartView: View {
     }
 
     private var chartAccessibilityValue: String {
-        guard let latest = history.last else { return "No measurements yet" }
-        return "\(history.count) measured steps; latest KL \(latest.perStep.formatted(.number.precision(.fractionLength(4)))) nats; cumulative \(latest.cumulative.formatted(.number.precision(.fractionLength(4)))) of \(budget.formatted(.number.precision(.fractionLength(2)))) nats"
+        guard let latest = logitHistory.last ?? actAddHistory.last else { return "No measurements yet" }
+        return "\(logitHistory.count) logit-bias steps and \(actAddHistory.count) activation-addition steps; latest KL \(latest.perStep.formatted(.number.precision(.fractionLength(4)))) nats; budget \(budget.formatted(.number.precision(.fractionLength(2)))) nats"
     }
 }
 

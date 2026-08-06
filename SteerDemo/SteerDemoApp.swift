@@ -8,10 +8,10 @@ struct SteerDemoApp: App {
         Window("SteerDemo", id: "main") {
             ContentView()
                 .environmentObject(model)
-                .frame(minWidth: 1_080, minHeight: 760)
+                .frame(minWidth: 1_420, minHeight: 820)
                 .task { model.startAutorunIfRequested() }
         }
         .windowStyle(.titleBar)
-        .defaultSize(width: 1_240, height: 860)
+        .defaultSize(width: 1_680, height: 1_000)
     }
 }
