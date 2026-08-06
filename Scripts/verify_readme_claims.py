@@ -8,6 +8,7 @@ import json
 import re
 import statistics
 import subprocess
+from datetime import datetime, timezone
 from decimal import ROUND_CEILING, ROUND_FLOOR, Decimal
 from pathlib import Path
 
@@ -18,6 +19,13 @@ ROOT = Path(__file__).resolve().parents[1]
 def check(condition: bool, message: str) -> None:
     if not condition:
         raise AssertionError(message)
+
+
+def git(*arguments: str) -> str:
+    """Read this repository's own history. Claims about it must come from it."""
+    return subprocess.run(
+        ["git", "-C", str(ROOT), *arguments], check=True, capture_output=True, text=True
+    ).stdout
 
 
 # --- printed ranges must contain their own extremes -------------------------
@@ -504,6 +512,74 @@ def main() -> None:
     forbid("same cumulative KL cap")
     check(not re.search(r"rho\s*=\s*1\d(?:\.\d+)?", readme), "invalid two-digit app ratio remains")
     print("PASS invalid comparison, reproducible layer sweep, first-step fractions, and claim removal")
+
+    # `git log -p -- docs/phase6/*/protocol.md` is the first command a hostile
+    # reviewer runs, and it shows two protocols edited after their runs. The
+    # README discloses that rather than leaving it to be discovered, so the split
+    # between amended and never-edited protocols is derived from git here and the
+    # disclosure cannot drift away from the history it describes.
+    protocol_history = {}
+    for protocol_path in sorted((ROOT / "docs/phase6").glob("*/protocol.md")):
+        name = protocol_path.parent.name
+        log = git("log", "--format=%H", "--", f"docs/phase6/{name}/protocol.md").split()
+        check(bool(log), f"docs/phase6/{name}/protocol.md is not committed")
+        protocol_history[name] = log
+    amended = sorted(name for name, log in protocol_history.items() if len(log) > 1)
+    unedited = sorted(name for name, log in protocol_history.items() if len(log) == 1)
+    check(
+        amended == ["layer-sweep", "on-device-rho"],
+        f"the set of post-run-amended Phase 6 protocols changed: {amended}",
+    )
+    check(
+        unedited == ["blocking-control", "teacher-forced-comparison"],
+        f"the set of never-edited Phase 6 protocols changed: {unedited}",
+    )
+    check(
+        all(len(protocol_history[name]) == 2 for name in amended),
+        "an amended protocol gained a further edit; the README disclosure must be revisited",
+    )
+    amending = {protocol_history[name][0] for name in amended}
+    check(len(amending) == 1, f"the amended protocols no longer share one amending commit: {amending}")
+    amending_commit = amending.pop()
+    amended_at = int(git("show", "-s", "--format=%ct", amending_commit).strip())
+    for name in amended:
+        relative = f"docs/phase6/{name}/protocol.md"
+        original = git("show", f"{protocol_history[name][1]}:{relative}").splitlines()
+        current = (ROOT / relative).read_text()
+        # Every predeclared line but one survives byte-identically, and the one
+        # that does not is the output-length shorthand. That is what carries the
+        # "no gate, threshold, or selection rule changed" half of the disclosure.
+        removed = [line for line in original if line not in current.splitlines()]
+        check(
+            len(removed) == 1,
+            f"{relative}: the amendment dropped {len(removed)} predeclared lines, not one: {removed}",
+        )
+        check(
+            re.search(r"[Oo]utput length: \d+ tokens|\d+ output tokens", removed[0]) is not None,
+            f"{relative}: the dropped line is not the output-length shorthand: {removed[0]!r}",
+        )
+        check(
+            "after the run" in current,
+            f"{relative} no longer labels its amendment as post-run",
+        )
+        latest_packet = max(
+            datetime.strptime(json.loads(path.read_text())["timestamp"], "%Y-%m-%dT%H:%M:%SZ")
+            .replace(tzinfo=timezone.utc)
+            .timestamp()
+            for path in (ROOT / f"docs/phase6/{name}/runs").glob("*.json")
+        )
+        check(
+            latest_packet < amended_at,
+            f"{relative} was amended before its last packet; the post-run wording is wrong",
+        )
+    require("Committed is not the same as unedited")
+    require(f"were each edited once after their runs, in commit `{amending_commit[:7]}`")
+    require("every other predeclared line survives byte-identically")
+    require("have one commit each and were never edited")
+    for name in amended + unedited:
+        require(f"[`{name}`](docs/phase6/{name}/protocol.md)")
+    require("amended after them as disclosed above", count=2)
+    print("PASS post-run protocol amendments disclosed, scoped, and never-edited half verified")
 
     blocking_path = ROOT / "docs/phase6/blocking-control/summary.json"
     blocking_before = blocking_path.read_bytes()

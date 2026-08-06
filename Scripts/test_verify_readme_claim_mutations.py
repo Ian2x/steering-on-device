@@ -97,6 +97,35 @@ must_reject("audit dissolution threshold", "`rho_lo < 0.9`", "`rho_lo < 0.8`")
 must_reject("second observed judge shift", "the full `+0.4154` shift", "the full `+0.5154` shift")
 must_reject("toy LoRA rank", "four-layer rank-8 LoRA", "four-layer rank-9 LoRA")
 
+# Two Phase 6 protocols were edited after their runs. The disclosure of that, and
+# each of its four load-bearing halves, is derived from git and mutation-tested.
+must_reject(
+    "post-run protocol amendment disclosed",
+    "Committed is not the same as unedited.",
+    "Every protocol stands exactly as first committed.",
+)
+must_reject("amending commit named", "in commit `df30259`", "in commit `df30258`")
+must_reject(
+    "amendment scope",
+    "every other predeclared line survives byte-identically",
+    "most other predeclared lines survive",
+)
+must_reject(
+    "never-edited protocols",
+    "have one commit each and were never edited",
+    "have one commit each and were also amended",
+)
+must_reject(
+    "which protocols were amended",
+    "[`layer-sweep`](docs/phase6/layer-sweep/protocol.md)",
+    "[`blocking-control`](docs/phase6/blocking-control/protocol.md)",
+)
+must_reject(
+    "layer protocol immutability over-claim",
+    "committed before its outcomes, then amended after them as disclosed above",
+    "committed before its outcomes and never touched afterwards",
+)
+
 # Printed ranges must contain their own extremes. Each mutation here rounds one
 # endpoint back to nearest, which is exactly the interval-shrinking defect the
 # range_floor/range_ceiling renderers exist to prevent.
