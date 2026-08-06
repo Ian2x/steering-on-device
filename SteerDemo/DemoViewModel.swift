@@ -45,6 +45,7 @@ final class DemoViewModel: ObservableObject {
     private var topicScorer: CoreMLTopicScorer?
     private var generationTask: Task<Void, Never>?
     private var didStartAutorun = false
+    private var stopAfterTokenCount: Int?
 
     init() {
         if let value = ProcessInfo.processInfo.environment["STEERDEMO_BIAS_STRENGTH"],
@@ -64,6 +65,11 @@ final class DemoViewModel: ObservableObject {
            let parsed = Double(value)
         {
             klBudget = min(20, max(0.1, parsed))
+        }
+        if let value = ProcessInfo.processInfo.environment["STEERDEMO_STOP_AFTER_TOKENS"],
+           let parsed = Int(value), parsed > 0
+        {
+            stopAfterTokenCount = parsed
         }
         do {
             guard let url = Bundle.main.url(forResource: "lexicons", withExtension: "json") else {
@@ -197,6 +203,9 @@ final class DemoViewModel: ObservableObject {
             writeFrameIfRequested(
                 name: "\(prefix)-\(String(format: "%03d", update.tokenCount))"
             )
+        }
+        if let stopAfterTokenCount, update.tokenCount >= stopAfterTokenCount {
+            stop()
         }
     }
 

@@ -1,0 +1,26 @@
+{
+  "baseline" : {
+    "residentMemoryBytes" : 531316736,
+    "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 25.428433090516627,
+    "topicScore" : -0.03826335192825014
+  },
+  "biasStrength" : 4,
+  "cumulativeKL" : 0.01576947698064468,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 1,
+  "lexicon" : "wedding",
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 537722880,
+    "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 34.891668864432916,
+    "topicScore" : -0.03826335192825014
+  },
+  "timestamp" : "2026-08-06T07:21:16Z"
+}

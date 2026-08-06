@@ -1,0 +1,26 @@
+{
+  "baseline" : {
+    "residentMemoryBytes" : 521715712,
+    "text" : "A quiet morning routine can vary depending on personal preferences and the time of day, but here's a general description of a typical morning routine for most people:\n\n1. Wake up: Start by getting up from your bed and preparing for the day. This might involve taking a shower, brushing your teeth, and maybe even having a quick breakfast.\n\n2. Check the time: Make sure you have a good timekeeping device like a watch or a clock to ensure you're aware of the",
+    "tokenCount" : 96,
+    "tokensPerSecond" : 36.09433423896725,
+    "topicScore" : -0.03837027272621253
+  },
+  "biasStrength" : 20,
+  "cumulativeKL" : 15.539358139038086,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 1,
+  "lexicon" : "wedding",
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 527646720,
+    "text" : " honeymoon morning routine: \n\n1. Wake up at a comfortable time, ideally around 6 AM, to ensure a good start to the day.\n\n2. Start the day with a healthy breakfast, which should include a variety of foods such as eggs, toast, and a piece of fruit.\n\n3. Take a short walk to the local park or a nearby beach to enjoy the fresh air and exercise.\n\n4. Spend some time thinking about the day ahead, such as planning your day",
+    "tokenCount" : 96,
+    "tokensPerSecond" : 10.907008352183663,
+    "topicScore" : 0.23529580562452282
+  },
+  "timestamp" : "2026-08-06T07:13:24Z"
+}

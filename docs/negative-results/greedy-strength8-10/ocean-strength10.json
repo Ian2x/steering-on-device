@@ -1,0 +1,26 @@
+{
+  "baseline" : {
+    "residentMemoryBytes" : 534249472,
+    "text" : "A quiet morning routine can vary depending on personal preferences and the time of day, but here's a general description of a typical morning routine for most people:\n\n1. Wake up: Start by getting up from your bed and preparing for the day. This might involve taking a shower, brushing your teeth, and maybe even having",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 71.59084934712502,
+    "topicScore" : -0.0006833128261076792
+  },
+  "biasStrength" : 10,
+  "cumulativeKL" : 1.1084779137436271,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 1,
+  "lexicon" : "ocean",
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 537788416,
+    "text" : "A quiet morning routine can vary depending on personal preferences and the time of day, but here's a general description of a typical morning routine for most people:\n\n1. Wake up: Start by getting up from your bed and preparing for the day. This might involve taking a shower, brushing your teeth, and maybe even having",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 70.17897193843694,
+    "topicScore" : -0.0006833128261076792
+  },
+  "timestamp" : "2026-08-06T07:17:42Z"
+}
