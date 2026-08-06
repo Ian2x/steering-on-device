@@ -1,0 +1,14 @@
+{
+  "source": "https://github.com/Ian2x/steering-output-equivalence-audit/blob/469b53ab55e35c6cc152910cf26fae304df677c4/results/2026-07-06-actadd-arm/results_full.json",
+  "source_commit": "469b53ab55e35c6cc152910cf26fae304df677c4",
+  "n_eval": 150,
+  "rho": {
+    "point": 0.9586776859504132,
+    "ci_lo": 0.8527131782945736,
+    "ci_hi": 1.0714446589446587
+  },
+  "verdict": {
+    "class": "Mixed",
+    "dissolved_rule": "rho_lo>=0.9 on valid cell"
+  }
+}

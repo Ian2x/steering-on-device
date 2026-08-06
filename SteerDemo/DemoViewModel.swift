@@ -22,6 +22,7 @@ final class DemoViewModel: ObservableObject {
 
         let modelID: String
         let modelRevision: String
+        let buildConfiguration: String
         let timestamp: String
         let status: String
         let error: String?
@@ -142,6 +143,9 @@ final class DemoViewModel: ObservableObject {
                 status = "Loading Qwen2.5 locally via MLX"
                 try await loadModel()
                 try Task.checkCancellation()
+                status = "Warming the matched prompt outside the timing window"
+                try await service.warmUp(prompt: configuration.prompt)
+                try Task.checkCancellation()
                 if topicScorer == nil {
                     status = "Loading the Core ML topic judge"
                     topicScorer = try await CoreMLTopicScorer.load()
@@ -173,8 +177,12 @@ final class DemoViewModel: ObservableObject {
             } catch is CancellationError {
                 status = "Stopped"
             } catch {
-                errorMessage = error.localizedDescription
-                status = "Generation failed"
+                if Task.isCancelled || (error as? URLError)?.code == .cancelled {
+                    status = "Stopped"
+                } else {
+                    errorMessage = error.localizedDescription
+                    status = "Generation failed"
+                }
             }
             baseline.isActive = false
             steered.isActive = false
@@ -327,6 +335,7 @@ final class DemoViewModel: ObservableObject {
         let report = RunReport(
             modelID: MLXGenerationService.modelID,
             modelRevision: MLXGenerationService.modelRevision,
+            buildConfiguration: MLXGenerationService.buildConfiguration,
             timestamp: ISO8601DateFormatter().string(from: Date()),
             status: status,
             error: errorMessage,

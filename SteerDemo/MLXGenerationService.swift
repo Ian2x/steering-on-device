@@ -33,6 +33,11 @@ actor MLXGenerationService {
     static let modelRevision = "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3"
     static let samplingTemperature: Float = 0.7
     static let samplingSeed: UInt64 = 42
+#if DEBUG
+    static let buildConfiguration = "Debug"
+#else
+    static let buildConfiguration = "Release"
+#endif
 
     private var container: ModelContainer?
     private var loadingTask: Task<ModelContainer, Error>?
@@ -72,6 +77,36 @@ actor MLXGenerationService {
         } catch {
             loadingTask = nil
             throw error
+        }
+    }
+
+    /// Compile and cache the model's Metal kernels before either measured
+    /// pane runs. Without this untimed token, the first (baseline) pass pays
+    /// one-time JIT work and its tokens/second is not comparable with the
+    /// already-warm steered pass.
+    func warmUp(prompt: String) async throws {
+        guard let container else {
+            throw DemoError.missingResource("loaded MLX model")
+        }
+        try await container.perform { context in
+            let input = try await context.processor.prepare(
+                input: UserInput(chat: [.user(prompt)])
+            )
+            let iterator = try TokenIterator(
+                input: input,
+                model: context.model,
+                processor: nil,
+                sampler: SeededCategoricalSampler(
+                    temperature: Self.samplingTemperature,
+                    seed: Self.samplingSeed
+                ),
+                maxTokens: 16
+            )
+            for _ in iterator {
+                try Task.checkCancellation()
+                break
+            }
+            Stream.gpu.synchronize()
         }
     }
 

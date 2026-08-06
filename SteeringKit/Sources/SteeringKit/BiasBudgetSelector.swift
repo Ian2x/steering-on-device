@@ -1,12 +1,29 @@
 import Foundation
 
-public enum BiasBudgetSelectorError: Error, Equatable {
+public enum BiasBudgetSelectorError: LocalizedError, Equatable {
     case emptyLogits
     case nonFiniteLogit
     case invalidTemperature(Double)
     case invalidRemainingBudget(Double)
     case tokenIDOutOfRange(Int)
     case nonFiniteBias
+
+    public var errorDescription: String? {
+        switch self {
+        case .emptyLogits:
+            "Cannot enforce a KL budget on an empty logit vector."
+        case .nonFiniteLogit:
+            "KL-budget selection received a non-finite model logit."
+        case .invalidTemperature(let value):
+            "Sampling temperature must be finite and positive; received \(value)."
+        case .invalidRemainingBudget(let value):
+            "Remaining KL budget must be finite and non-negative; received \(value)."
+        case .tokenIDOutOfRange(let tokenID):
+            "Bias token ID \(tokenID) is outside the model vocabulary."
+        case .nonFiniteBias:
+            "KL-budget selection received a non-finite steering bias."
+        }
+    }
 }
 
 public struct BiasBudgetDecision: Equatable, Sendable {

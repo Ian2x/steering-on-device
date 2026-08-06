@@ -1,12 +1,13 @@
 {
   "baseline" : {
-    "residentMemoryBytes" : 604749824,
+    "residentMemoryBytes" : 534577152,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 64.84937276597394,
+    "tokensPerSecond" : 335.3478218438498,
     "topicScore" : -0.03826335192825014
   },
   "biasStrength" : 12,
+  "buildConfiguration" : "Release",
   "cumulativeKL" : 7.999999999449602,
   "droppedTokenStrings" : [
 
@@ -52,12 +53,12 @@
   "seed" : 42,
   "status" : "Complete — all inference stayed on-device",
   "steered" : {
-    "residentMemoryBytes" : 610942976,
+    "residentMemoryBytes" : 543653888,
     "text" : "A quiet morning ceremony is a unique and enriching experience that can be a wonderful way to start the day. It's a time to reflect on your day, think about your goals for the day, and give yourself a chance to recharge and relax. You can start your day with a simple morning ritual such as a cup",
     "tokenCount" : 64,
-    "tokensPerSecond" : 53.11449792811672,
+    "tokensPerSecond" : 324.53380541372894,
     "topicScore" : 0.23035727417220003
   },
   "temperature" : 0.699999988079071,
-  "timestamp" : "2026-08-06T12:44:55Z"
+  "timestamp" : "2026-08-06T14:19:21Z"
 }

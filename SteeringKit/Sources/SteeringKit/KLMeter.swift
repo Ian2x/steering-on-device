@@ -1,9 +1,20 @@
 import Foundation
 
-public enum KLMeterError: Error, Equatable {
+public enum KLMeterError: LocalizedError, Equatable {
     case emptyLogits
     case shapeMismatch(biased: Int, base: Int)
     case nonFiniteLogit
+
+    public var errorDescription: String? {
+        switch self {
+        case .emptyLogits:
+            "KL divergence requires two non-empty logit vectors."
+        case .shapeMismatch(let biased, let base):
+            "KL divergence requires matching logit shapes; received \(biased) and \(base)."
+        case .nonFiniteLogit:
+            "KL divergence received a non-finite logit or divergence value."
+        }
+    }
 }
 
 public struct KLReading: Codable, Equatable, Sendable {

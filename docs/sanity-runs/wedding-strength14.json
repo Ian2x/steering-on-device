@@ -1,12 +1,13 @@
 {
   "baseline" : {
-    "residentMemoryBytes" : 533757952,
+    "residentMemoryBytes" : 537821184,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 67.25085593789593,
+    "tokensPerSecond" : 359.7114720559689,
     "topicScore" : -0.03826335192825014
   },
   "biasStrength" : 14,
+  "buildConfiguration" : "Release",
   "cumulativeKL" : 7.999999998847121,
   "droppedTokenStrings" : [
 
@@ -40,12 +41,12 @@
   "seed" : 42,
   "status" : "Complete — all inference stayed on-device",
   "steered" : {
-    "residentMemoryBytes" : 543178752,
+    "residentMemoryBytes" : 546684928,
     "text" : " honeymoon ceremony: I start my day with a quiet morning prayer and meditation session, which gives me a chance to clear my mind and prepare for the day ahead.\n\nMorning routine: I start my day with a simple breakfast consisting of a balanced meal of rice, eggs, and milk. I enjoy the warmth of the sun on",
     "tokenCount" : 64,
-    "tokensPerSecond" : 60.470567309587686,
+    "tokensPerSecond" : 361.375542802299,
     "topicScore" : 0.4211666341963682
   },
   "temperature" : 0.699999988079071,
-  "timestamp" : "2026-08-06T12:45:02Z"
+  "timestamp" : "2026-08-06T14:19:26Z"
 }

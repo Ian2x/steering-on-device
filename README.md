@@ -42,7 +42,7 @@ A command-line Xcode build is also reproducible:
 xcodebuild \
   -project SteerDemo.xcodeproj \
   -scheme SteerDemo \
-  -configuration Debug \
+  -configuration Release \
   -destination 'platform=macOS,arch=arm64' \
   CODE_SIGNING_ALLOWED=NO \
   build
@@ -50,7 +50,7 @@ xcodebuild \
 
 ## On-device sanity experiment
 
-These are real 64-token app runs, not illustrative values. Every row used the same prompt, fixed seed, temperature, and an 8.0000-nat KL cap. The cap is spent in the first few biased steps; the remaining tokens continue without additional bias from the resulting prefix. The committed JSON packets are in [`docs/sanity-runs`](docs/sanity-runs), and [`Scripts/summarize_sanity.py`](Scripts/summarize_sanity.py) renders the table.
+These are real 64-token app runs, not illustrative values. Every row used the same prompt, fixed seed, temperature, and an 8.0000-nat KL cap. Across these rows, the cap is spent over 2–18 biased steps; the remaining tokens continue without additional bias from the resulting prefix. Evidence runs use Release builds and perform an untimed 16-token same-prompt warm-up before measuring either pane, so one-time Metal kernel compilation is not assigned only to baseline. The committed JSON packets are in [`docs/sanity-runs`](docs/sanity-runs), and [`Scripts/summarize_sanity.py`](Scripts/summarize_sanity.py) renders the table.
 
 | Lexicon | Bias strength | Cumulative KL (nats) | Baseline score | Steered score | Change |
 |---|---:|---:|---:|---:|---:|
@@ -63,17 +63,20 @@ These are real 64-token app runs, not illustrative values. Every row used the sa
 
 The result is directional, not monotonic. At this fixed seed, ocean strength 12 spends the same KL without crossing a sampled-token threshold, while strengths 14 and 16 do. Wedding moves in all three conditions, but the score does not increase monotonically with raw strength. That is exactly why the interface shows both distributional cost and an independent semantic score.
 
-The cap is reached numerically, but it is not behaviorally discriminating in the tested wedding conditions. Doubling it from 4 to 8 nats changes neither the sampled steered text nor its topic score:
+The cap is reached numerically and is a behaviorally live control, not a formality. Under the ocean lexicon, a 4-nat cap never crosses a sampled-token threshold at the three tested strengths; at 8 nats, strengths 14 and 16 do, moving the score by +0.3155. The wedding conditions have already saturated by 4 nats, so doubling their cap changes neither sampled text nor topic score:
 
-| Bias strength | Steered text identical? | Topic score (KL cap 4) | Topic score (KL cap 8) |
-|---:|:---:|---:|---:|
-| 12 | yes | 0.230357 | 0.230357 |
-| 14 | yes | 0.421167 | 0.421167 |
-| 16 | yes | 0.226144 | 0.226144 |
+| Lexicon | Bias strength | Steered text identical? | Topic score (KL cap 4) | Topic score (KL cap 8) |
+|---|---:|:---:|---:|---:|
+| Ocean | 12 | yes | -0.017548 | -0.017548 |
+| Ocean | 14 | no | -0.017548 | 0.297914 |
+| Ocean | 16 | no | -0.017548 | 0.297914 |
+| Wedding | 12 | yes | 0.230357 | 0.230357 |
+| Wedding | 14 | yes | 0.421167 | 0.421167 |
+| Wedding | 16 | yes | 0.226144 | 0.226144 |
 
-The KL-4 packets are in [`docs/negative-results/matched-kl4`](docs/negative-results/matched-kl4); the KL-8 packets are in [`docs/sanity-runs`](docs/sanity-runs). This plateau is direct evidence that the visible effect here is a short forced prefix followed by an unbiased continuation, not a sustained intervention whose effect grows with the permitted cost.
+The KL-4 packets are in [`docs/negative-results/matched-kl4`](docs/negative-results/matched-kl4); the KL-8 packets are in [`docs/sanity-runs`](docs/sanity-runs). Together they show both regimes: the permitted cost changes sampled behavior for ocean, while wedding plateaus by 4 nats. In every row, bias stops once the cap is spent and generation continues from the resulting prefix.
 
-The default 96-token wedding run in [`docs/final-demo-run.json`](docs/final-demo-run.json) measured 68.4 baseline and 62.1 steered tokens/second, about 570 MB resident memory, 8.0000 cumulative KL, and a Core ML topic-score change from `-0.0338` to `0.3815`. Treat these as one-machine prototype measurements, not a benchmark.
+The default 96-token wedding run in [`docs/final-demo-run.json`](docs/final-demo-run.json) measured 214.7 baseline and 362.6 steered tokens/second, about 590 MB resident memory, 8.0000 cumulative KL, and a Core ML topic-score change from `-0.0338` to `0.3815`. Treat these as one-machine prototype measurements, not a benchmark or a controlled estimate of controller overhead.
 
 ### What the judge shift contains
 

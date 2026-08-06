@@ -2,7 +2,7 @@
 set -euo pipefail
 
 root_dir=${0:A:h:h}
-app_path="$root_dir/DerivedData/Build/Products/Debug/SteerDemo.app"
+app_path="$root_dir/DerivedData/Build/Products/Release/SteerDemo.app"
 executable="$app_path/Contents/MacOS/SteerDemo"
 output_dir="$root_dir/docs/sanity-runs"
 mkdir -p "$output_dir"
@@ -10,9 +10,10 @@ mkdir -p "$output_dir"
 xcodebuild -quiet \
   -project "$root_dir/SteerDemo.xcodeproj" \
   -scheme SteerDemo \
-  -configuration Debug \
+  -configuration Release \
   -destination 'platform=macOS,arch=arm64' \
   -derivedDataPath "$root_dir/DerivedData" \
+  ONLY_ACTIVE_ARCH=YES \
   CODE_SIGNING_ALLOWED=NO \
   build
 

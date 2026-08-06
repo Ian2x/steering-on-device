@@ -1,12 +1,13 @@
 {
   "baseline" : {
-    "residentMemoryBytes" : 538361856,
+    "residentMemoryBytes" : 541966336,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 65.07154120293133,
+    "tokensPerSecond" : 164.61764511639583,
     "topicScore" : -0.017548133593150595
   },
   "biasStrength" : 12,
+  "buildConfiguration" : "Release",
   "cumulativeKL" : 7.999999999558399,
   "droppedTokenStrings" : [
 
@@ -130,12 +131,12 @@
   "seed" : 42,
   "status" : "Complete — all inference stayed on-device",
   "steered" : {
-    "residentMemoryBytes" : 546324480,
+    "residentMemoryBytes" : 550879232,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 33.37772976444663,
+    "tokensPerSecond" : 227.07392389108654,
     "topicScore" : -0.017548133593150595
   },
   "temperature" : 0.699999988079071,
-  "timestamp" : "2026-08-06T12:45:18Z"
+  "timestamp" : "2026-08-06T14:19:37Z"
 }
