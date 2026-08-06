@@ -1,0 +1,354 @@
+{
+  "actAdd" : {
+    "baseModelNLL" : 0.8924782940744149,
+    "residentMemoryBytes" : 536166400,
+    "text" : "On a typical bus commute across a city, you would start your journey from your home in the morning. Once you arrive at the bus station, you would board",
+    "tokenCount" : 32,
+    "tokenIDs" : [
+      1925,
+      264,
+      14260,
+      5828,
+      58163,
+      3941,
+      264,
+      3283,
+      11,
+      498,
+      1035,
+      1191,
+      697,
+      11618,
+      504,
+      697,
+      2114,
+      304,
+      279,
+      6556,
+      13,
+      9646,
+      498,
+      17331,
+      518,
+      279,
+      5828,
+      8056,
+      11,
+      498,
+      1035,
+      4479
+    ],
+    "tokensPerSecond" : 79.56055226211473,
+    "topicScore" : 0.06551202704858614
+  },
+  "actAddAppliedCoefficient" : 12,
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 5.099915997385148,
+  "actAddDirectionDiagnostics" : {
+    "alignedPositionCount" : 12,
+    "alignment" : "front-aligned; an absent side contributes zero at suffix positions and is never tokenized",
+    "appliedMatrixNorm" : 51.389652252197266,
+    "appliedPerPositionNorms" : [
+      14.731555938720703,
+      14.569146156311035,
+      14.636695861816406,
+      14.3911714553833,
+      15.086151123046875,
+      14.8573579788208,
+      14.450363159179688,
+      15.26116943359375,
+      14.857339859008789,
+      15.62138843536377,
+      15.08395767211914,
+      14.41997241973877
+    ],
+    "historicalFinalVectorNorm" : 7.3125,
+    "injection" : "all aligned prompt positions after the selected block; persistent in downstream KV cache",
+    "mode" : "random-matched-norm",
+    "negativeTokenCount" : 10,
+    "positiveTokenCount" : 12,
+    "semanticMatrixNorm" : 51.389652252197266,
+    "semanticPerPositionNorms" : [
+      0,
+      13.217818260192871,
+      15.702275276184082,
+      11.734228134155273,
+      6.864925384521484,
+      17.316843032836914,
+      18.37285614013672,
+      14.461791038513184,
+      17.910511016845703,
+      16.613065719604492,
+      18.773700714111328,
+      15.45944595336914
+    ]
+  },
+  "actAddDirectionMode" : "random-matched-norm",
+  "actAddKLCapEnabled" : false,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 1.4043906641524408,
+      "perStep" : 1.4043906641524408,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.4167397861103965,
+      "perStep" : 0.012349121957955601,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.5372461005272136,
+      "perStep" : 0.12050631441681703,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.5526290148170319,
+      "perStep" : 0.015382914289818321,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.5995845011876793,
+      "perStep" : 0.046955486370647434,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.7480716632717137,
+      "perStep" : 0.14848716208403448,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.772936665475194,
+      "perStep" : 0.024865002203480303,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.7736357604016584,
+      "perStep" : 0.0006990949264644199,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.7746992477756607,
+      "perStep" : 0.0010634873740023737,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.219373947902782,
+      "perStep" : 0.4446747001271216,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.491452437990458,
+      "perStep" : 0.2720784900876756,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.7504083269307587,
+      "perStep" : 0.2589558889403007,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.8281009987536585,
+      "perStep" : 0.0776926718228997,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.9951933189877105,
+      "perStep" : 0.16709232023405188,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.2295595873962153,
+      "perStep" : 0.2343662684085049,
+      "step" : 15
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.361422736053543,
+      "perStep" : 0.13186314865732798,
+      "step" : 16
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.4244806086658652,
+      "perStep" : 0.06305787261232206,
+      "step" : 17
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.862296788058584,
+      "perStep" : 0.43781617939271866,
+      "step" : 18
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.871258027358996,
+      "perStep" : 0.008961239300412371,
+      "step" : 19
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.26267414387416,
+      "perStep" : 0.39141611651516434,
+      "step" : 20
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.293961753591523,
+      "perStep" : 0.03128760971736237,
+      "step" : 21
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.384591368724122,
+      "perStep" : 0.09062961513259932,
+      "step" : 22
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.405895032160183,
+      "perStep" : 0.02130366343606085,
+      "step" : 23
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.47186746946548,
+      "perStep" : 0.06597243730529707,
+      "step" : 24
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.62153152412662,
+      "perStep" : 0.1496640546611402,
+      "step" : 25
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.844856585558536,
+      "perStep" : 0.22332506143191513,
+      "step" : 26
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.854215405571358,
+      "perStep" : 0.009358820012821949,
+      "step" : 27
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.859543145732284,
+      "perStep" : 0.005327740160927065,
+      "step" : 28
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.862105865127551,
+      "perStep" : 0.0025627193952663034,
+      "step" : 29
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.864463032423471,
+      "perStep" : 0.002357167295920115,
+      "step" : 30
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.8907537888965535,
+      "perStep" : 0.026290756473082637,
+      "step" : 31
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.099915997385148,
+      "perStep" : 0.20916220848859488,
+      "step" : 32
+    }
+  ],
+  "actAddLayer" : 12,
+  "baseline" : {
+    "baseModelNLL" : 1.0278773446145184,
+    "residentMemoryBytes" : 528285696,
+    "text" : "A bus commute across a city can be a daily routine for many individuals, and it can be a fulfilling activity. The first step is to gather your bus ticket",
+    "tokenCount" : 32,
+    "tokenIDs" : [
+      32,
+      5828,
+      58163,
+      3941,
+      264,
+      3283,
+      646,
+      387,
+      264,
+      7298,
+      14021,
+      369,
+      1657,
+      7775,
+      11,
+      323,
+      432,
+      646,
+      387,
+      264,
+      49598,
+      5702,
+      13,
+      576,
+      1156,
+      3019,
+      374,
+      311,
+      9567,
+      697,
+      5828,
+      11727
+    ],
+    "tokensPerSecond" : 361.90855871330194,
+    "topicScore" : 0.03097195286791351
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "controlOnly" : true,
+  "cumulativeKL" : 0,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+
+  ],
+  "lexicon" : "wedding",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe a routine bus commute across a city in two short paragraphs.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 0,
+    "text" : "",
+    "tokenCount" : 0,
+    "tokenIDs" : [
+
+    ],
+    "tokensPerSecond" : 0
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T17:05:10Z"
+}

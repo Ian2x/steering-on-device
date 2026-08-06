@@ -1,0 +1,1038 @@
+{
+  "cells": [
+    {
+      "coefficient": 1.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        false
+      ],
+      "directionDependencePass": true,
+      "layer": 8,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 1.116269947249331,
+        "semantic": 0.9141251028043922
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": false,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.04477686396526962,
+          "randomShifts": [
+            0.10183697493384665,
+            0.04477686396526962,
+            -0.10104920758200076
+          ],
+          "semanticMedianShift": 0.046678236808576704,
+          "semanticMinusRandomMedian": 0.0019013728433070823,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.0808402018787087,
+            0.046678236808576704,
+            -0.007131368598724139
+          ]
+        },
+        "wedding": {
+          "onTargetPass": false,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.04976198012863554,
+          "randomShifts": [
+            0.04976198012863554,
+            0.08418680543323857,
+            -0.01179887041837821
+          ],
+          "semanticMedianShift": 0.034300550379913086,
+          "semanticMinusRandomMedian": -0.01546142974872245,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.06461488345043212,
+            0.034300550379913086,
+            -0.007552889487835335
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 2.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        false
+      ],
+      "directionDependencePass": true,
+      "layer": 8,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 0.929719202413119,
+        "semantic": 0.9747652837520067
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": 0.046004048059798415,
+          "randomShifts": [
+            0.05527725168410623,
+            0.046004048059798415,
+            -0.05719275044511197
+          ],
+          "semanticMedianShift": 0.10765573475688649,
+          "semanticMinusRandomMedian": 0.06165168669708807,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.10765573475688649,
+            0.11306932047133839,
+            -0.007131368598724139
+          ]
+        },
+        "wedding": {
+          "onTargetPass": false,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.023753659754625372,
+          "randomShifts": [
+            -0.0001665372947259637,
+            0.11351327893858242,
+            0.023753659754625372
+          ],
+          "semanticMedianShift": -0.030258840026502233,
+          "semanticMinusRandomMedian": -0.054012499781127606,
+          "semanticPositiveCount": 1,
+          "semanticShifts": [
+            -0.030258840026502233,
+            0.004059234726882563,
+            -0.07669033458538087
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 4.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        false
+      ],
+      "directionDependencePass": true,
+      "layer": 8,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 1.2961299509057775,
+        "semantic": 0.8496633886305609
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.016666666666666663,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": 0.03077251604309702,
+          "randomShifts": [
+            0.03077251604309702,
+            0.24425281839656812,
+            -0.0544741905839014
+          ],
+          "semanticMedianShift": 0.0778693975116879,
+          "semanticMinusRandomMedian": 0.047096881468590875,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.09018679599070695,
+            0.0778693975116879,
+            -0.1072014525165437
+          ]
+        },
+        "wedding": {
+          "onTargetPass": false,
+          "randomFloorPass": true,
+          "randomMedianShift": -0.05784225503901927,
+          "randomShifts": [
+            -0.05784225503901927,
+            0.07404112371230785,
+            -0.08694945561414857
+          ],
+          "semanticMedianShift": 0.00105346326533658,
+          "semanticMinusRandomMedian": 0.058895718304355846,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.0415977559772799,
+            0.00105346326533658,
+            -0.03338948256110372
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 8.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        false
+      ],
+      "directionDependencePass": true,
+      "layer": 8,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 1.6331981502709196,
+        "semantic": 1.6280411526014427
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": true,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.09135805140306782,
+          "randomShifts": [
+            0.09135805140306782,
+            0.19599089820046062,
+            -0.08454985129136079
+          ],
+          "semanticMedianShift": 0.08729526502352833,
+          "semanticMinusRandomMedian": -0.004062786379539496,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.3612361058525748,
+            0.08729526502352833,
+            -0.19405059851460527
+          ]
+        },
+        "wedding": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": -0.026603059991336272,
+          "randomShifts": [
+            -0.026603059991336272,
+            0.04560457417699849,
+            -0.26433193879400163
+          ],
+          "semanticMedianShift": 0.09839148693877413,
+          "semanticMinusRandomMedian": 0.1249945469301104,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.33882113143358666,
+            0.09839148693877413,
+            -0.0725669443236504
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 12.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        false
+      ],
+      "directionDependencePass": true,
+      "layer": 8,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 1.9344792824951813,
+        "semantic": 2.5739129748861758
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.033333333333333326,
+        "semantic": 0.0
+      },
+      "nllPass": false,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": 0.06542577214704437,
+          "randomShifts": [
+            0.06542577214704437,
+            0.14707364691178929,
+            -0.08454985129136079
+          ],
+          "semanticMedianShift": 0.33186193155052257,
+          "semanticMinusRandomMedian": 0.2664361594034782,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.4266418104838738,
+            0.33186193155052257,
+            -0.06532773023026159
+          ]
+        },
+        "wedding": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": 0.030911673845006232,
+          "randomShifts": [
+            0.030911673845006232,
+            0.2050889400526724,
+            -0.21475958118622937
+          ],
+          "semanticMedianShift": 0.10302701641361177,
+          "semanticMinusRandomMedian": 0.07211534256860554,
+          "semanticPositiveCount": 3,
+          "semanticShifts": [
+            0.3588794250614789,
+            0.10302701641361177,
+            0.08886489213269738
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 1.0,
+      "crossLexiconIdentityByPrompt": [
+        true,
+        false,
+        false
+      ],
+      "directionDependencePass": false,
+      "layer": 10,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 0.8703823549344047,
+        "semantic": 0.9475003108672719
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": false,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.02450603030772238,
+          "randomShifts": [
+            0.024620784836645086,
+            0.02450603030772238,
+            -0.07918861409701627
+          ],
+          "semanticMedianShift": 0.01085182395768947,
+          "semanticMinusRandomMedian": -0.013654206350032911,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.01085182395768947,
+            0.02768683926928495,
+            0.0
+          ]
+        },
+        "wedding": {
+          "onTargetPass": false,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.012764557274423332,
+          "randomShifts": [
+            0.04976198012863554,
+            0.012764557274423332,
+            -0.00749824816846642
+          ],
+          "semanticMedianShift": 0.021464911176760526,
+          "semanticMinusRandomMedian": 0.008700353902337194,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            -0.04556797895905644,
+            0.05090419330595873,
+            0.021464911176760526
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 2.0,
+      "crossLexiconIdentityByPrompt": [
+        true,
+        false,
+        false
+      ],
+      "directionDependencePass": false,
+      "layer": 10,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 0.8555373813882028,
+        "semantic": 0.9475003108672719
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": false,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.02156637103144924,
+          "randomShifts": [
+            0.042352503645168564,
+            0.02156637103144924,
+            -0.0720350091999545
+          ],
+          "semanticMedianShift": 0.01085182395768947,
+          "semanticMinusRandomMedian": -0.01071454707375977,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.01085182395768947,
+            0.02768683926928495,
+            0.0
+          ]
+        },
+        "wedding": {
+          "onTargetPass": false,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.017328363004431968,
+          "randomShifts": [
+            0.04976198012863554,
+            0.00105346326533658,
+            0.017328363004431968
+          ],
+          "semanticMedianShift": 0.00042453513146287203,
+          "semanticMinusRandomMedian": -0.016903827872969096,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            -0.04556797895905644,
+            0.05090419330595873,
+            0.00042453513146287203
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 4.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        false
+      ],
+      "directionDependencePass": true,
+      "layer": 10,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 0.9166263108611563,
+        "semantic": 1.096959262085898
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": true,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": 0.011825869296213546,
+          "randomShifts": [
+            0.014068849648912836,
+            0.011825869296213546,
+            -0.0882111543672583
+          ],
+          "semanticMedianShift": 0.053689169807467,
+          "semanticMinusRandomMedian": 0.04186330051125345,
+          "semanticPositiveCount": 3,
+          "semanticShifts": [
+            0.053689169807467,
+            0.06745123122037619,
+            0.05080770990021685
+          ]
+        },
+        "wedding": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": -0.0038432884523865833,
+          "randomShifts": [
+            -0.0038432884523865833,
+            0.13320826323946705,
+            -0.08515129973831193
+          ],
+          "semanticMedianShift": 0.07851249814446169,
+          "semanticMinusRandomMedian": 0.08235578659684828,
+          "semanticPositiveCount": 3,
+          "semanticShifts": [
+            0.11104119422791406,
+            0.07851249814446169,
+            0.021464911176760526
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 8.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        false
+      ],
+      "directionDependencePass": true,
+      "layer": 10,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 1.5914127372534477,
+        "semantic": 1.794901699178687
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": true,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.10649671577176059,
+          "randomShifts": [
+            0.11970479309009494,
+            0.10649671577176059,
+            -0.07848071286571658
+          ],
+          "semanticMedianShift": 0.11502264545422554,
+          "semanticMinusRandomMedian": 0.008525929682464947,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.11502264545422554,
+            0.15685069171507976,
+            -0.0001799668447707431
+          ]
+        },
+        "wedding": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": 0.007939558329830926,
+          "randomShifts": [
+            0.0642992509076096,
+            0.007939558329830926,
+            -0.21592990142009838
+          ],
+          "semanticMedianShift": 0.3924254012333046,
+          "semanticMinusRandomMedian": 0.38448584290347365,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.3924254012333046,
+            0.5320631505495496,
+            -0.029238289705640602
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 12.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        false
+      ],
+      "directionDependencePass": true,
+      "layer": 10,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 2.044702066409457,
+        "semantic": 3.6146537153487106
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.016666666666666663
+      },
+      "nllPass": false,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": 0.09075618398533482,
+          "randomShifts": [
+            0.09075618398533482,
+            0.11119754196542767,
+            -0.21917016244654147
+          ],
+          "semanticMedianShift": 0.22081664418005975,
+          "semanticMinusRandomMedian": 0.13006046019472495,
+          "semanticPositiveCount": 3,
+          "semanticShifts": [
+            0.22081664418005975,
+            0.21964233375359363,
+            0.2447960079904729
+          ]
+        },
+        "wedding": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": 0.07380605667759563,
+          "randomShifts": [
+            0.07380605667759563,
+            0.08345004594181234,
+            -0.21592990142009838
+          ],
+          "semanticMedianShift": 0.311756278328869,
+          "semanticMinusRandomMedian": 0.23795022165127336,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.311756278328869,
+            0.4332785106054136,
+            -0.0814483844392665
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 1.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        true
+      ],
+      "directionDependencePass": false,
+      "layer": 12,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 0.9643629586718141,
+        "semantic": 0.9831486306403328
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": false,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.031064122483113833,
+          "randomShifts": [
+            0.0633306455391423,
+            0.031064122483113833,
+            0.0
+          ],
+          "semanticMedianShift": 0.01085182395768947,
+          "semanticMinusRandomMedian": -0.020212298525424364,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.01085182395768947,
+            0.019045958266429918,
+            0.0
+          ]
+        },
+        "wedding": {
+          "onTargetPass": false,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.036923325990781714,
+          "randomShifts": [
+            0.04976198012863554,
+            0.0,
+            0.036923325990781714
+          ],
+          "semanticMedianShift": 0.0,
+          "semanticMinusRandomMedian": -0.036923325990781714,
+          "semanticPositiveCount": 1,
+          "semanticShifts": [
+            -0.02324221110935641,
+            0.004059234726882563,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 2.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        false
+      ],
+      "directionDependencePass": true,
+      "layer": 12,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 0.9142706988557265,
+        "semantic": 0.9406232951913691
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": false,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.0479782990784762,
+          "randomShifts": [
+            0.0479782990784762,
+            0.09746432636345995,
+            0.03510269865337584
+          ],
+          "semanticMedianShift": 0.01085182395768947,
+          "semanticMinusRandomMedian": -0.037126475120786734,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.01085182395768947,
+            0.0773011379694761,
+            0.0
+          ]
+        },
+        "wedding": {
+          "onTargetPass": false,
+          "randomFloorPass": true,
+          "randomMedianShift": 0.0037807451480050755,
+          "randomShifts": [
+            0.0037807451480050755,
+            0.015178314434655301,
+            0.0
+          ],
+          "semanticMedianShift": 0.036923325990781714,
+          "semanticMinusRandomMedian": 0.03314258084277664,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            -0.010033821207672097,
+            0.06731606641113118,
+            0.036923325990781714
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 4.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        true
+      ],
+      "directionDependencePass": false,
+      "layer": 12,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 1.013101725430364,
+        "semantic": 0.9831486306403328
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": true,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.03697712019612529,
+          "randomShifts": [
+            0.0907057644432245,
+            0.03697712019612529,
+            -0.03992252427941034
+          ],
+          "semanticMedianShift": 0.053689169807467,
+          "semanticMinusRandomMedian": 0.016712049611341706,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.053689169807467,
+            0.09111375071662578,
+            0.0
+          ]
+        },
+        "wedding": {
+          "onTargetPass": false,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.013988307866097553,
+          "randomShifts": [
+            0.013988307866097553,
+            0.03503321767147855,
+            -0.09115930731468289
+          ],
+          "semanticMedianShift": 0.029426985655516255,
+          "semanticMinusRandomMedian": 0.015438677789418702,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.029426985655516255,
+            0.03748443268570041,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 8.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        false
+      ],
+      "directionDependencePass": true,
+      "layer": 12,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 1.275208058127906,
+        "semantic": 1.7560920202659052
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": false,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": true,
+          "randomFloorPass": false,
+          "randomMedianShift": 0.05624382417427853,
+          "randomShifts": [
+            0.1897475272508208,
+            0.05624382417427853,
+            -0.06446596293195965
+          ],
+          "semanticMedianShift": 0.07423957829656927,
+          "semanticMinusRandomMedian": 0.017995754122290743,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.07438932541214632,
+            0.07423957829656927,
+            -0.07595419097269718
+          ]
+        },
+        "wedding": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": 0.03454007418067263,
+          "randomShifts": [
+            0.03454007418067263,
+            0.03995572536273685,
+            -0.216377862819697
+          ],
+          "semanticMedianShift": 0.21717150475008817,
+          "semanticMinusRandomMedian": 0.18263143056941555,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.3716608271848035,
+            0.21717150475008817,
+            -0.07131607091165715
+          ]
+        }
+      }
+    },
+    {
+      "coefficient": 12.0,
+      "crossLexiconIdentityByPrompt": [
+        false,
+        false,
+        false
+      ],
+      "directionDependencePass": true,
+      "layer": 12,
+      "lengthPass": true,
+      "medianBaseModelNLL": {
+        "baseline": 0.9831486306403328,
+        "random": 1.1242714592796568,
+        "semantic": 1.7299223164437032
+      },
+      "medianLengths": {
+        "baseline": 32.0,
+        "random": 32.0,
+        "semantic": 32.0
+      },
+      "medianRepeatedTrigramFractions": {
+        "baseline": 0.0,
+        "random": 0.0,
+        "semantic": 0.0
+      },
+      "nllPass": true,
+      "passed": true,
+      "repetitionPass": true,
+      "topics": {
+        "ocean": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": 0.03585593429779758,
+          "randomShifts": [
+            0.04804729715272164,
+            0.03585593429779758,
+            -0.04024567502943008
+          ],
+          "semanticMedianShift": 0.11290645940140911,
+          "semanticMinusRandomMedian": 0.07705052510361154,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.1814636923567813,
+            0.11290645940140911,
+            -0.0121221721458208
+          ]
+        },
+        "wedding": {
+          "onTargetPass": true,
+          "randomFloorPass": true,
+          "randomMedianShift": 0.03156324608176908,
+          "randomShifts": [
+            0.03454007418067263,
+            0.03156324608176908,
+            -0.18048835789955833
+          ],
+          "semanticMedianShift": 0.3200444894891969,
+          "semanticMinusRandomMedian": 0.2884812434074278,
+          "semanticPositiveCount": 2,
+          "semanticShifts": [
+            0.3200444894891969,
+            0.43519872186783365,
+            -0.051847028870157005
+          ]
+        }
+      }
+    }
+  ],
+  "directionDiagnostics": {
+    "alignedPositionCounts": [
+      11,
+      12
+    ],
+    "alignment": [
+      "front-aligned; an absent side contributes zero at suffix positions and is never tokenized"
+    ],
+    "historicalFinalVectorNormRange": [
+      6.29296875,
+      8.734375
+    ],
+    "injection": [
+      "all aligned prompt positions after the selected block; persistent in downstream KV cache"
+    ],
+    "semanticMatrixNormRange": [
+      48.37239074707031,
+      82.1305923461914
+    ]
+  },
+  "packetCount": 180,
+  "passDefinition": "all predeclared direction, on-target, random-floor, length, repetition, and NLL gates",
+  "passingCellCount": 2,
+  "protocol": "docs/phase6/blocking-control/protocol.md",
+  "selectedCellByPredeclaredTieBreak": {
+    "coefficient": 4.0,
+    "layer": 10
+  },
+  "status": "pass"
+}

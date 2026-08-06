@@ -4,22 +4,28 @@ The steering audit (Wang, 2026) reported that a static logit-bias controller rep
 
 ![SteerDemo showing preserved baseline, logit-bias, and invalidated residual-edit continuations](docs/steerdemo.png)
 
-## Phase 6 comparison invalidated
+## Historical Phase 6 comparison invalidated
 
-The published Phase 6 controller comparison is invalid. Across its four prompts, the residual-edit output was byte-identical between the ocean and wedding directions in every case, so that arm was not direction-dependent in this configuration. Its first generation step consumed **97.4%–99.9%** of the cumulative 8-nat cap in all eight prompt-topic runs. The greedy selector therefore made the edit effectively a single-token shock followed by continuation without further intervention. The blocking control—whether this implementation produces a direction-dependent, on-target effect with its coefficient unconstrained by the cumulative cap—was not run.
+The previous Phase 6 controller comparison is invalid. Across its four prompts, the residual-edit output was byte-identical between the ocean and wedding directions in every case, so that arm was not direction-dependent in that configuration. Its first generation step consumed **97.4%–99.9%** of the cumulative 8-nat cap in all eight prompt-topic runs. The greedy selector therefore made the edit effectively a single-token shock followed by continuation without further intervention.
 
 The layer sweep is degenerate for the same reason: blocks 3 and 19 produced byte-identical residual-edit text in all four matched cases. Their equal topic-score statistic reflects the shared first-token mechanism, not evidence that the layers are equivalent, and no layer is selected from that sweep. These runs support **no conclusion about activation steering, the audit, or transfer**. All preregistered protocols and raw packets remain committed so the failure is inspectable; [`docs/phase6/invalid-comparison-analysis.json`](docs/phase6/invalid-comparison-analysis.json) is a machine-checked reanalysis of those unchanged packets.
 
 What the failed comparison did reveal is a matching-protocol problem. In the six static-logit-bias sanity runs, a sparse bias spreads the cap over **2–18 biased steps**. In the eight residual-edit runs, the dense edit collapses nearly all permitted cost into step one. A greedy cumulative-KL cap therefore does not make sparse and dense interventions perform comparable work; a ratio between them under this rule mostly measures the matching rule.
 
+## Remediated blocking control
+
+The blocking control was predeclared and run with the cumulative cap disabled: 3 layers × 5 direct coefficients × 2 directions × 2 topics × 3 neutral prompts = **180 Release packets**. Exactly **2/15 layer/coefficient cells passed** every frozen direction-dependence, on-target movement, matched-random-floor, length, repetition, and base-model-NLL gate. The predeclared tie-break selected **block 10, coefficient 4**.
+
+At that selected cell, all three wedding/ocean output pairs were byte-different. Median Core ML topic-score shift was `+0.078512` for wedding versus `-0.003843` under its matched-random direction, and `+0.053689` for ocean versus `+0.011826` random. Median returned length was 32 tokens in every arm, repeated-trigram fraction was zero, and base-model mean token NLL was `0.983149` baseline, `1.096959` semantic, and `0.916626` random. This establishes a direction-dependent, on-target residual-edit effect above the specified random floor in this Qwen harness. It does not validate the old comparison, establish transfer, or compare controller efficiency; a teacher-forced per-step-KL comparison remains pending. The protocol, all packets, and the machine summary are in [`docs/phase6/blocking-control`](docs/phase6/blocking-control).
+
 ## What the demo measures
 
 The app is deliberately a research interface, not a chat client:
 
-- All three passes use the same Qwen prompt, chat template, seed (`42`), temperature (`0.7`), and 4-bit MLX model. Each pass starts with a fresh seeded random state; the baseline and logit-bias passes start with fresh KV caches, while the exact ActAdd comparison recomputes from the full prefix without a KV cache.
+- All three passes use the same Qwen prompt, chat template, seed (`42`), temperature (`0.7`), and 4-bit MLX model. Each pass starts with a fresh seeded random state and fresh KV caches.
 - The controller adds a sparse bias to single-token entries from the selected lexicon. Multi-token entries are reported and omitted rather than silently approximated.
-- The current residual-edit path measures one final-position `h(A) - h(B)` vector at a selected residual boundary, adds a scaled version at the current final token, and then runs the remaining transformer tail. This is the flawed Phase 6 implementation retained for inspection, not a faithful ActAdd result.
-- The orange and purple traces are `KL(candidate || baseline)` between the actual temperature-scaled sampling distributions. A common bisection selector independently rescales each controller so cumulative KL cannot exceed the selected budget.
+- The current residual-edit path computes a front-aligned per-position `h(A) - h(B)` matrix from unpadded contrast prompts, injects it across aligned prompt positions after the selected block, and bakes the edit into downstream KV caches. Its displayed coefficient is applied directly; its KL trace is diagnostic and uncapped.
+- The orange and purple traces are `KL(candidate || baseline)` between the actual temperature-scaled sampling distributions. The orange sparse-bias path uses a bisection selector so cumulative KL cannot exceed the selected cap. The purple residual path does not use that cap.
 - In the six documented logit-bias sanity rows, the budget is exhausted over two to eighteen steps. Generation then continues without additional logit bias from the steered prefix. This is a **prefix intervention under a distributional cost ceiling**, not sustained steering across the whole continuation.
 - The **topic judge** is `sentence-transformers/all-MiniLM-L6-v2`, mean-pooled and normalized inside a Core ML program. It compares each continuation with a precomputed lexicon centroid.
 - All three passes stream token by token and report process resident memory. Timing remains in raw packets, but the UI's single-run token rates are not benchmark results.
@@ -87,13 +93,13 @@ The KL-4 packets are in [`docs/negative-results/matched-kl4`](docs/negative-resu
 
 The default 96-token wedding packet in [`docs/final-demo-run.json`](docs/final-demo-run.json) records about 610 MB peak resident memory across the three passes and `8.0000` cumulative KL for each intervention. Its baseline and logit-bias topic scores are `-0.0338` and `0.3815`. Single-run token rates were removed from the headline because baseline rate varied roughly threefold across otherwise similar packets. The residual-edit path was about 30× slower than baseline in this packet because it discarded the KV cache and repeatedly recomputed the full prefix and transformer tail; that is a defect in this prototype path, not a property or benchmark of activation steering.
 
-## Residual-edit implementation and invalid layer sweep
+## Residual-edit remediation and invalid historical layer sweep
 
 The app vendors and adapts Qwen2 from `mlx-swift-examples` revision `9bff95ca5f0b9e8c021acc4d71a2bbe4a7441631` under its MIT License. The failed implementation tokenizes a positive and negative contrast prompt without special tokens, **left-pads the shorter sequence with the tokenizer's EOS token as attended content**, and subtracts their single final-position residual vectors after block `L`. This mixes topic direction with different leading EOS content and differs from the reference construction's front-aligned, per-position direction.
 
 The layer protocol was committed before its outcomes: blocks 3, 7, 11, 15, 19, and 23 were swept across four neutral prompt-topic cases at a nominal coefficient of 12, an 8-nat cumulative cap, and at most 32 generated tokens. All 24 Release packets are retained in [`docs/phase6/layer-sweep`](docs/phase6/layer-sweep). Because blocks 3 and 19 produced the same text in every matched case, the predeclared statistic cannot select a meaningful layer from this sweep.
 
-The reference construction injects a per-position matrix at prompt positions and bakes the edit into the KV cache. This app instead injects one vector only at the **current final prefix token**, recomputes from scratch, and stops editing once the cumulative cap is spent. The nominal coefficient in the historical packets is also incomplete: the value actually applied at each active step was `coefficient × decision.scale`, but `decision.scale` was not recorded. New packets must record that applied value explicitly. Coefficient zero does not validate the residual math because it intentionally routes through the baseline closure; the separate Release packet in [`docs/phase6/coefficient-zero`](docs/phase6/coefficient-zero) is checked only as evidence that the public packet's baseline and residual-pane token IDs, decoded text, and counts are equal.
+The remediated construction instead captures a per-position matrix from unpadded, front-aligned contrast sequences, injects it across the aligned neutral-prompt positions, and builds downstream KV caches from the edited prompt states. It uses the displayed coefficient directly and records that exact applied value plus direction norms in every new packet. The old nominal coefficient remains incomplete: its actual stepwise value was `coefficient × decision.scale`, and `decision.scale` was not recorded. Coefficient zero does not validate the residual math because it intentionally routes through the baseline closure; the separate Release packet in [`docs/phase6/coefficient-zero`](docs/phase6/coefficient-zero) is checked only as evidence that the public packet's baseline and residual-pane token IDs, decoded text, and counts are equal.
 
 ## Preserved invalid comparison packets
 
@@ -145,7 +151,7 @@ The audit result, stored artifacts, checker, and controller source are in [`Ian2
 
 - This is a research **prototype** and Ian's first Swift project, not evidence of production Swift experience.
 - The macOS app performs inference only; it does not train or fine-tune. The separate toy LoRA artifact fine-tunes with MLX Python and does not turn the app into a training system.
-- The residual-edit pane is a known-invalid Phase 6 implementation retained for remediation and inspection. It does not establish activation-steering behavior.
+- The residual-edit path passed its predeclared blocking control in this harness. The controller comparison is still pending and no transfer or efficiency claim follows from that control.
 - Core ML runs the small topic encoder. The LLM was not converted to Core ML.
 - MLX is Metal-backed. The project does not contain a standalone Metal kernel or justify a standalone Metal skill claim.
 - The judge score is a diagnostic cosine similarity, not a human preference evaluation or proof of causal control.

@@ -1,0 +1,352 @@
+{
+  "actAdd" : {
+    "baseModelNLL" : 1.8329050827096613,
+    "residentMemoryBytes" : 534528000,
+    "text" : "My routine towards a sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy sandy",
+    "tokenCount" : 32,
+    "tokenIDs" : [
+      5050,
+      14021,
+      6974,
+      264,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439,
+      67439
+    ],
+    "tokensPerSecond" : 82.87298190401366,
+    "topicScore" : 0.2071795002457605
+  },
+  "actAddAppliedCoefficient" : 12,
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 43.32910965395558,
+  "actAddDirectionDiagnostics" : {
+    "alignedPositionCount" : 11,
+    "alignment" : "front-aligned; an absent side contributes zero at suffix positions and is never tokenized",
+    "appliedMatrixNorm" : 81.25495147705078,
+    "appliedPerPositionNorms" : [
+      62.540531158447266,
+      17.605388641357422,
+      18.20754623413086,
+      16.89960289001465,
+      16.184429168701172,
+      16.574270248413086,
+      16.069313049316406,
+      12.785407066345215,
+      18.540653228759766,
+      16.611175537109375,
+      13.637042999267578
+    ],
+    "historicalFinalVectorNorm" : 8.3359375,
+    "injection" : "all aligned prompt positions after the selected block; persistent in downstream KV cache",
+    "mode" : "semantic",
+    "negativeTokenCount" : 10,
+    "positiveTokenCount" : 11,
+    "semanticMatrixNorm" : 81.25495147705078,
+    "semanticPerPositionNorms" : [
+      62.540531158447266,
+      17.605388641357422,
+      18.20754623413086,
+      16.89960289001465,
+      16.184429168701172,
+      16.574270248413086,
+      16.069313049316406,
+      12.785407066345215,
+      18.540653228759766,
+      16.611175537109375,
+      13.637042999267578
+    ]
+  },
+  "actAddDirectionMode" : "semantic",
+  "actAddKLCapEnabled" : false,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.25279667869674577,
+      "perStep" : 0.25279667869674577,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.364878269709157,
+      "perStep" : 2.112081591012411,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.581035457370428,
+      "perStep" : 8.21615718766127,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 11.213362437257194,
+      "perStep" : 0.6323269798867663,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 33.30643274022823,
+      "perStep" : 22.09307030297104,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 38.62484301643469,
+      "perStep" : 5.318410276206456,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 41.82332613042987,
+      "perStep" : 3.1984831139951777,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 42.61891226828468,
+      "perStep" : 0.795586137854811,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 42.89595252027443,
+      "perStep" : 0.27704025198974835,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 42.99730763858997,
+      "perStep" : 0.10135511831554694,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.05503955541795,
+      "perStep" : 0.05773191682797276,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.086346217410636,
+      "perStep" : 0.03130666199268469,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.104586482310886,
+      "perStep" : 0.01824026490025006,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.11815098698643,
+      "perStep" : 0.013564504675546016,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.12818318856714,
+      "perStep" : 0.010032201580715359,
+      "step" : 15
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.136432828465104,
+      "perStep" : 0.008249639897959904,
+      "step" : 16
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.14395979689861,
+      "perStep" : 0.007526968433511356,
+      "step" : 17
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.15006983362869,
+      "perStep" : 0.006110036730078042,
+      "step" : 18
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.15569276377445,
+      "perStep" : 0.005622930145752029,
+      "step" : 19
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.16109824717033,
+      "perStep" : 0.005405483395884503,
+      "step" : 20
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.16746817250431,
+      "perStep" : 0.006369925333974262,
+      "step" : 21
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.176037928280856,
+      "perStep" : 0.00856975577654582,
+      "step" : 22
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.1860770710833,
+      "perStep" : 0.010039142802442813,
+      "step" : 23
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.19928147137282,
+      "perStep" : 0.013204400289525,
+      "step" : 24
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.214719570484,
+      "perStep" : 0.015438099111177907,
+      "step" : 25
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.234879018617434,
+      "perStep" : 0.02015944813343042,
+      "step" : 26
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.25572613315398,
+      "perStep" : 0.020847114536544503,
+      "step" : 27
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.279568501708816,
+      "perStep" : 0.02384236855483785,
+      "step" : 28
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.30015611608499,
+      "perStep" : 0.02058761437617782,
+      "step" : 29
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.30983534993748,
+      "perStep" : 0.009679233852486879,
+      "step" : 30
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.317176582760894,
+      "perStep" : 0.00734123282341252,
+      "step" : 31
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 43.32910965395558,
+      "perStep" : 0.011933071194685542,
+      "step" : 32
+    }
+  ],
+  "actAddLayer" : 10,
+  "baseline" : {
+    "baseModelNLL" : 1.0278773446145184,
+    "residentMemoryBytes" : 527007744,
+    "text" : "A bus commute across a city can be a daily routine for many individuals, and it can be a fulfilling activity. The first step is to gather your bus ticket",
+    "tokenCount" : 32,
+    "tokenIDs" : [
+      32,
+      5828,
+      58163,
+      3941,
+      264,
+      3283,
+      646,
+      387,
+      264,
+      7298,
+      14021,
+      369,
+      1657,
+      7775,
+      11,
+      323,
+      432,
+      646,
+      387,
+      264,
+      49598,
+      5702,
+      13,
+      576,
+      1156,
+      3019,
+      374,
+      311,
+      9567,
+      697,
+      5828,
+      11727
+    ],
+    "tokensPerSecond" : 365.00964606429034,
+    "topicScore" : -0.013637143934299231
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "controlOnly" : true,
+  "cumulativeKL" : 0,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+
+  ],
+  "lexicon" : "ocean",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe a routine bus commute across a city in two short paragraphs.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 0,
+    "text" : "",
+    "tokenCount" : 0,
+    "tokenIDs" : [
+
+    ],
+    "tokensPerSecond" : 0
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T16:55:56Z"
+}

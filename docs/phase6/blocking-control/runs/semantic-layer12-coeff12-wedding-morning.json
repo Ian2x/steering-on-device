@@ -1,0 +1,354 @@
+{
+  "actAdd" : {
+    "baseModelNLL" : 2.9613806764947546,
+    "residentMemoryBytes" : 534577152,
+    "text" : "A bride and bridegay will start their wedding day preparations a few days ahead of time. The first step is to plan and prepare themselves for the event,",
+    "tokenCount" : 32,
+    "tokenIDs" : [
+      32,
+      41347,
+      323,
+      41347,
+      70,
+      352,
+      686,
+      1191,
+      862,
+      13008,
+      1899,
+      46879,
+      264,
+      2421,
+      2849,
+      8305,
+      315,
+      882,
+      13,
+      576,
+      1156,
+      3019,
+      374,
+      311,
+      3119,
+      323,
+      10549,
+      5577,
+      369,
+      279,
+      1538,
+      11
+    ],
+    "tokensPerSecond" : 77.29142649513243,
+    "topicScore" : 0.4097002145843344
+  },
+  "actAddAppliedCoefficient" : 12,
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 28.66614615840904,
+  "actAddDirectionDiagnostics" : {
+    "alignedPositionCount" : 12,
+    "alignment" : "front-aligned; an absent side contributes zero at suffix positions and is never tokenized",
+    "appliedMatrixNorm" : 51.389652252197266,
+    "appliedPerPositionNorms" : [
+      0,
+      13.217818260192871,
+      15.702275276184082,
+      11.734228134155273,
+      6.864925384521484,
+      17.316843032836914,
+      18.37285614013672,
+      14.461791038513184,
+      17.910511016845703,
+      16.613065719604492,
+      18.773700714111328,
+      15.45944595336914
+    ],
+    "historicalFinalVectorNorm" : 7.3125,
+    "injection" : "all aligned prompt positions after the selected block; persistent in downstream KV cache",
+    "mode" : "semantic",
+    "negativeTokenCount" : 10,
+    "positiveTokenCount" : 12,
+    "semanticMatrixNorm" : 51.389652252197266,
+    "semanticPerPositionNorms" : [
+      0,
+      13.217818260192871,
+      15.702275276184082,
+      11.734228134155273,
+      6.864925384521484,
+      17.316843032836914,
+      18.37285614013672,
+      14.461791038513184,
+      17.910511016845703,
+      16.613065719604492,
+      18.773700714111328,
+      15.45944595336914
+    ]
+  },
+  "actAddDirectionMode" : "semantic",
+  "actAddKLCapEnabled" : false,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.12000622787746373,
+      "perStep" : 0.12000622787746373,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.5914215183741738,
+      "perStep" : 1.47141529049671,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.6917042681731105,
+      "perStep" : 1.1002827497989367,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.845330294965846,
+      "perStep" : 3.1536260267927356,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.913755949802173,
+      "perStep" : 0.06842565483632673,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.766797264405938,
+      "perStep" : 10.853041314603763,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.14968651171077,
+      "perStep" : 1.3828892473048318,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.45902629901464,
+      "perStep" : 0.30933978730386835,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.46857159603055,
+      "perStep" : 0.009545297015912791,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 20.079497377035196,
+      "perStep" : 1.6109257810046442,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 21.666320554292476,
+      "perStep" : 1.5868231772572812,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 21.70715369070527,
+      "perStep" : 0.040833136412792,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 21.90212794344905,
+      "perStep" : 0.19497425274378077,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 22.241099863155597,
+      "perStep" : 0.3389719197065467,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 22.397747256520844,
+      "perStep" : 0.15664739336524877,
+      "step" : 15
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 22.93556001619985,
+      "perStep" : 0.5378127596790048,
+      "step" : 16
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 22.94101247425565,
+      "perStep" : 0.005452458055797888,
+      "step" : 17
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 23.276863632079067,
+      "perStep" : 0.33585115782341635,
+      "step" : 18
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 23.29526195199215,
+      "perStep" : 0.018398319913080493,
+      "step" : 19
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 23.590914737103656,
+      "perStep" : 0.2956527851115062,
+      "step" : 20
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.40898186575028,
+      "perStep" : 0.8180671286466266,
+      "step" : 21
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.441376548597265,
+      "perStep" : 0.032394682846984775,
+      "step" : 22
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.4808006094407,
+      "perStep" : 0.03942406084343219,
+      "step" : 23
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.503566247952275,
+      "perStep" : 0.02276563851157601,
+      "step" : 24
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 25.14135328974482,
+      "perStep" : 0.6377870417925442,
+      "step" : 25
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 25.351776605711407,
+      "perStep" : 0.21042331596658634,
+      "step" : 26
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 26.69923626349239,
+      "perStep" : 1.3474596577809852,
+      "step" : 27
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 26.776150125548746,
+      "perStep" : 0.07691386205635524,
+      "step" : 28
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 26.8438174326782,
+      "perStep" : 0.06766730712945367,
+      "step" : 29
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 26.85159949731751,
+      "perStep" : 0.007782064639307557,
+      "step" : 30
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 28.52748731571534,
+      "perStep" : 1.6758878183978343,
+      "step" : 31
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 28.66614615840904,
+      "perStep" : 0.1386588426936977,
+      "step" : 32
+    }
+  ],
+  "actAddLayer" : 12,
+  "baseline" : {
+    "baseModelNLL" : 0.6776302438673437,
+    "residentMemoryBytes" : 526794752,
+    "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a",
+    "tokenCount" : 32,
+    "tokenIDs" : [
+      32,
+      11340,
+      6556,
+      14021,
+      646,
+      13289,
+      11649,
+      389,
+      4345,
+      19322,
+      323,
+      13161,
+      11,
+      714,
+      264,
+      14260,
+      6556,
+      304,
+      847,
+      3139,
+      11136,
+      5646,
+      279,
+      2701,
+      7354,
+      1447,
+      16,
+      13,
+      40574,
+      705,
+      518,
+      264
+    ],
+    "tokensPerSecond" : 365.10091617511154,
+    "topicScore" : -0.025498507283499224
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "controlOnly" : true,
+  "cumulativeKL" : 0,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+
+  ],
+  "lexicon" : "wedding",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe a quiet morning routine in two short paragraphs.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 0,
+    "text" : "",
+    "tokenCount" : 0,
+    "tokenIDs" : [
+
+    ],
+    "tokensPerSecond" : 0
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T16:58:13Z"
+}

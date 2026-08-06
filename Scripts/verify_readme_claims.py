@@ -125,7 +125,7 @@ def main() -> None:
     high = 100 * comparison["firstStepFractionMaximum"]
     require(f"**{low:.1f}%–{high:.1f}%**")
     require("byte-identical between the ocean and wedding directions in every case")
-    require("blocking control", count=1)
+    require("The previous Phase 6 controller comparison is invalid.")
     require("**no conclusion about activation steering, the audit, or transfer**")
     check(layer["runCount"] == 24, "layer sweep packet count changed")
     check(layer["block3Vs19CaseCount"] == layer["byteIdenticalCaseCount"] == 4, "block 3/19 identity changed")
@@ -141,6 +141,52 @@ def main() -> None:
     forbid("same cumulative KL cap")
     check(not re.search(r"rho\s*=\s*1\d(?:\.\d+)?", readme), "invalid two-digit app ratio remains")
     print("PASS invalid comparison, layer degeneracy, first-step fractions, and claim removal")
+
+    blocking_path = ROOT / "docs/phase6/blocking-control/summary.json"
+    blocking_before = blocking_path.read_bytes()
+    subprocess.run(
+        ["python3", str(ROOT / "Scripts/summarize_blocking_control.py")],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    check(blocking_path.read_bytes() == blocking_before, "blocking summary is not reproducible")
+    blocking = json.loads(blocking_before)
+    blocking_packets = [
+        json.loads(path.read_text())
+        for path in sorted((ROOT / "docs/phase6/blocking-control/runs").glob("*.json"))
+    ]
+    check(len(blocking_packets) == blocking["packetCount"] == 180, "blocking packet count changed")
+    check(all(row["buildConfiguration"] == "Release" for row in blocking_packets), "a blocking packet is not Release")
+    check(all(row["actAddKLCapEnabled"] is False for row in blocking_packets), "a blocking packet enabled the cap")
+    check(
+        all(row["actAddCoefficient"] == row["actAddAppliedCoefficient"] for row in blocking_packets),
+        "a blocking packet does not record the exact applied coefficient",
+    )
+    check(blocking["status"] == "pass", "blocking control no longer passes")
+    check(blocking["passingCellCount"] == 2, "blocking passing-cell count changed")
+    check(
+        blocking["selectedCellByPredeclaredTieBreak"] == {"layer": 10, "coefficient": 4.0},
+        "blocking selected cell changed",
+    )
+    selected = next(
+        cell
+        for cell in blocking["cells"]
+        if cell["layer"] == 10 and cell["coefficient"] == 4.0
+    )
+    check(selected["passed"], "selected blocking cell no longer passes")
+    check(not any(selected["crossLexiconIdentityByPrompt"]), "selected cell has cross-topic identity")
+    require("**180 Release packets**")
+    require("**2/15 layer/coefficient cells passed**")
+    require("**block 10, coefficient 4**")
+    for topic in ("wedding", "ocean"):
+        row = selected["topics"][topic]
+        require(f"`{row['semanticMedianShift']:+.6f}`")
+        require(f"`{row['randomMedianShift']:+.6f}`")
+    require("Median returned length was 32 tokens in every arm")
+    require("repeated-trigram fraction was zero")
+    require("a teacher-forced per-step-KL comparison remains pending")
+    print("PASS blocking-control grid, selected cell, random floor, degeneracy gates, and README claims")
 
     rho_paths = sorted((ROOT / "docs/phase6/on-device-rho/runs").glob("*.json"))
     rho_packets = [json.loads(path.read_text()) for path in rho_paths]
