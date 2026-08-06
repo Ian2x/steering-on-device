@@ -1,0 +1,130 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 595443712,
+    "text" : "Of course, I can help you with that. Before breakfast, you might want to start by preparing a small garden to enjoy before you start your day. You",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 2.3142646941418414,
+    "topicScore" : 0.14220828899489504
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999987238277,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.982381272607208,
+      "perStep" : 7.982381272607208,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999581919473824,
+      "perStep" : 0.017200646866616102,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999775415288275,
+      "perStep" : 0.0003956220550031315,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999996256222839,
+      "perStep" : 1.871469401127532e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999518233449,
+      "perStep" : 3.262010610201783e-06,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999864219824,
+      "perStep" : 3.459863748148346e-07,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999864219824,
+      "perStep" : 0,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999912822809,
+      "perStep" : 4.860298596861568e-08,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999980174191,
+      "perStep" : 6.735138153111836e-08,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999982936083,
+      "perStep" : 2.761892150726663e-09,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999987238277,
+      "perStep" : 4.302193718583801e-09,
+      "step" : 11
+    }
+  ],
+  "actAddLayer" : 7,
+  "baseline" : {
+    "residentMemoryBytes" : 528384000,
+    "text" : "Preparing a small garden before breakfast can be a delightful and rewarding activity that brings fresh produce straight to your plate. Start by choosing a balanced and varied garden, incorporating",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 343.4216446385292,
+    "topicScore" : 0.15172749139698777
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999919471,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.508934840353584,
+      "perStep" : 7.508934840353584,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999994064527429,
+      "perStep" : 0.49105922417384495,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999919471,
+      "perStep" : 5.935392041567351e-06,
+      "step" : 3
+    }
+  ],
+  "lexicon" : "wedding",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe tending a small garden before breakfast in two sentences.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 537608192,
+    "text" : " honeymooning with a small garden before breakfast is like stepping into a new world of opportunity and beauty. The morning sun's warm embrace and the peaceful serenity of",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 338.08977754284297,
+    "topicScore" : 0.4332186158772517
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:41:41Z"
+}

@@ -1,0 +1,88 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 557858816,
+    "text" : " When you wake up and start your day, prepare a small garden in your backyard or in your front yard. Take out a few seeds and a potting mix",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 15.862376042656903,
+    "topicScore" : 0.09821504136591085
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.9999999941937165,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.88442140597988,
+      "perStep" : 7.88442140597988,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999995772214324,
+      "perStep" : 0.11557436623444418,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999894042369,
+      "perStep" : 4.121828045307657e-06,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999999941937165,
+      "perStep" : 1.0015134800706035e-07,
+      "step" : 4
+    }
+  ],
+  "actAddLayer" : 3,
+  "baseline" : {
+    "residentMemoryBytes" : 532054016,
+    "text" : "Preparing a small garden before breakfast can be a delightful and rewarding activity that brings fresh produce straight to your plate. Start by choosing a balanced and varied garden, incorporating",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 342.4222360439531,
+    "topicScore" : 0.15172749139698777
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999919471,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.508934840353584,
+      "perStep" : 7.508934840353584,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999994064527429,
+      "perStep" : 0.49105922417384495,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999919471,
+      "perStep" : 5.935392041567351e-06,
+      "step" : 3
+    }
+  ],
+  "lexicon" : "wedding",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe tending a small garden before breakfast in two sentences.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 541212672,
+    "text" : " honeymooning with a small garden before breakfast is like stepping into a new world of opportunity and beauty. The morning sun's warm embrace and the peaceful serenity of",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 354.6412038419789,
+    "topicScore" : 0.4332186158772517
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:40:49Z"
+}

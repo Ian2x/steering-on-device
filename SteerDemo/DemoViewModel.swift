@@ -50,7 +50,7 @@ final class DemoViewModel: ObservableObject {
     @Published var prompt = "Describe a quiet morning routine in two short paragraphs."
     @Published var strength = 14.0
     @Published var actAddCoefficient = 12.0
-    @Published var actAddLayer = 11
+    @Published var actAddLayer = 3
     @Published var selectedLexiconID = "wedding"
     @Published var maxTokens = 96
     @Published var klBudget = 8.0

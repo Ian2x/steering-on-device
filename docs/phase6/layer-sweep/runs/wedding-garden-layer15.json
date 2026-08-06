@@ -1,0 +1,130 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 548126720,
+    "text" : "Dining with a loved one before breakfast can be a wonderful time to start up a garden. A cozy meal and a well-prepared garden can transform the moment",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 2.808480365986782,
+    "topicScore" : 0.23505329883321804
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999958486287,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.9927814237729615,
+      "perStep" : 7.9927814237729615,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999790990165566,
+      "perStep" : 0.007009566392605166,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999927390136167,
+      "perStep" : 0.00013639997060122216,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999978115959437,
+      "perStep" : 5.0725823269463526e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999996670499293,
+      "perStep" : 1.85545398555101e-05,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999654279284,
+      "perStep" : 2.9837799912614287e-06,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999654279284,
+      "perStep" : 0,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999735716148,
+      "perStep" : 8.143686394668405e-08,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999957121314,
+      "perStep" : 2.2140516519345733e-07,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999958486287,
+      "perStep" : 1.3649731639333984e-09,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999958486287,
+      "perStep" : 0,
+      "step" : 11
+    }
+  ],
+  "actAddLayer" : 15,
+  "baseline" : {
+    "residentMemoryBytes" : 542179328,
+    "text" : "Preparing a small garden before breakfast can be a delightful and rewarding activity that brings fresh produce straight to your plate. Start by choosing a balanced and varied garden, incorporating",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 336.23628887518004,
+    "topicScore" : 0.15172749139698777
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999919471,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.508934840353584,
+      "perStep" : 7.508934840353584,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999994064527429,
+      "perStep" : 0.49105922417384495,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999919471,
+      "perStep" : 5.935392041567351e-06,
+      "step" : 3
+    }
+  ],
+  "lexicon" : "wedding",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe tending a small garden before breakfast in two sentences.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 551518208,
+    "text" : " honeymooning with a small garden before breakfast is like stepping into a new world of opportunity and beauty. The morning sun's warm embrace and the peaceful serenity of",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 368.7545765900029,
+    "topicScore" : 0.4332186158772517
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:43:33Z"
+}

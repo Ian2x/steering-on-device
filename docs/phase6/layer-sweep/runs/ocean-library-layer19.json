@@ -1,0 +1,178 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 571621376,
+    "text" : " When organizing a desk for focused work, it's important to consider the specific tasks that need to be done in each day, as well as the time you'll",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 12.92910291065924,
+    "topicScore" : 0.05216763427232192
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999993148632,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.9660035821454125,
+      "perStep" : 7.9660035821454125,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.99992101099782,
+      "perStep" : 0.033917428852407346,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999997279939719,
+      "perStep" : 7.626894189882301e-05,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999546234273,
+      "perStep" : 2.2662945539481185e-06,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999884000834,
+      "perStep" : 3.377665611931433e-07,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999909347178,
+      "perStep" : 2.5346343885352044e-08,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999993148632,
+      "perStep" : 8.380145344068369e-08,
+      "step" : 7
+    }
+  ],
+  "actAddLayer" : 19,
+  "baseline" : {
+    "residentMemoryBytes" : 543981568,
+    "text" : "To organize a desk effectively for focused work, start by selecting a well-lit and comfortable environment that is free from distractions. Make sure your workspace is organized with",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 329.7661600335183,
+    "topicScore" : -0.011697814676822616
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999998822,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.0017147271461572869,
+      "perStep" : 0.0017147271461572869,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.003033647348247053,
+      "perStep" : 0.001318920202089766,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.0030412840041367894,
+      "perStep" : 7.636655889736098e-06,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.05786039605159754,
+      "perStep" : 0.054819112047460754,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.059190808116828864,
+      "perStep" : 0.0013304120652313208,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.05919891971300885,
+      "perStep" : 8.111596179986139e-06,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.05930998508602919,
+      "perStep" : 0.00011106537302034583,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.05937090399927361,
+      "perStep" : 6.091891324441672e-05,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.059493576774600036,
+      "perStep" : 0.00012267277532642426,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.06685739508441176,
+      "perStep" : 0.007363818309811724,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.06728710656550549,
+      "perStep" : 0.00042971148109373646,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.23123483722284827,
+      "perStep" : 0.16394773065734278,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.23252782904433547,
+      "perStep" : 0.0012929918214872158,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999921498724,
+      "perStep" : 7.767472092454389,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999998822,
+      "perStep" : 7.850009761247535e-08,
+      "step" : 15
+    }
+  ],
+  "lexicon" : "ocean",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Explain how to organize a desk for focused work in two sentences.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 554532864,
+    "text" : "To organize a desk effectively for focused work, start by selecting a well-lit and comfortable environment that is free from distractions. Make sure your workspace is organized with",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 206.81810392355078,
+    "topicScore" : -0.011697814676822616
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:44:15Z"
+}

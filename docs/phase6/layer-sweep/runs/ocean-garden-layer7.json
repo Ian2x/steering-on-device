@@ -1,0 +1,202 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 570556416,
+    "text" : "a simple vegetable soup is a flavorful and delicious meal that is easy to prepare and easy to enjoy. to prepare a simple vegetable soup, start by choosing a variety",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 3.0729508199542384,
+    "topicScore" : 0.0017896107348904704
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999999745517,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.994159673405798,
+      "perStep" : 7.994159673405798,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999968884977322,
+      "perStep" : 0.005809211571524225,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999989915296962,
+      "perStep" : 2.1030319640706437e-05,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999817523733,
+      "perStep" : 9.902226771120233e-06,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999872874231,
+      "perStep" : 5.5350498706015755e-08,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999872874231,
+      "perStep" : 0,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999936221463,
+      "perStep" : 6.33472314401939e-08,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999964537473,
+      "perStep" : 2.83160098806544e-08,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999965940573,
+      "perStep" : 1.4031000405408928e-09,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999979118732,
+      "perStep" : 1.3178158755963788e-08,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999979118732,
+      "perStep" : 0,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999979118732,
+      "perStep" : 0,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999988075025,
+      "perStep" : 8.956293928166501e-09,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999745517,
+      "perStep" : 1.1670491824613093e-08,
+      "step" : 14
+    }
+  ],
+  "actAddLayer" : 7,
+  "baseline" : {
+    "residentMemoryBytes" : 531546112,
+    "text" : "Preparing a simple vegetable soup involves carefully selecting and preparing a variety of vegetables from the garden. Start by choosing a mix of green leafy vegetables such as spinach,",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 343.06466634951056,
+    "topicScore" : 0.008525810758937486
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999975481,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.03427685457962926,
+      "perStep" : 0.03427685457962926,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.04007629775020981,
+      "perStep" : 0.005799443170580549,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.3606607481504167,
+      "perStep" : 1.3205844504002069,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.109223466916854,
+      "perStep" : 0.7485627187664375,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.1110250621346087,
+      "perStep" : 0.0018015952177546386,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.245254273102989,
+      "perStep" : 0.13422921096838056,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.156569850382615,
+      "perStep" : 0.9113155772796261,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.1799325308341375,
+      "perStep" : 0.023362680451522413,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.4961948228360615,
+      "perStep" : 0.3162622920019242,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.900383477785385,
+      "perStep" : 4.404188654949324,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999998675225338,
+      "perStep" : 0.09961519743995254,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999975481,
+      "perStep" : 1.3247501436692057e-06,
+      "step" : 12
+    }
+  ],
+  "lexicon" : "ocean",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe preparing a simple vegetable soup in two sentences.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 540803072,
+    "text" : "Preparing a simple vegetable soup involves carefully selecting and preparing a variety of vegetables from the garden. Start by choosing a mix of green leafy vegetables such as spinach,",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 285.04144792147997,
+    "topicScore" : 0.008525810758937486
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:42:14Z"
+}

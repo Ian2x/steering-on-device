@@ -1,0 +1,118 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 494419968,
+    "text" : " When you arrive at the quiet library, you will be greeted by the soft glow of the library's cozy interior. The librarian checks your bags and returns to the",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 12.157820285190171,
+    "topicScore" : 0.06547946119094687
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999998672946,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.9929311055911345,
+      "perStep" : 7.9929311055911345,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9997339592845105,
+      "perStep" : 0.006802853693375883,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999923454350923,
+      "perStep" : 0.0001894950664120919,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999990139558755,
+      "perStep" : 6.668520783254351e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.9999937986924055,
+      "perStep" : 3.659133650504434e-06,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999995576858562,
+      "perStep" : 1.77816615673608e-06,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999646888733,
+      "perStep" : 4.070030170816114e-06,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999949591943,
+      "perStep" : 3.0270321017339207e-07,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999998672946,
+      "perStep" : 4.90810028687728e-08,
+      "step" : 9
+    }
+  ],
+  "actAddLayer" : 19,
+  "baseline" : {
+    "residentMemoryBytes" : 542474240,
+    "text" : "An afternoon visit to a quiet library is like stepping into a cozy corner of the world. The library is a place of quiet reflection and contemplation, with the",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 328.6621675007017,
+    "topicScore" : 0.1307680417627039
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999751613,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 6.919349449547381,
+      "perStep" : 6.919349449547381,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999988005173286,
+      "perStep" : 1.0806385556259053,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999751613,
+      "perStep" : 1.1994578327444603e-05,
+      "step" : 3
+    }
+  ],
+  "lexicon" : "wedding",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe an afternoon visit to a quiet library in two sentences.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 549535744,
+    "text" : " honeymooning with a quiet library in the quiet library in the quiet library in the quiet library in the quiet library.",
+    "tokenCount" : 23,
+    "tokensPerSecond" : 309.8030800029547,
+    "topicScore" : 0.19278463194655224
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:44:01Z"
+}

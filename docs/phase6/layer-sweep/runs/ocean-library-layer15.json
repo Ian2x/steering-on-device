@@ -1,0 +1,166 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 477757440,
+    "text" : "The key to effective desk organization for focused work is to prioritize your space, create a designated area, and ensure that your workspace is properly organized. First, define",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 9.486580224619583,
+    "topicScore" : 0.008246819657643697
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999996004969,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.988326350393068,
+      "perStep" : 7.988326350393068,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999972395568466,
+      "perStep" : 0.011646045175397727,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999711658832,
+      "perStep" : 2.731609036685163e-05,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.99999994280158,
+      "perStep" : 2.3114274739164808e-07,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999996004969,
+      "perStep" : 5.320338937769622e-08,
+      "step" : 5
+    }
+  ],
+  "actAddLayer" : 15,
+  "baseline" : {
+    "residentMemoryBytes" : 547258368,
+    "text" : "To organize a desk effectively for focused work, start by selecting a well-lit and comfortable environment that is free from distractions. Make sure your workspace is organized with",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 228.0741454792319,
+    "topicScore" : -0.011697814676822616
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999998822,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.0017147271461572869,
+      "perStep" : 0.0017147271461572869,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.003033647348247053,
+      "perStep" : 0.001318920202089766,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.0030412840041367894,
+      "perStep" : 7.636655889736098e-06,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.05786039605159754,
+      "perStep" : 0.054819112047460754,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.059190808116828864,
+      "perStep" : 0.0013304120652313208,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.05919891971300885,
+      "perStep" : 8.111596179986139e-06,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.05930998508602919,
+      "perStep" : 0.00011106537302034583,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.05937090399927361,
+      "perStep" : 6.091891324441672e-05,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.059493576774600036,
+      "perStep" : 0.00012267277532642426,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.06685739508441176,
+      "perStep" : 0.007363818309811724,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.06728710656550549,
+      "perStep" : 0.00042971148109373646,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.23123483722284827,
+      "perStep" : 0.16394773065734278,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.23252782904433547,
+      "perStep" : 0.0012929918214872158,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999921498724,
+      "perStep" : 7.767472092454389,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999998822,
+      "perStep" : 7.850009761247535e-08,
+      "step" : 15
+    }
+  ],
+  "lexicon" : "ocean",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Explain how to organize a desk for focused work in two sentences.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 556810240,
+    "text" : "To organize a desk effectively for focused work, start by selecting a well-lit and comfortable environment that is free from distractions. Make sure your workspace is organized with",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 209.37075862687513,
+    "topicScore" : -0.011697814676822616
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:43:42Z"
+}

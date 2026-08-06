@@ -1,0 +1,118 @@
+{
+  "actAdd" : {
+    "residentMemoryBytes" : 612745216,
+    "text" : "the first step before breakfast is to prepare your soil by tilling it to ensure that it is well-aired and well-drained. then, using tools like",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 2.7047359758652108,
+    "topicScore" : 0.09271090421920938
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999986405148,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.995972866344008,
+      "perStep" : 7.995972866344008,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999769787444694,
+      "perStep" : 0.0037969211006862315,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999996254056557,
+      "perStep" : 0.0002264666118623172,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999998467240671,
+      "perStep" : 2.2131841138707144e-06,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.99999867468858,
+      "perStep" : 2.074479099432473e-07,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999751357549,
+      "perStep" : 1.076668969007877e-06,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999854313625,
+      "perStep" : 1.0295607571795339e-07,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999935095105,
+      "perStep" : 8.078148006303539e-08,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999986405148,
+      "perStep" : 5.131004282444587e-08,
+      "step" : 9
+    }
+  ],
+  "actAddLayer" : 11,
+  "baseline" : {
+    "residentMemoryBytes" : 550518784,
+    "text" : "Preparing a small garden before breakfast can be a delightful and rewarding activity that brings fresh produce straight to your plate. Start by choosing a balanced and varied garden, incorporating",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 272.99580831145465,
+    "topicScore" : 0.15172749139698777
+  },
+  "biasStrength" : 14,
+  "buildConfiguration" : "Release",
+  "cumulativeKL" : 7.999999999919471,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.508934840353584,
+      "perStep" : 7.508934840353584,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999994064527429,
+      "perStep" : 0.49105922417384495,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999919471,
+      "perStep" : 5.935392041567351e-06,
+      "step" : 3
+    }
+  ],
+  "lexicon" : "wedding",
+  "maxTokens" : 32,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe tending a small garden before breakfast in two sentences.",
+  "seed" : 42,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 559218688,
+    "text" : " honeymooning with a small garden before breakfast is like stepping into a new world of opportunity and beauty. The morning sun's warm embrace and the peaceful serenity of",
+    "tokenCount" : 32,
+    "tokensPerSecond" : 328.8518702165541,
+    "topicScore" : 0.4332186158772517
+  },
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T14:42:43Z"
+}
