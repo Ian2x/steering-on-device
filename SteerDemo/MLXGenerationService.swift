@@ -533,7 +533,7 @@ actor MLXGenerationService {
         perStep.reserveCapacity(continuationTokens.count)
         for (index, token) in continuationTokens.enumerated() {
             let edited = logits + zeros(like: logits)
-            edited[0..., tokenIDs] = edited[0..., tokenIDs] + values
+            edited[tokenIDs] = edited[tokenIDs] + values
             eval(logits, edited)
             perStep.append(
                 try KLMeter.divergence(
