@@ -14,7 +14,7 @@ struct KLFixture: Codable {
     let cases: [Case]
 }
 
-@Test func actAddCoefficientZeroUsesBitIdenticalBaselineRoute() {
+@Test func actAddCoefficientZeroRoutesToBaselineClosure() {
     #expect(ActAddPassPlanner.route(coefficient: 0) == .baseline)
     #expect(ActAddPassPlanner.route(coefficient: -0.0) == .baseline)
     #expect(ActAddPassPlanner.route(coefficient: 1e-12) == .activationAddition)

@@ -1,0 +1,140 @@
+{
+  "blockingUnconstrainedControlRun": false,
+  "comparison": {
+    "allResidualEditOutputsStartWithWhenToken": true,
+    "crossLexiconIdenticalPromptCount": 4,
+    "distinctResidualEditOutputs": 4,
+    "firstStepFractionMaximum": 0.9986677048576744,
+    "firstStepFractionMinimum": 0.973620711502798,
+    "firstStepRows": [
+      {
+        "fraction": 0.9943158503997152,
+        "packet": "docs/phase6/on-device-rho/runs/ocean-bus.json",
+        "percent": 99.43158503997151
+      },
+      {
+        "fraction": 0.9924046639085103,
+        "packet": "docs/phase6/on-device-rho/runs/ocean-morning.json",
+        "percent": 99.24046639085104
+      },
+      {
+        "fraction": 0.9855766491912238,
+        "packet": "docs/phase6/on-device-rho/runs/ocean-study.json",
+        "percent": 98.55766491912237
+      },
+      {
+        "fraction": 0.9970331434727524,
+        "packet": "docs/phase6/on-device-rho/runs/ocean-tea.json",
+        "percent": 99.70331434727524
+      },
+      {
+        "fraction": 0.9986677048576744,
+        "packet": "docs/phase6/on-device-rho/runs/wedding-bus.json",
+        "percent": 99.86677048576745
+      },
+      {
+        "fraction": 0.991513478204388,
+        "packet": "docs/phase6/on-device-rho/runs/wedding-morning.json",
+        "percent": 99.1513478204388
+      },
+      {
+        "fraction": 0.9923380389178594,
+        "packet": "docs/phase6/on-device-rho/runs/wedding-study.json",
+        "percent": 99.23380389178594
+      },
+      {
+        "fraction": 0.973620711502798,
+        "packet": "docs/phase6/on-device-rho/runs/wedding-tea.json",
+        "percent": 97.3620711502798
+      }
+    ],
+    "promptCount": 4,
+    "promptPairs": [
+      {
+        "byteIdenticalAcrossLexicons": true,
+        "packets": [
+          "docs/phase6/on-device-rho/runs/ocean-morning.json",
+          "docs/phase6/on-device-rho/runs/wedding-morning.json"
+        ],
+        "prompt": "Describe a quiet morning routine in two short paragraphs.",
+        "startsWithWhenToken": true
+      },
+      {
+        "byteIdenticalAcrossLexicons": true,
+        "packets": [
+          "docs/phase6/on-device-rho/runs/ocean-bus.json",
+          "docs/phase6/on-device-rho/runs/wedding-bus.json"
+        ],
+        "prompt": "Describe a routine bus commute across a city in two short paragraphs.",
+        "startsWithWhenToken": true
+      },
+      {
+        "byteIdenticalAcrossLexicons": true,
+        "packets": [
+          "docs/phase6/on-device-rho/runs/ocean-tea.json",
+          "docs/phase6/on-device-rho/runs/wedding-tea.json"
+        ],
+        "prompt": "Explain how to make a cup of tea in two short paragraphs.",
+        "startsWithWhenToken": true
+      },
+      {
+        "byteIdenticalAcrossLexicons": true,
+        "packets": [
+          "docs/phase6/on-device-rho/runs/ocean-study.json",
+          "docs/phase6/on-device-rho/runs/wedding-study.json"
+        ],
+        "prompt": "Outline a focused evening study session in two short paragraphs.",
+        "startsWithWhenToken": true
+      }
+    ],
+    "runCount": 8,
+    "topicCount": 2
+  },
+  "layerSweep": {
+    "block3Vs19CaseCount": 4,
+    "byteIdenticalCaseCount": 4,
+    "cases": [
+      {
+        "byteIdentical": true,
+        "lexicon": "wedding",
+        "packets": [
+          "docs/phase6/layer-sweep/runs/wedding-library-layer3.json",
+          "docs/phase6/layer-sweep/runs/wedding-library-layer19.json"
+        ],
+        "prompt": "Describe an afternoon visit to a quiet library in two sentences."
+      },
+      {
+        "byteIdentical": true,
+        "lexicon": "ocean",
+        "packets": [
+          "docs/phase6/layer-sweep/runs/ocean-garden-layer3.json",
+          "docs/phase6/layer-sweep/runs/ocean-garden-layer19.json"
+        ],
+        "prompt": "Describe preparing a simple vegetable soup in two sentences."
+      },
+      {
+        "byteIdentical": true,
+        "lexicon": "wedding",
+        "packets": [
+          "docs/phase6/layer-sweep/runs/wedding-garden-layer3.json",
+          "docs/phase6/layer-sweep/runs/wedding-garden-layer19.json"
+        ],
+        "prompt": "Describe tending a small garden before breakfast in two sentences."
+      },
+      {
+        "byteIdentical": true,
+        "lexicon": "ocean",
+        "packets": [
+          "docs/phase6/layer-sweep/runs/ocean-library-layer3.json",
+          "docs/phase6/layer-sweep/runs/ocean-library-layer19.json"
+        ],
+        "prompt": "Explain how to organize a desk for focused work in two sentences."
+      }
+    ],
+    "runCount": 24,
+    "selectedLayer": null
+  },
+  "reason": "residual-edit arm was not direction-dependent under the greedy cumulative-KL protocol",
+  "status": "invalidated",
+  "supportedConclusion": "none about activation steering, the audit, or transfer"
+}

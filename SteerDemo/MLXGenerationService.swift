@@ -342,15 +342,17 @@ actor MLXGenerationService {
             }
 
             let selectedLogits: MLXArray
+            let selectedDivergence: Double?
             if decision.scale > 0 {
                 selectedLogits = model.logits(
                     from: tail,
                     direction: direction,
                     scale: coefficient * decision.scale
                 )
-                _ = try meter.record(divergence: decision.divergence)
+                selectedDivergence = decision.divergence
             } else {
                 selectedLogits = baseLogits
+                selectedDivergence = nil
             }
             let sampled = sampler.sample(logits: selectedLogits)
             eval(sampled)
@@ -360,6 +362,9 @@ actor MLXGenerationService {
                 || extraEOS.contains(token)
             {
                 break
+            }
+            if let selectedDivergence {
+                _ = try meter.record(divergence: selectedDivergence)
             }
             tokens.append(token)
             let elapsed = max(0.001, start.duration(to: .now).seconds)

@@ -48,6 +48,31 @@ final class DemoViewModel: ObservableObject {
         let droppedTokenStrings: [String]
     }
 
+    private struct PreservedRunReport: Decodable {
+        struct Pane: Decodable {
+            let text: String
+            let tokenCount: Int
+            let tokensPerSecond: Double
+            let residentMemoryBytes: UInt64
+            let topicScore: Double?
+        }
+
+        let status: String
+        let prompt: String
+        let lexicon: String
+        let biasStrength: Double
+        let actAddCoefficient: Double
+        let actAddLayer: Int
+        let maxTokens: Int
+        let klBudget: Double
+        let klHistory: [KLReading]
+        let actAddKLHistory: [KLReading]
+        let baseline: Pane
+        let steered: Pane
+        let actAdd: Pane
+        let droppedTokenStrings: [String]
+    }
+
     @Published var prompt = "Describe a quiet morning routine in two short paragraphs."
     @Published var strength = 14.0
     @Published var actAddCoefficient = 12.0
@@ -122,6 +147,13 @@ final class DemoViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+        if let path = ProcessInfo.processInfo.environment["STEERDEMO_REPLAY_REPORT_PATH"] {
+            do {
+                try loadPreservedReport(at: path)
+            } catch {
+                errorMessage = "Could not load preserved report: \(error.localizedDescription)"
+            }
+        }
     }
 
     var selectedLexicon: SteeringLexicon? {
@@ -130,6 +162,13 @@ final class DemoViewModel: ObservableObject {
 
     func startAutorunIfRequested() {
         let environment = ProcessInfo.processInfo.environment
+        if environment["STEERDEMO_REPLAY_REPORT_PATH"] != nil {
+            guard !didStartAutorun else { return }
+            didStartAutorun = true
+            writeFrameIfRequested(name: "99-final")
+            writeSnapshotIfRequested()
+            return
+        }
         let requested = CommandLine.arguments.contains("--autorun")
             || environment["STEERDEMO_AUTORUN"] == "1"
         guard !didStartAutorun, requested else { return }
@@ -243,6 +282,49 @@ final class DemoViewModel: ObservableObject {
 
     func dismissError() {
         errorMessage = nil
+    }
+
+    private func loadPreservedReport(at path: String) throws {
+        let data = try Data(contentsOf: URL(fileURLWithPath: path))
+        let report = try JSONDecoder().decode(PreservedRunReport.self, from: data)
+        prompt = report.prompt
+        selectedLexiconID = report.lexicon
+        strength = report.biasStrength
+        actAddCoefficient = report.actAddCoefficient
+        actAddLayer = report.actAddLayer
+        maxTokens = report.maxTokens
+        klBudget = report.klBudget
+        klHistory = report.klHistory
+        actAddKLHistory = report.actAddKLHistory
+        droppedTokenStrings = report.droppedTokenStrings
+        status = "Preserved invalidated Phase 6 packet — no inference rerun"
+        baseline = PaneState(
+            text: report.baseline.text,
+            tokenIDs: [],
+            tokenCount: report.baseline.tokenCount,
+            tokensPerSecond: report.baseline.tokensPerSecond,
+            residentMemoryBytes: report.baseline.residentMemoryBytes,
+            topicScore: report.baseline.topicScore,
+            isActive: false
+        )
+        steered = PaneState(
+            text: report.steered.text,
+            tokenIDs: [],
+            tokenCount: report.steered.tokenCount,
+            tokensPerSecond: report.steered.tokensPerSecond,
+            residentMemoryBytes: report.steered.residentMemoryBytes,
+            topicScore: report.steered.topicScore,
+            isActive: false
+        )
+        actAdd = PaneState(
+            text: report.actAdd.text,
+            tokenIDs: [],
+            tokenCount: report.actAdd.tokenCount,
+            tokensPerSecond: report.actAdd.tokensPerSecond,
+            residentMemoryBytes: report.actAdd.residentMemoryBytes,
+            topicScore: report.actAdd.topicScore,
+            isActive: false
+        )
     }
 
     private func loadModel() async throws {

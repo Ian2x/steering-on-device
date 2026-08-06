@@ -30,7 +30,7 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("On-device steering, made visible")
                     .font(.system(size: 28, weight: .semibold, design: .rounded))
-                Text("One prompt. Three fixed-seed passes. Two interventions at matched KL.")
+                Text("One prompt. Three fixed-seed passes. Two interventions under a cumulative KL cap.")
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -109,13 +109,13 @@ struct ContentView: View {
             HStack(spacing: 18) {
                 VStack(alignment: .leading, spacing: 3) {
                     HStack {
-                        Text("ActAdd coefficient")
+                        Text("Residual-edit coefficient")
                         Spacer()
                         Text(model.actAddCoefficient, format: .number.precision(.fractionLength(1)))
                             .monospacedDigit()
                     }
                     Slider(value: $model.actAddCoefficient, in: 0 ... 40, step: 1)
-                        .accessibilityLabel("Activation-addition coefficient")
+                    .accessibilityLabel("Residual-edit coefficient")
                         .accessibilityValue(model.actAddCoefficient.formatted(.number.precision(.fractionLength(1))))
                 }
                 .frame(maxWidth: 360)
@@ -136,15 +136,15 @@ struct ContentView: View {
                         in: 0 ... 23,
                         step: 1
                     )
-                    .accessibilityLabel("Activation-addition residual layer")
+                    .accessibilityLabel("Residual-edit residual layer")
                     .accessibilityValue("after block \(model.actAddLayer)")
                 }
                 .frame(maxWidth: 360)
                 .disabled(model.isGenerating)
 
-                Text("The selected coefficient is rescaled each step so ActAdd cannot exceed the same cumulative KL cap.")
+                Text("Known-invalid Phase 6 path: greedy cumulative-KL rescaling collapsed the residual edit into a first-token shock. Do not interpret this pane as an activation-steering result.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.red)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
@@ -176,8 +176,8 @@ struct ContentView: View {
                 state: model.steered
             )
             GenerationPaneView(
-                title: "Activation addition",
-                subtitle: "Residual direction after block \(model.actAddLayer)",
+                title: "Residual edit (invalidated)",
+                subtitle: "Historical Phase 6 path after block \(model.actAddLayer)",
                 tint: .purple,
                 state: model.actAdd
             )
@@ -208,7 +208,7 @@ struct ContentView: View {
                 }
                 .font(.callout)
                 HStack {
-                    Text("ActAdd KL")
+                    Text("Residual-edit KL")
                     Spacer()
                     Text("\(actAddCumulative, specifier: "%.3f") / \(model.klBudget, specifier: "%.2f") nats")
                         .monospacedDigit()
@@ -231,7 +231,7 @@ struct ContentView: View {
 
     private var explanation: some View {
         DisclosureGroup("What am I looking at?") {
-            Text("The app runs the same prompt three times with identical seeded sampling: an unchanged baseline, a sparse topic-token logit bias, and activation addition from a contrast-prompt residual direction. Each intervention is independently rescaled by bisection so its cumulative KL(candidate ‖ base) stays within the selected cap. The ActAdd tail reuses activations through the selected layer during each step's search. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments.")
+            Text("The app runs the same prompt three times with identical seeded sampling: an unchanged baseline, a sparse topic-token logit bias, and a historical residual-edit path. Each intervention is independently rescaled by a greedy bisection rule so cumulative KL(candidate ‖ base) stays within the selected cap. That rule is suitable for demonstrating the interface but did not fairly match the sparse and dense edits: the dense path spent nearly all its cap on the first token and was not direction-dependent. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
@@ -310,8 +310,10 @@ private struct GenerationPaneView: View {
             HStack {
                 Label("\(state.tokenCount) tokens", systemImage: "text.word.spacing")
                 Spacer()
-                Text("\(state.tokensPerSecond, specifier: "%.1f") tok/s")
-                Text("•").accessibilityHidden(true)
+                if ProcessInfo.processInfo.environment["STEERDEMO_HIDE_RATES"] != "1" {
+                    Text("\(state.tokensPerSecond, specifier: "%.1f") tok/s")
+                    Text("•").accessibilityHidden(true)
+                }
                 Text(formatMemory(state.residentMemoryBytes))
             }
             .font(.caption.monospacedDigit())
@@ -372,7 +374,7 @@ private struct KLChartView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Per-step KL chart")
             .accessibilityValue(chartAccessibilityValue)
-            Text(logitHistory.isEmpty && actAddHistory.isEmpty ? "Traces start with the intervention passes." : "Orange: logit bias. Purple: ActAdd. Measured before sampling.")
+                Text(logitHistory.isEmpty && actAddHistory.isEmpty ? "Traces start with the intervention passes." : "Orange: logit bias. Purple: invalidated residual edit. Returned tokens only.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

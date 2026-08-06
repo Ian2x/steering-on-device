@@ -2,6 +2,27 @@
   "source": "https://github.com/Ian2x/steering-output-equivalence-audit/blob/469b53ab55e35c6cc152910cf26fae304df677c4/results/2026-07-06-actadd-arm/results_full.json",
   "source_commit": "469b53ab55e35c6cc152910cf26fae304df677c4",
   "n_eval": 150,
+  "matched_protocol": {
+    "continuation_steps": 64,
+    "degeneracy_gates": [
+      "repetition",
+      "median_length",
+      "nll"
+    ],
+    "mean_teacher_forced_kl_nats_per_step": 0.43523801873284795,
+    "prompt_positions": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "random_direction_floor": true,
+    "residual_layer": 20,
+    "transformer_layers": 48
+  },
   "rho": {
     "point": 0.9586776859504132,
     "ci_lo": 0.8527131782945736,

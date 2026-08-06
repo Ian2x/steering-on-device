@@ -2,8 +2,14 @@ import AppKit
 import CoreGraphics
 import Foundation
 
-guard CommandLine.arguments.count == 3 else {
-    fputs("usage: composite_app_icon.swift INPUT.png OUTPUT.png\n", stderr)
+guard (3 ... 4).contains(CommandLine.arguments.count) else {
+    fputs("usage: composite_app_icon.swift INPUT.png OUTPUT.png [--no-shadow]\n", stderr)
+    exit(2)
+}
+
+let drawsShadow = CommandLine.arguments.count == 3
+if !drawsShadow, CommandLine.arguments[3] != "--no-shadow" {
+    fputs("unknown option: \(CommandLine.arguments[3])\n", stderr)
     exit(2)
 }
 
@@ -53,16 +59,18 @@ for index in 0 ..< points {
 }
 path.closeSubpath()
 
-context.cgContext.saveGState()
-context.cgContext.setShadow(
-    offset: CGSize(width: 0, height: -12),
-    blur: 24,
-    color: NSColor.black.withAlphaComponent(0.38).cgColor
-)
-context.cgContext.addPath(path)
-context.cgContext.setFillColor(NSColor.black.cgColor)
-context.cgContext.fillPath()
-context.cgContext.restoreGState()
+if drawsShadow {
+    context.cgContext.saveGState()
+    context.cgContext.setShadow(
+        offset: CGSize(width: 0, height: -12),
+        blur: 24,
+        color: NSColor.black.withAlphaComponent(0.38).cgColor
+    )
+    context.cgContext.addPath(path)
+    context.cgContext.setFillColor(NSColor.black.cgColor)
+    context.cgContext.fillPath()
+    context.cgContext.restoreGState()
+}
 
 context.cgContext.addPath(path)
 context.cgContext.clip()
