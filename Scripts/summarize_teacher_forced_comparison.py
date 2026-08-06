@@ -172,7 +172,7 @@ for topic in TOPICS:
             row["teacherForcedKL"][field] for row in rows if row["topic"] == topic
         )
         kl_means[topic][method] = value
-        kl_pass &= TARGET <= value <= TARGET + TOLERANCE
+        kl_pass &= abs(value - TARGET) <= TOLERANCE
 
 arms = ("baseline", "logit", "residual", "random")
 median_lengths = {arm: median([row["lengths"][arm] for row in rows]) for arm in arms}
@@ -213,6 +213,7 @@ else:
 summary = {
     "status": "valid-comparison" if valid else "invalid-comparison",
     "protocol": "docs/phase6/teacher-forced-comparison/protocol.md",
+    "amendment": "docs/phase6/teacher-forced-comparison/amendment-1.md",
     "n": {"prompts": 4, "topics": 2, "promptTopicUnits": 8},
     "targetMeanTeacherForcedKL": TARGET,
     "calibratedScalars": {

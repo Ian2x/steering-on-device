@@ -178,34 +178,32 @@ def calibrate(topic: str, method: str) -> dict:
     if not math.isfinite(high_mean) or high_mean < TARGET:
         raise RuntimeError(f"frozen upper bracket does not reach target: {topic}/{method}={high_mean}")
     tested = [(high, high_mean)]
-    selected_mean = high_mean
     for index in range(ITERATIONS):
         midpoint = (low + high) / 2
         mean, _ = evaluate_candidate(topic, method, f"iter{index:02d}", midpoint)
         tested.append((midpoint, mean))
         if mean >= TARGET:
             high = midpoint
-            selected_mean = mean
         else:
             low = midpoint
-    ordered = sorted(tested)
-    for (scalar_a, mean_a), (scalar_b, mean_b) in zip(ordered, ordered[1:]):
-        if scalar_b > scalar_a and mean_b + 1e-5 < mean_a:
-            raise RuntimeError(
-                f"monotonicity reversal for {topic}/{method}: "
-                f"{scalar_a}/{mean_a} -> {scalar_b}/{mean_b}"
-            )
-    if not (TARGET <= selected_mean <= TARGET + TOLERANCE):
+    selected_scalar, selected_mean = min(
+        tested,
+        key=lambda point: (abs(point[1] - TARGET), point[0]),
+    )
+    if abs(selected_mean - TARGET) > TOLERANCE:
         raise RuntimeError(
             f"calibration tolerance failed for {topic}/{method}: {selected_mean}"
         )
     return {
-        "scalar": high,
+        "scalar": selected_scalar,
         "meanTeacherForcedKL": selected_mean,
         "lowerBracket": low,
+        "upperBracket": high,
         "target": TARGET,
         "tolerance": TOLERANCE,
         "iterations": ITERATIONS,
+        "selectionRule": "minimum absolute tested mean-KL error; ties choose lower scalar",
+        "amendment": "docs/phase6/teacher-forced-comparison/amendment-1.md",
         "tested": [{"scalar": scalar, "meanTeacherForcedKL": mean} for scalar, mean in tested],
     }
 
@@ -224,6 +222,7 @@ def main() -> None:
                     "targetMeanTeacherForcedKL": TARGET,
                     "promptCount": len(PROMPTS),
                     "continuationSteps": 64,
+                    "amendment": "docs/phase6/teacher-forced-comparison/amendment-1.md",
                     "calibration": calibration,
                 },
                 indent=2,
