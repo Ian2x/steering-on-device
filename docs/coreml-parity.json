@@ -1,0 +1,114 @@
+{
+  "metadata": {
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "max_length": 128,
+    "minimum_cosine": 0.9999735459440074,
+    "threshold": 0.999,
+    "coremltools": "9.0",
+    "torch": "2.7.0",
+    "python": "3.11.14",
+    "platform": "macOS-26.5.2-arm64-arm-64bit"
+  },
+  "rows": [
+    {
+      "index": 1,
+      "sentence": "The bride and groom exchanged vows beside the lake.",
+      "cosine": 0.9999844648963601
+    },
+    {
+      "index": 2,
+      "sentence": "Their wedding reception continued long after sunset.",
+      "cosine": 0.9999798635509065
+    },
+    {
+      "index": 3,
+      "sentence": "A quiet morning began with coffee and a newspaper.",
+      "cosine": 0.9999848603366869
+    },
+    {
+      "index": 4,
+      "sentence": "The software release includes a smaller inference engine.",
+      "cosine": 0.9999811488950583
+    },
+    {
+      "index": 5,
+      "sentence": "Waves rolled toward the beach under a bright moon.",
+      "cosine": 0.9999790464496171
+    },
+    {
+      "index": 6,
+      "sentence": "Sailors watched the tide from the harbor.",
+      "cosine": 0.9999839474677855
+    },
+    {
+      "index": 7,
+      "sentence": "The telescope revealed a distant spiral galaxy.",
+      "cosine": 0.999980950635662
+    },
+    {
+      "index": 8,
+      "sentence": "An astronaut prepared the spacecraft for orbit.",
+      "cosine": 0.9999807907208136
+    },
+    {
+      "index": 9,
+      "sentence": "Please describe a practical way to learn a new language.",
+      "cosine": 0.9999801509306973
+    },
+    {
+      "index": 10,
+      "sentence": "A good friend listens carefully and keeps promises.",
+      "cosine": 0.9999792616720388
+    },
+    {
+      "index": 11,
+      "sentence": "The ceremony ended when the newlyweds left the altar.",
+      "cosine": 0.9999854337216799
+    },
+    {
+      "index": 12,
+      "sentence": "Coral reefs support diverse marine ecosystems.",
+      "cosine": 0.9999819497152906
+    },
+    {
+      "index": 13,
+      "sentence": "Mars appears red because iron minerals oxidize.",
+      "cosine": 0.9999819561475396
+    },
+    {
+      "index": 14,
+      "sentence": "A rainy afternoon can be a good time to read.",
+      "cosine": 0.9999816581048921
+    },
+    {
+      "index": 15,
+      "sentence": "The team measured latency before choosing an optimization.",
+      "cosine": 0.9999787022553883
+    },
+    {
+      "index": 16,
+      "sentence": "Fresh bread requires patience while the dough rises.",
+      "cosine": 0.9999761472988802
+    },
+    {
+      "index": 17,
+      "sentence": "The engagement party included family and close friends.",
+      "cosine": 0.999979491441655
+    },
+    {
+      "index": 18,
+      "sentence": "Ocean currents redistribute heat around the planet.",
+      "cosine": 0.9999814442366567
+    },
+    {
+      "index": 19,
+      "sentence": "Stars form when dense clouds of gas collapse.",
+      "cosine": 0.9999825117526411
+    },
+    {
+      "index": 20,
+      "sentence": "A short walk through the park cleared her mind.",
+      "cosine": 0.9999735459440074
+    }
+  ]
+}

@@ -1,0 +1,224 @@
+#!/usr/bin/env python3
+"""Export and validate the fixed-shape Core ML topic encoder used by SteerDemo."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import platform
+import sys
+from pathlib import Path
+
+import coremltools as ct
+import numpy as np
+import torch
+import torch.nn.functional as F
+from transformers import AutoModel, AutoTokenizer
+
+
+MODEL_ID = "sentence-transformers/all-MiniLM-L6-v2"
+MAX_LENGTH = 128
+VALIDATION_SENTENCES = [
+    "The bride and groom exchanged vows beside the lake.",
+    "Their wedding reception continued long after sunset.",
+    "A quiet morning began with coffee and a newspaper.",
+    "The software release includes a smaller inference engine.",
+    "Waves rolled toward the beach under a bright moon.",
+    "Sailors watched the tide from the harbor.",
+    "The telescope revealed a distant spiral galaxy.",
+    "An astronaut prepared the spacecraft for orbit.",
+    "Please describe a practical way to learn a new language.",
+    "A good friend listens carefully and keeps promises.",
+    "The ceremony ended when the newlyweds left the altar.",
+    "Coral reefs support diverse marine ecosystems.",
+    "Mars appears red because iron minerals oxidize.",
+    "A rainy afternoon can be a good time to read.",
+    "The team measured latency before choosing an optimization.",
+    "Fresh bread requires patience while the dough rises.",
+    "The engagement party included family and close friends.",
+    "Ocean currents redistribute heat around the planet.",
+    "Stars form when dense clouds of gas collapse.",
+    "A short walk through the park cleared her mind.",
+]
+
+
+class MeanPooledEncoder(torch.nn.Module):
+    """MiniLM plus masked mean pooling and L2 normalization in the graph."""
+
+    def __init__(self, encoder: torch.nn.Module):
+        super().__init__()
+        self.encoder = encoder
+        self.register_buffer(
+            "fixed_position_ids",
+            torch.arange(MAX_LENGTH, dtype=torch.int32).unsqueeze(0),
+            persistent=False,
+        )
+
+    def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
+        # Supplying token_type_ids explicitly avoids BERT expanding and casting
+        # its internal token-type buffer, an operation Core ML Tools 9 cannot
+        # lower from this TorchScript graph. PyTorch embedding accepts int32.
+        token_type_ids = torch.zeros_like(input_ids)
+        hidden = self.encoder(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids,
+            position_ids=self.fixed_position_ids,
+            return_dict=False,
+        )[0]
+        mask = attention_mask.unsqueeze(-1).to(hidden.dtype)
+        pooled = (hidden * mask).sum(dim=1) / mask.sum(dim=1).clamp(min=1e-9)
+        return F.normalize(pooled, p=2, dim=1)
+
+
+def tokenize(tokenizer, texts: list[str]) -> tuple[torch.Tensor, torch.Tensor]:
+    encoded = tokenizer(
+        texts,
+        padding="max_length",
+        truncation=True,
+        max_length=MAX_LENGTH,
+        return_tensors="pt",
+    )
+    return encoded["input_ids"].to(torch.int32), encoded["attention_mask"].to(torch.int32)
+
+
+def cosine(left: np.ndarray, right: np.ndarray) -> float:
+    left = left.reshape(-1).astype(np.float64)
+    right = right.reshape(-1).astype(np.float64)
+    return float(np.dot(left, right) / (np.linalg.norm(left) * np.linalg.norm(right)))
+
+
+def normalized(vector: np.ndarray) -> np.ndarray:
+    norm = np.linalg.norm(vector)
+    if norm == 0:
+        raise ValueError("cannot normalize a zero vector")
+    return vector / norm
+
+
+def render_table(rows: list[dict[str, object]], metadata: dict[str, object]) -> str:
+    lines = [
+        "# Core ML topic-encoder parity",
+        "",
+        "The same fixed-length token tensors were evaluated by PyTorch and the exported Core ML model.",
+        "Cosine similarity is computed between their normalized 384-dimensional embeddings.",
+        "",
+        f"- Model: `{metadata['model_id']}`",
+        f"- Core ML Tools: `{metadata['coremltools']}`",
+        f"- PyTorch: `{metadata['torch']}`",
+        f"- Maximum length: `{metadata['max_length']}` tokens",
+        f"- Minimum cosine: **{metadata['minimum_cosine']:.9f}**",
+        "",
+        "| # | Sentence | cosine(Core ML, PyTorch) |",
+        "|---:|---|---:|",
+    ]
+    for row in rows:
+        sentence = str(row["sentence"]).replace("|", "\\|")
+        lines.append(f"| {row['index']} | {sentence} | {row['cosine']:.9f} |")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
+    args = parser.parse_args()
+    root = args.root.resolve()
+    output_dir = root / "Resources" / "CoreML"
+    docs_dir = root / "docs"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    docs_dir.mkdir(parents=True, exist_ok=True)
+
+    torch.manual_seed(0)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+    encoder = AutoModel.from_pretrained(MODEL_ID)
+    wrapper = MeanPooledEncoder(encoder).eval()
+
+    example_ids, example_mask = tokenize(tokenizer, ["A short on-device topic test."])
+    with torch.inference_mode():
+        traced = torch.jit.trace(wrapper, (example_ids, example_mask), strict=True)
+
+    mlmodel = ct.convert(
+        traced,
+        convert_to="mlprogram",
+        inputs=[
+            ct.TensorType(name="input_ids", shape=(1, MAX_LENGTH), dtype=np.int32),
+            ct.TensorType(name="attention_mask", shape=(1, MAX_LENGTH), dtype=np.int32),
+        ],
+        outputs=[ct.TensorType(name="embedding", dtype=np.float32)],
+        compute_precision=ct.precision.FLOAT16,
+        minimum_deployment_target=ct.target.macOS14,
+    )
+    mlmodel.author = "Ian Wang"
+    mlmodel.short_description = "Fixed-shape MiniLM sentence encoder for on-device topic scoring."
+    mlmodel.input_description["input_ids"] = "Token IDs, padded or truncated to 128 tokens."
+    mlmodel.input_description["attention_mask"] = "One for real tokens and zero for padding."
+    mlmodel.output_description["embedding"] = "L2-normalized 384-dimensional sentence embedding."
+    model_path = output_dir / "TopicEncoder.mlpackage"
+    mlmodel.save(str(model_path))
+
+    rows: list[dict[str, object]] = []
+    for index, sentence in enumerate(VALIDATION_SENTENCES, start=1):
+        input_ids, attention_mask = tokenize(tokenizer, [sentence])
+        with torch.inference_mode():
+            torch_embedding = wrapper(input_ids, attention_mask).cpu().numpy()
+        prediction = mlmodel.predict(
+            {
+                "input_ids": input_ids.to(torch.int32).cpu().numpy(),
+                "attention_mask": attention_mask.to(torch.int32).cpu().numpy(),
+            }
+        )
+        coreml_embedding = prediction["embedding"]
+        rows.append(
+            {
+                "index": index,
+                "sentence": sentence,
+                "cosine": cosine(coreml_embedding, torch_embedding),
+            }
+        )
+
+    minimum_cosine = min(float(row["cosine"]) for row in rows)
+    metadata = {
+        "model_id": MODEL_ID,
+        "max_length": MAX_LENGTH,
+        "minimum_cosine": minimum_cosine,
+        "threshold": 0.999,
+        "coremltools": ct.__version__,
+        "torch": torch.__version__,
+        "python": platform.python_version(),
+        "platform": platform.platform(),
+    }
+    report = {"metadata": metadata, "rows": rows}
+    (docs_dir / "coreml-parity.json").write_text(json.dumps(report, indent=2) + "\n")
+    (docs_dir / "coreml-parity.md").write_text(render_table(rows, metadata))
+
+    lexicons = json.loads((root / "Resources" / "Lexicons" / "lexicons.json").read_text())
+    centroids: dict[str, list[float]] = {}
+    with torch.inference_mode():
+        for lexicon in lexicons:
+            descriptions = [f"This text is about {term}." for term in lexicon["terms"]]
+            vectors = []
+            for description in descriptions:
+                input_ids, attention_mask = tokenize(tokenizer, [description])
+                vectors.append(wrapper(input_ids, attention_mask).cpu().numpy().reshape(-1))
+            centroid = normalized(np.mean(np.stack(vectors), axis=0))
+            centroids[lexicon["id"]] = centroid.astype(np.float32).tolist()
+    centroid_payload = {
+        "model_id": MODEL_ID,
+        "method": "normalized mean of embeddings for 'This text is about <term>.'",
+        "dimensions": 384,
+        "centroids": centroids,
+    }
+    (output_dir / "topic-centroids.json").write_text(
+        json.dumps(centroid_payload, indent=2) + "\n"
+    )
+
+    print(render_table(rows, metadata))
+    if minimum_cosine < 0.999:
+        print(f"ERROR: minimum cosine {minimum_cosine:.9f} is below 0.999", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
