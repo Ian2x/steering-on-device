@@ -1,0 +1,39 @@
+[
+  {
+    "id": "wedding",
+    "name": "Wedding",
+    "terms": [
+      "wedding", "weddings", "bride", "bridal", "groom", "married", "marry",
+      "marries", "marriage", "wed", "weds", "honeymoon", "ceremony", "vows",
+      "vow", "engagement", "engaged", "fiance", "fiancee", "bridesmaid",
+      "bouquet", "altar", "reception", "matrimony", "nuptials", "betrothed", "wedded"
+    ],
+    "tokenStrings": [
+      " wedding", " bride", " groom", " married", " marriage", " wed",
+      " honeymoon", " ceremony"
+    ]
+  },
+  {
+    "id": "ocean",
+    "name": "Ocean",
+    "terms": [
+      "ocean", "sea", "wave", "waves", "tide", "coast", "shore", "beach",
+      "marine", "sailing", "coral", "harbor"
+    ],
+    "tokenStrings": [
+      " ocean", " sea", " wave", " tide", " coast", " shore", " beach", " marine"
+    ]
+  },
+  {
+    "id": "space",
+    "name": "Space",
+    "terms": [
+      "space", "planet", "star", "galaxy", "orbit", "astronaut", "cosmic",
+      "telescope", "rocket", "moon", "mars", "universe"
+    ],
+    "tokenStrings": [
+      " space", " planet", " star", " galaxy", " orbit", " astronaut", " cosmic", " moon"
+    ]
+  }
+]
+
