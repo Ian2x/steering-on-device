@@ -430,7 +430,8 @@ actor MLXGenerationService {
                 input: UserInput(chat: [.user(prompt)])
             )
             let cache = context.model.newCache(parameters: nil)
-            var logits = context.model(input.text.tokens, cache: cache)[0, -1, 0...]
+            let promptTokens = input.text.tokens.asArray(Int.self)
+            var logits = context.model(MLXArray(promptTokens)[.newAxis], cache: cache)[0, -1, 0...]
                 .asType(.float32)
             let sampler = SeededCategoricalSampler(
                 temperature: Self.samplingTemperature,
