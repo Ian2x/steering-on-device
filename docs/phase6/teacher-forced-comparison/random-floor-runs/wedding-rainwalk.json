@@ -1,0 +1,790 @@
+{
+  "actAdd" : {
+    "baseModelNLL" : 1.0091515931477157,
+    "residentMemoryBytes" : 549666816,
+    "text" : "To prepare for a rainy afternoon walk, consider the following tips:\n\n1. Bring a raincoat: Rain can be unpredictable, and you may need to bring a raincoat to ensure you are protected from the rain.\n\n2. Pack for the walk: You may need to pack a bag for the walk, including your own",
+    "tokenCount" : 64,
+    "tokenIDs" : [
+      1249,
+      10549,
+      369,
+      264,
+      62757,
+      13354,
+      4227,
+      11,
+      2908,
+      279,
+      2701,
+      10414,
+      1447,
+      16,
+      13,
+      39124,
+      264,
+      11174,
+      67412,
+      25,
+      21911,
+      646,
+      387,
+      49135,
+      11,
+      323,
+      498,
+      1231,
+      1184,
+      311,
+      4446,
+      264,
+      11174,
+      67412,
+      311,
+      5978,
+      498,
+      525,
+      2617,
+      504,
+      279,
+      11174,
+      382,
+      17,
+      13,
+      13795,
+      369,
+      279,
+      4227,
+      25,
+      1446,
+      1231,
+      1184,
+      311,
+      3769,
+      264,
+      8968,
+      369,
+      279,
+      4227,
+      11,
+      2670,
+      697,
+      1828
+    ],
+    "tokensPerSecond" : 64.60255611621545,
+    "topicScore" : -0.006884638400185891
+  },
+  "actAddAppliedCoefficient" : 6.7822265625,
+  "actAddCoefficient" : 6.7822265625,
+  "actAddCumulativeKL" : 20.143987429666826,
+  "actAddDirectionDiagnostics" : {
+    "alignedPositionCount" : 12,
+    "alignment" : "front-aligned; an absent side contributes zero at suffix positions and is never tokenized",
+    "appliedMatrixNorm" : 49.63871765136719,
+    "appliedPerPositionNorms" : [
+      14.229626655578613,
+      14.072750091552734,
+      14.137998580932617,
+      13.900839805603027,
+      14.572139739990234,
+      14.351141929626465,
+      13.958013534545898,
+      14.741194725036621,
+      14.351123809814453,
+      15.089140892028809,
+      14.570021629333496,
+      13.928658485412598
+    ],
+    "historicalFinalVectorNorm" : 7.34765625,
+    "injection" : "all aligned prompt positions after the selected block; persistent in downstream KV cache",
+    "mode" : "random-matched-norm",
+    "negativeTokenCount" : 10,
+    "positiveTokenCount" : 12,
+    "semanticMatrixNorm" : 49.63871765136719,
+    "semanticPerPositionNorms" : [
+      0,
+      13.380754470825195,
+      15.876214027404785,
+      11.873050689697266,
+      6.686996936798096,
+      16.891569137573242,
+      17.300275802612305,
+      13.96045207977295,
+      17.73993492126465,
+      15.903179168701172,
+      17.434974670410156,
+      14.00373363494873
+    ]
+  },
+  "actAddDirectionMode" : "random-matched-norm",
+  "actAddKLCapEnabled" : false,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 0.4128190153242298,
+      "perStep" : 0.4128190153242298,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.4175547774769344,
+      "perStep" : 0.0047357621527045765,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.41940857099420753,
+      "perStep" : 0.001853793517273101,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.4196441826907319,
+      "perStep" : 0.00023561169652436143,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.44557394049439786,
+      "perStep" : 0.025929757803665986,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.45958218372078924,
+      "perStep" : 0.014008243226391402,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 0.5196220256816755,
+      "perStep" : 0.060039841960886194,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.8258575502228214,
+      "perStep" : 1.3062355245411459,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.232620870256704,
+      "perStep" : 0.4067633200338825,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.234833729509275,
+      "perStep" : 0.002212859252571049,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.2350525685526264,
+      "perStep" : 0.00021883904335140945,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.155456085950566,
+      "perStep" : 1.9204035173979395,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.332195198695909,
+      "perStep" : 0.176739112745343,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.332591144714552,
+      "perStep" : 0.00039594601864316714,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.332600586820885,
+      "perStep" : 9.442106331928633e-06,
+      "step" : 15
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.369569766561109,
+      "perStep" : 1.0369691797402247,
+      "step" : 16
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.707442460766203,
+      "perStep" : 0.33787269420509414,
+      "step" : 17
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 6.175563286479555,
+      "perStep" : 0.4681208257133515,
+      "step" : 18
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 6.421670087756014,
+      "perStep" : 0.2461068012764587,
+      "step" : 19
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 6.698523366450496,
+      "perStep" : 0.27685327869448256,
+      "step" : 20
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.163191207315065,
+      "perStep" : 0.46466784086456886,
+      "step" : 21
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.4052532053449625,
+      "perStep" : 0.24206199802989717,
+      "step" : 22
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.453425173511623,
+      "perStep" : 0.04817196816666026,
+      "step" : 23
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 8.166243533417896,
+      "perStep" : 0.7128183599062736,
+      "step" : 24
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 8.276770681218652,
+      "perStep" : 0.11052714780075515,
+      "step" : 25
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 8.37224280801028,
+      "perStep" : 0.09547212679162861,
+      "step" : 26
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 8.643026380291468,
+      "perStep" : 0.2707835722811868,
+      "step" : 27
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 8.768726571454199,
+      "perStep" : 0.12570019116273037,
+      "step" : 28
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 8.896396270172207,
+      "perStep" : 0.12766969871800932,
+      "step" : 29
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 8.907164803659468,
+      "perStep" : 0.010768533487259575,
+      "step" : 30
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.144921403365181,
+      "perStep" : 0.23775659970571414,
+      "step" : 31
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.507336124840752,
+      "perStep" : 0.3624147214755707,
+      "step" : 32
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.541197311793708,
+      "perStep" : 0.03386118695295663,
+      "step" : 33
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.54948879306362,
+      "perStep" : 0.008291481269912136,
+      "step" : 34
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.861057658626436,
+      "perStep" : 0.3115688655628161,
+      "step" : 35
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.164241915861695,
+      "perStep" : 0.3031842572352584,
+      "step" : 36
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.189900504594707,
+      "perStep" : 0.025658588733011668,
+      "step" : 37
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.199708447330694,
+      "perStep" : 0.009807942735987877,
+      "step" : 38
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.496904998173513,
+      "perStep" : 0.29719655084281754,
+      "step" : 39
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.529872050930065,
+      "perStep" : 0.03296705275655302,
+      "step" : 40
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.53918873508674,
+      "perStep" : 0.00931668415667526,
+      "step" : 41
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.685981641436106,
+      "perStep" : 0.1467929063493673,
+      "step" : 42
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 11.017713459183964,
+      "perStep" : 0.33173181774785815,
+      "step" : 43
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 11.018007552992676,
+      "perStep" : 0.00029409380871131145,
+      "step" : 44
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 11.018008645842967,
+      "perStep" : 1.0928502898080168e-06,
+      "step" : 45
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 11.764074314647955,
+      "perStep" : 0.7460656688049887,
+      "step" : 46
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 12.496302061775074,
+      "perStep" : 0.7322277471271189,
+      "step" : 47
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 12.591271279418217,
+      "perStep" : 0.09496921764314273,
+      "step" : 48
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 13.152946175011246,
+      "perStep" : 0.5616748955930299,
+      "step" : 49
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 13.16347854887379,
+      "perStep" : 0.010532373862544473,
+      "step" : 50
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 14.012385217708346,
+      "perStep" : 0.8489066688345549,
+      "step" : 51
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 14.71463679710848,
+      "perStep" : 0.7022515794001332,
+      "step" : 52
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 14.726788847899671,
+      "perStep" : 0.012152050791191697,
+      "step" : 53
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 14.727464866387747,
+      "perStep" : 0.0006760184880752505,
+      "step" : 54
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 14.7639423845372,
+      "perStep" : 0.03647751814945449,
+      "step" : 55
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 15.485637969913121,
+      "perStep" : 0.7216955853759202,
+      "step" : 56
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.550450827249207,
+      "perStep" : 1.0648128573360864,
+      "step" : 57
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.702916426367285,
+      "perStep" : 0.15246559911807644,
+      "step" : 58
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 17.19548972348939,
+      "perStep" : 0.49257329712210646,
+      "step" : 59
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 17.20781902102308,
+      "perStep" : 0.012329297533687977,
+      "step" : 60
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 17.38802884784702,
+      "perStep" : 0.1802098268239389,
+      "step" : 61
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.576378875778207,
+      "perStep" : 1.188350027931185,
+      "step" : 62
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.782279159977723,
+      "perStep" : 0.20590028419951473,
+      "step" : 63
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 20.143987429666826,
+      "perStep" : 1.361708269689103,
+      "step" : 64
+    }
+  ],
+  "actAddLayer" : 10,
+  "baseline" : {
+    "baseModelNLL" : 0.9576070377190363,
+    "residentMemoryBytes" : 539082752,
+    "text" : "Preparing for a rainy afternoon walk in the rain involves a few key steps to ensure that you can enjoy the weather and enjoy your walk without the usual rain cloud. Here are some tips:\n\n1. Pack your bags: Before you hit the trail, make sure to pack your essentials. This includes comfortable boots, rain boots,",
+    "tokenCount" : 64,
+    "tokenIDs" : [
+      97191,
+      369,
+      264,
+      62757,
+      13354,
+      4227,
+      304,
+      279,
+      11174,
+      17601,
+      264,
+      2421,
+      1376,
+      7354,
+      311,
+      5978,
+      429,
+      498,
+      646,
+      4669,
+      279,
+      9104,
+      323,
+      4669,
+      697,
+      4227,
+      2041,
+      279,
+      13475,
+      11174,
+      9437,
+      13,
+      5692,
+      525,
+      1045,
+      10414,
+      1447,
+      16,
+      13,
+      13795,
+      697,
+      17899,
+      25,
+      13235,
+      498,
+      4201,
+      279,
+      8849,
+      11,
+      1281,
+      2704,
+      311,
+      3769,
+      697,
+      58786,
+      13,
+      1096,
+      5646,
+      10655,
+      25236,
+      11,
+      11174,
+      25236,
+      11
+    ],
+    "tokensPerSecond" : 332.4370950451939,
+    "topicScore" : -0.04287890785428514
+  },
+  "biasStrength" : 11.144790649414062,
+  "buildConfiguration" : "Release",
+  "controlOnly" : true,
+  "cumulativeKL" : 0,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+
+  ],
+  "lexicon" : "wedding",
+  "maxTokens" : 64,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Explain how to prepare for a rainy afternoon walk in two short paragraphs.",
+  "seed" : 42,
+  "stage3RunMode" : "evaluate-random",
+  "staticBiasKLCapEnabled" : false,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 0,
+    "text" : "",
+    "tokenCount" : 0,
+    "tokenIDs" : [
+
+    ],
+    "tokensPerSecond" : 0
+  },
+  "teacherForcedActAdd" : {
+    "appliedScalar" : 6.7822265625,
+    "continuationTokenCount" : 64,
+    "directionDiagnostics" : {
+      "alignedPositionCount" : 12,
+      "alignment" : "front-aligned; an absent side contributes zero at suffix positions and is never tokenized",
+      "appliedMatrixNorm" : 49.63871765136719,
+      "appliedPerPositionNorms" : [
+        14.229626655578613,
+        14.072750091552734,
+        14.137998580932617,
+        13.900839805603027,
+        14.572139739990234,
+        14.351141929626465,
+        13.958013534545898,
+        14.741194725036621,
+        14.351123809814453,
+        15.089140892028809,
+        14.570021629333496,
+        13.928658485412598
+      ],
+      "historicalFinalVectorNorm" : 7.34765625,
+      "injection" : "all aligned prompt positions after the selected block; persistent in downstream KV cache",
+      "mode" : "random-matched-norm",
+      "negativeTokenCount" : 10,
+      "positiveTokenCount" : 12,
+      "semanticMatrixNorm" : 49.63871765136719,
+      "semanticPerPositionNorms" : [
+        0,
+        13.380754470825195,
+        15.876214027404785,
+        11.873050689697266,
+        6.686996936798096,
+        16.891569137573242,
+        17.300275802612305,
+        13.96045207977295,
+        17.73993492126465,
+        15.903179168701172,
+        17.434974670410156,
+        14.00373363494873
+      ]
+    },
+    "meanNatsPerStep" : 0.2677884393703648,
+    "method" : "random-matched-norm",
+    "perStepNats" : [
+      0.4128190153242298,
+      0.00013696977966560266,
+      0.001360237203556084,
+      0.040698323801822166,
+      0.06527517789832632,
+      0.13235715871466058,
+      1.4774883857169363,
+      0.06268995790345727,
+      0.3113218467074289,
+      0.29111095864816705,
+      0.12367571314429,
+      0.10477261559197563,
+      0.06556089407227271,
+      0.4292984911294332,
+      0.2596789158651983,
+      0.0030567826389774097,
+      0.11255859829270086,
+      0.006622258492047512,
+      0.1655187518988591,
+      0.11478393373609239,
+      0.0784663801415126,
+      0.5096721240424749,
+      0.05487335518467589,
+      0.3929897098765101,
+      0.016960102923631933,
+      0.05930476132440193,
+      0.08654882251504421,
+      0.18904755259021852,
+      1.1014841739163195,
+      1.1278521920427382,
+      0.484356545367174,
+      0.11884098241558613,
+      0.021450937652834755,
+      0.03841929970244269,
+      0.9539259830341686,
+      0.05104854632633745,
+      0.06708302408580262,
+      0.001044513877653697,
+      8.536833920952699e-06,
+      0.31702793267972756,
+      0.5264529981432993,
+      1.8303000442984736,
+      0.13685886088187127,
+      0.3284457568420936,
+      0.061965973081727424,
+      0.30423441447423405,
+      3.951906188268934e-05,
+      0.14383139288851404,
+      0.00036129490695471236,
+      0.2164089766947149,
+      0.01652100124714357,
+      0.1039031363243767,
+      0.07970793769195902,
+      0.369592151756778,
+      1.4605578555691234,
+      0.029226139985085314,
+      0.11051558839659897,
+      0.05127264779094568,
+      0.11870915742808547,
+      0.5293930027347509,
+      0.02878396987534353,
+      0.10919210889114339,
+      0.6614914757248382,
+      0.06950425192013722
+    ]
+  },
+  "teacherForcedContinuationTokenIDs" : [
+    97191,
+    369,
+    264,
+    62757,
+    13354,
+    4227,
+    304,
+    279,
+    11174,
+    17601,
+    264,
+    2421,
+    1376,
+    7354,
+    311,
+    5978,
+    429,
+    498,
+    646,
+    4669,
+    279,
+    9104,
+    323,
+    4669,
+    697,
+    4227,
+    2041,
+    279,
+    13475,
+    11174,
+    9437,
+    13,
+    5692,
+    525,
+    1045,
+    10414,
+    1447,
+    16,
+    13,
+    13795,
+    697,
+    17899,
+    25,
+    13235,
+    498,
+    4201,
+    279,
+    8849,
+    11,
+    1281,
+    2704,
+    311,
+    3769,
+    697,
+    58786,
+    13,
+    1096,
+    5646,
+    10655,
+    25236,
+    11,
+    11174,
+    25236,
+    11
+  ],
+  "teacherForcedTargetKL" : 0.43523801873284795,
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T17:49:59Z"
+}

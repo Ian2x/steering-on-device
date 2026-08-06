@@ -185,8 +185,60 @@ def main() -> None:
         require(f"`{row['randomMedianShift']:+.6f}`")
     require("Median returned length was 32 tokens in every arm")
     require("repeated-trigram fraction was zero")
-    require("a teacher-forced per-step-KL comparison remains pending")
     print("PASS blocking-control grid, selected cell, random floor, degeneracy gates, and README claims")
+
+    stage3_path = ROOT / "docs/phase6/teacher-forced-comparison/summary.json"
+    stage3_before = stage3_path.read_bytes()
+    subprocess.run(
+        ["python3", str(ROOT / "Scripts/summarize_teacher_forced_comparison.py")],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    check(stage3_path.read_bytes() == stage3_before, "teacher-forced summary is not reproducible")
+    stage3 = json.loads(stage3_before)
+    calibration_paths = sorted(
+        (ROOT / "docs/phase6/teacher-forced-comparison/calibration-runs").glob("*.json")
+    )
+    comparison_paths = sorted(
+        (ROOT / "docs/phase6/teacher-forced-comparison/runs").glob("*.json")
+    )
+    random_paths = sorted(
+        (ROOT / "docs/phase6/teacher-forced-comparison/random-floor-runs").glob("*.json")
+    )
+    check(len(calibration_paths) == 304, "teacher-forced calibration packet count changed")
+    check(len(comparison_paths) == len(random_paths) == 8, "teacher-forced output packet count changed")
+    check(stage3["n"] == {"prompts": 4, "topics": 2, "promptTopicUnits": 8}, "Stage 3 n changed")
+    check(stage3["klMatchPass"], "teacher-forced KL matching failed")
+    check(stage3["directionDependencePass"], "Stage 3 direction dependence failed")
+    check(all(row["passed"] for row in stage3["topics"].values()), "a Stage 3 topic/floor gate failed")
+    check(stage3["lengthPass"] and stage3["repetitionPass"], "a Stage 3 degeneration gate changed")
+    check(not stage3["nllPass"], "Stage 3 NLL gate unexpectedly passes")
+    check(stage3["status"] == "invalid-comparison", "Stage 3 invalid status changed")
+    check(stage3["ratioStatus"] == "withheld-validity-gate", "Stage 3 ratio status changed")
+    check(stage3["ratio"] is None, "Stage 3 ratio must remain withheld")
+    require("**4 prompts × 2 topics = 8 prompt-topic units**")
+    achieved = [
+        value
+        for topic in stage3["achievedMeanTeacherForcedKL"].values()
+        for value in topic.values()
+    ]
+    require(f"`{min(achieved):.9f}` to `{max(achieved):.9f}` nats/step")
+    baseline_nll = stage3["medianBaseModelNLL"]["baseline"]
+    residual_nll = stage3["medianBaseModelNLL"]["residual"]
+    require(f"`{baseline_nll:.6f}` baseline")
+    require(f"`{residual_nll:.6f}` for the semantic residual arm")
+    require(f"`{residual_nll - baseline_nll - 1:.6f}` nat/token")
+    interval = stage3["denominatorPromptClusterBootstrap95"]
+    require(f"`[{interval[0]:.6f}, {interval[1]:.6f}]`")
+    require("No point ratio or ratio interval is reported.")
+    require("304 calibration packets, 16 output packets")
+    failure = json.loads(
+        (ROOT / "docs/phase6/teacher-forced-comparison/calibration-failure.json").read_text()
+    )
+    check(failure["status"] == "failed-monotonicity-gate", "original calibration failure changed")
+    check(failure["topicOutputsObserved"] is False, "original calibration observed topic output")
+    print("PASS teacher-forced calibration, invalid NLL gate, packet retention, and ratio withholding")
 
     rho_paths = sorted((ROOT / "docs/phase6/on-device-rho/runs").glob("*.json"))
     rho_packets = [json.loads(path.read_text()) for path in rho_paths]

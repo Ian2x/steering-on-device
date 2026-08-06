@@ -45,3 +45,7 @@ must_reject("blocking packet count", "**180 Release packets**", "**179 Release p
 must_reject("blocking passing cells", "**2/15 layer/coefficient cells passed**", "**3/15 layer/coefficient cells passed**")
 must_reject("blocking selected cell", "**block 10, coefficient 4**", "**block 8, coefficient 4**")
 must_reject("blocking wedding median", "`+0.078512` for wedding", "`+0.088512` for wedding")
+must_reject("Stage 3 unit count", "**4 prompts × 2 topics = 8 prompt-topic units**", "**8 prompts × 2 topics = 16 prompt-topic units**")
+must_reject("Stage 3 residual NLL", "`1.984159` for the semantic residual arm", "`1.884159` for the semantic residual arm")
+must_reject("Stage 3 NLL excess", "`0.119157` nat/token", "`0.019157` nat/token")
+must_reject("Stage 3 ratio withholding", "No point ratio or ratio interval is reported.", "A point ratio is reported.")

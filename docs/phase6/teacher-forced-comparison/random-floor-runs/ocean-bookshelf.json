@@ -1,0 +1,786 @@
+{
+  "actAdd" : {
+    "baseModelNLL" : 1.5736637384028125,
+    "residentMemoryBytes" : 549306368,
+    "text" : "1. To organize a small bookshelf, first decide how many books you want to save. A large number of books can be difficult to carry around, so start with a few smaller items like novels, novels, or books on a related topic.\n\n2. To start with, carefully select the most important books you need",
+    "tokenCount" : 64,
+    "tokenIDs" : [
+      16,
+      13,
+      2014,
+      30235,
+      264,
+      2613,
+      2311,
+      53950,
+      11,
+      1156,
+      10279,
+      1246,
+      1657,
+      6467,
+      498,
+      1366,
+      311,
+      3581,
+      13,
+      362,
+      3460,
+      1372,
+      315,
+      6467,
+      646,
+      387,
+      5000,
+      311,
+      6777,
+      2163,
+      11,
+      773,
+      1191,
+      448,
+      264,
+      2421,
+      9155,
+      3589,
+      1075,
+      31863,
+      11,
+      31863,
+      11,
+      476,
+      6467,
+      389,
+      264,
+      5435,
+      8544,
+      382,
+      17,
+      13,
+      2014,
+      1191,
+      448,
+      11,
+      15516,
+      3293,
+      279,
+      1429,
+      2989,
+      6467,
+      498,
+      1184
+    ],
+    "tokensPerSecond" : 51.86053552637838,
+    "topicScore" : 0.038451313795576446
+  },
+  "actAddAppliedCoefficient" : 7.29522705078125,
+  "actAddCoefficient" : 7.29522705078125,
+  "actAddCumulativeKL" : 24.53097863036472,
+  "actAddDirectionDiagnostics" : {
+    "alignedPositionCount" : 11,
+    "alignment" : "front-aligned; an absent side contributes zero at suffix positions and is never tokenized",
+    "appliedMatrixNorm" : 81.25495147705078,
+    "appliedPerPositionNorms" : [
+      24.13561248779297,
+      24.680315017700195,
+      24.103160858154297,
+      24.816673278808594,
+      24.12036895751953,
+      25.503665924072266,
+      24.478256225585938,
+      24.70946502685547,
+      24.269784927368164,
+      24.091304779052734,
+      24.546001434326172
+    ],
+    "historicalFinalVectorNorm" : 8.3359375,
+    "injection" : "all aligned prompt positions after the selected block; persistent in downstream KV cache",
+    "mode" : "random-matched-norm",
+    "negativeTokenCount" : 10,
+    "positiveTokenCount" : 11,
+    "semanticMatrixNorm" : 81.25495147705078,
+    "semanticPerPositionNorms" : [
+      62.540531158447266,
+      17.605388641357422,
+      18.20754623413086,
+      16.89960289001465,
+      16.184429168701172,
+      16.574270248413086,
+      16.069313049316406,
+      12.785407066345215,
+      18.540653228759766,
+      16.611175537109375,
+      13.637042999267578
+    ]
+  },
+  "actAddDirectionMode" : "random-matched-norm",
+  "actAddKLCapEnabled" : false,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 2.4405783554645,
+      "perStep" : 2.4405783554645,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.441643541450868,
+      "perStep" : 0.0010651859863683739,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.245632403319087,
+      "perStep" : 0.8039888618682192,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.705109357103181,
+      "perStep" : 0.45947695378409414,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.991415958119607,
+      "perStep" : 0.2863066010164261,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.031026999216333,
+      "perStep" : 0.039611041096725516,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.042063612961811,
+      "perStep" : 0.011036613745478437,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.0421200742703345,
+      "perStep" : 5.6461308523667416e-05,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.983352542324107,
+      "perStep" : 0.9412324680537726,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.101744432586885,
+      "perStep" : 0.11839189026277702,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.299795364708151,
+      "perStep" : 0.19805093212126662,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.731625713125799,
+      "perStep" : 0.4318303484176475,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.752955356048449,
+      "perStep" : 0.02132964292265081,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.846948249583623,
+      "perStep" : 0.09399289353517382,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.978601160968938,
+      "perStep" : 0.13165291138531462,
+      "step" : 15
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.991271436933791,
+      "perStep" : 0.012670275964852816,
+      "step" : 16
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.991545713005883,
+      "perStep" : 0.00027427607209239174,
+      "step" : 17
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 6.122598171023394,
+      "perStep" : 0.13105245801751075,
+      "step" : 18
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 6.573299674983578,
+      "perStep" : 0.45070150396018405,
+      "step" : 19
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.561226070535796,
+      "perStep" : 0.9879263955522187,
+      "step" : 20
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 8.79200022884319,
+      "perStep" : 1.2307741583073941,
+      "step" : 21
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.609841782148393,
+      "perStep" : 0.8178415533052047,
+      "step" : 22
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.629719099891151,
+      "perStep" : 0.019877317742757493,
+      "step" : 23
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.663842350747055,
+      "perStep" : 0.03412325085590395,
+      "step" : 24
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.900552890841263,
+      "perStep" : 0.23671054009420875,
+      "step" : 25
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.245466005027703,
+      "perStep" : 0.34491311418644044,
+      "step" : 26
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.81158853508393,
+      "perStep" : 0.5661225300562259,
+      "step" : 27
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.817697164303063,
+      "perStep" : 0.006108629219132688,
+      "step" : 28
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 12.120065695882602,
+      "perStep" : 1.3023685315795388,
+      "step" : 29
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 12.282677358841045,
+      "perStep" : 0.16261166295844412,
+      "step" : 30
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 12.421564573633928,
+      "perStep" : 0.13888721479288238,
+      "step" : 31
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 12.47157171105333,
+      "perStep" : 0.05000713741940343,
+      "step" : 32
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 12.77493605528647,
+      "perStep" : 0.30336434423314046,
+      "step" : 33
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 12.789436347129664,
+      "perStep" : 0.014500291843193519,
+      "step" : 34
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 12.861138939120105,
+      "perStep" : 0.07170259199044045,
+      "step" : 35
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 13.054877833966348,
+      "perStep" : 0.19373889484624257,
+      "step" : 36
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 14.089269637697564,
+      "perStep" : 1.034391803731216,
+      "step" : 37
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 14.180935911423763,
+      "perStep" : 0.09166627372619933,
+      "step" : 38
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 14.319324966571093,
+      "perStep" : 0.13838905514733033,
+      "step" : 39
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 14.639012421605983,
+      "perStep" : 0.31968745503488905,
+      "step" : 40
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 15.024881007942831,
+      "perStep" : 0.3858685863368477,
+      "step" : 41
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.1566537747263,
+      "perStep" : 1.1317727667834694,
+      "step" : 42
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.54816420104319,
+      "perStep" : 0.3915104263168863,
+      "step" : 43
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.80234493910564,
+      "perStep" : 0.25418073806245134,
+      "step" : 44
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 17.501826375986884,
+      "perStep" : 0.6994814368812412,
+      "step" : 45
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 17.76248242237447,
+      "perStep" : 0.2606560463875893,
+      "step" : 46
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.09878174091018,
+      "perStep" : 0.33629931853571005,
+      "step" : 47
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 19.442492174848287,
+      "perStep" : 1.343710433938108,
+      "step" : 48
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 19.505239340753633,
+      "perStep" : 0.06274716590534637,
+      "step" : 49
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 19.67120450366753,
+      "perStep" : 0.16596516291389685,
+      "step" : 50
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 19.69687689683306,
+      "perStep" : 0.025672393165531972,
+      "step" : 51
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 19.748921352096698,
+      "perStep" : 0.05204445526363765,
+      "step" : 52
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 20.69976779312989,
+      "perStep" : 0.9508464410331915,
+      "step" : 53
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 21.89576360893909,
+      "perStep" : 1.1959958158092014,
+      "step" : 54
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 22.766758519802025,
+      "perStep" : 0.8709949108629339,
+      "step" : 55
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 22.91973194712541,
+      "perStep" : 0.15297342732338473,
+      "step" : 56
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 23.46559922115394,
+      "perStep" : 0.5458672740285307,
+      "step" : 57
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 23.729014958246903,
+      "perStep" : 0.2634157370929625,
+      "step" : 58
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 23.858249997119035,
+      "perStep" : 0.12923503887213192,
+      "step" : 59
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.119012225371716,
+      "perStep" : 0.2607622282526819,
+      "step" : 60
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.154098268803203,
+      "perStep" : 0.03508604343148811,
+      "step" : 61
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.378937323998866,
+      "perStep" : 0.22483905519566208,
+      "step" : 62
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.476109544048626,
+      "perStep" : 0.09717222004976044,
+      "step" : 63
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.53097863036472,
+      "perStep" : 0.05486908631609512,
+      "step" : 64
+    }
+  ],
+  "actAddLayer" : 10,
+  "baseline" : {
+    "baseModelNLL" : 0.8157555895739306,
+    "residentMemoryBytes" : 542179328,
+    "text" : "Organizing a small bookshelf can be a fun and rewarding activity that enhances both personal organization and mental well-being. Here are two short paragraphs to describe the process:\n\n1. Begin by deciding how you will use the space for your bookshelf. Do you want to keep it cluttered for years to come, or do",
+    "tokenCount" : 64,
+    "tokenIDs" : [
+      23227,
+      4849,
+      264,
+      2613,
+      2311,
+      53950,
+      646,
+      387,
+      264,
+      2464,
+      323,
+      40993,
+      5702,
+      429,
+      56824,
+      2176,
+      4345,
+      7321,
+      323,
+      10502,
+      1632,
+      32751,
+      13,
+      5692,
+      525,
+      1378,
+      2805,
+      42643,
+      311,
+      7512,
+      279,
+      1882,
+      1447,
+      16,
+      13,
+      18597,
+      553,
+      29130,
+      1246,
+      498,
+      686,
+      990,
+      279,
+      3550,
+      369,
+      697,
+      2311,
+      53950,
+      13,
+      3155,
+      498,
+      1366,
+      311,
+      2506,
+      432,
+      53816,
+      291,
+      369,
+      1635,
+      311,
+      2525,
+      11,
+      476,
+      653
+    ],
+    "tokensPerSecond" : 338.3842773594646,
+    "topicScore" : 0.010711767337485432
+  },
+  "biasStrength" : 8.490829467773438,
+  "buildConfiguration" : "Release",
+  "controlOnly" : true,
+  "cumulativeKL" : 0,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+
+  ],
+  "lexicon" : "ocean",
+  "maxTokens" : 64,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe organizing a small bookshelf in two short paragraphs.",
+  "seed" : 42,
+  "stage3RunMode" : "evaluate-random",
+  "staticBiasKLCapEnabled" : false,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 0,
+    "text" : "",
+    "tokenCount" : 0,
+    "tokenIDs" : [
+
+    ],
+    "tokensPerSecond" : 0
+  },
+  "teacherForcedActAdd" : {
+    "appliedScalar" : 7.29522705078125,
+    "continuationTokenCount" : 64,
+    "directionDiagnostics" : {
+      "alignedPositionCount" : 11,
+      "alignment" : "front-aligned; an absent side contributes zero at suffix positions and is never tokenized",
+      "appliedMatrixNorm" : 81.25495147705078,
+      "appliedPerPositionNorms" : [
+        24.13561248779297,
+        24.680315017700195,
+        24.103160858154297,
+        24.816673278808594,
+        24.12036895751953,
+        25.503665924072266,
+        24.478256225585938,
+        24.70946502685547,
+        24.269784927368164,
+        24.091304779052734,
+        24.546001434326172
+      ],
+      "historicalFinalVectorNorm" : 8.3359375,
+      "injection" : "all aligned prompt positions after the selected block; persistent in downstream KV cache",
+      "mode" : "random-matched-norm",
+      "negativeTokenCount" : 10,
+      "positiveTokenCount" : 11,
+      "semanticMatrixNorm" : 81.25495147705078,
+      "semanticPerPositionNorms" : [
+        62.540531158447266,
+        17.605388641357422,
+        18.20754623413086,
+        16.89960289001465,
+        16.184429168701172,
+        16.574270248413086,
+        16.069313049316406,
+        12.785407066345215,
+        18.540653228759766,
+        16.611175537109375,
+        13.637042999267578
+      ]
+    },
+    "meanNatsPerStep" : 0.5344012811136922,
+    "method" : "random-matched-norm",
+    "perStepNats" : [
+      2.4405783554645,
+      0.016152956309886467,
+      0.05691529629431018,
+      0.0025263221498055596,
+      0.001954245783516372,
+      1.687154567532253e-05,
+      2.4629905040508087,
+      0.008048650727422947,
+      0.07884054158652284,
+      2.0476437401241383,
+      2.7280020514552263,
+      1.0950782695239178,
+      0.5489191174610719,
+      0.4210503177136034,
+      1.0953200045302933,
+      0.22130008713286908,
+      0.07704882969893345,
+      0.6312915480379331,
+      0.014024744618562271,
+      1.2536304616091238,
+      0.1972719956140545,
+      4.020079569460563e-05,
+      0.001895810109242271,
+      2.4436656826012446,
+      0.14953718616651296,
+      0.009663263585110443,
+      0.7718958639339243,
+      0.18520266271779642,
+      0.22134145450049258,
+      0.022726473262015948,
+      0.2957222518142373,
+      1.8220692529243496,
+      0.08180365658172623,
+      0.009417029886568428,
+      0.003898017849767684,
+      1.1694915002630486,
+      0.06561909210911655,
+      0.5800290591509287,
+      0.5652204207265693,
+      0.11813011285591021,
+      0.24377490671810506,
+      1.7009332171975329,
+      0.24167281450771855,
+      0.20654556863127663,
+      0.6933466104426095,
+      0.9140865892442627,
+      0.3713999020569994,
+      0.0034206471035926173,
+      0.21243063278585686,
+      1.0454745355931174,
+      0.00016521716367487682,
+      0.06193444602458113,
+      0.01629118999428032,
+      0.07260795441198577,
+      0.500160689763818,
+      0.3045680256591172,
+      1.3584854717806634,
+      0.3009823838957576,
+      0.9847612516992061,
+      0.43770630509708913,
+      0.00014617524952528608,
+      0.11473652147736174,
+      0.3800415059861309,
+      0.12003552552560866
+    ]
+  },
+  "teacherForcedContinuationTokenIDs" : [
+    23227,
+    4849,
+    264,
+    2613,
+    2311,
+    53950,
+    646,
+    387,
+    264,
+    2464,
+    323,
+    40993,
+    5702,
+    429,
+    56824,
+    2176,
+    4345,
+    7321,
+    323,
+    10502,
+    1632,
+    32751,
+    13,
+    5692,
+    525,
+    1378,
+    2805,
+    42643,
+    311,
+    7512,
+    279,
+    1882,
+    1447,
+    16,
+    13,
+    18597,
+    553,
+    29130,
+    1246,
+    498,
+    686,
+    990,
+    279,
+    3550,
+    369,
+    697,
+    2311,
+    53950,
+    13,
+    3155,
+    498,
+    1366,
+    311,
+    2506,
+    432,
+    53816,
+    291,
+    369,
+    1635,
+    311,
+    2525,
+    11,
+    476,
+    653
+  ],
+  "teacherForcedTargetKL" : 0.43523801873284795,
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T17:50:45Z"
+}

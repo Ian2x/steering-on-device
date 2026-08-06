@@ -142,7 +142,7 @@ struct ContentView: View {
                 .frame(maxWidth: 360)
                 .disabled(model.isGenerating)
 
-                Text("Blocking control passed: 2/15 frozen layer/coefficient cells cleared direction, topic, random-floor, and degeneracy gates. The residual KL trace is diagnostic, not capped; a matched comparison is still pending.")
+                Text("Blocking control passed in 2/15 cells. A later teacher-forced KL comparison was withheld because the residual arm failed its frozen base-model NLL gate; no controller ratio is reported.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -231,7 +231,7 @@ struct ContentView: View {
 
     private var explanation: some View {
         DisclosureGroup("What am I looking at?") {
-            Text("The app runs the same prompt three times with identical seeded sampling: an unchanged baseline, a sparse topic-token logit bias under a cumulative cap, and a direct residual prompt edit. The residual path front-aligns a per-position contrast direction, injects it after the selected block across the aligned prompt positions, and bakes the edit into downstream KV caches. A frozen 180-packet control found direction-dependent, on-target behavior above a matched-random floor in 2/15 cells; that validates the path in this harness but is not yet a matched controller comparison. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments.")
+            Text("The app runs the same prompt three times with identical seeded sampling: an unchanged baseline, a sparse topic-token logit bias under a cumulative cap, and a direct residual prompt edit. The residual path front-aligns a per-position contrast direction, injects it after the selected block across the aligned prompt positions, and bakes the edit into downstream KV caches. A frozen 180-packet control found direction-dependent, on-target behavior above a matched-random floor in 2/15 cells. A later teacher-forced comparison matched both controllers to 0.43524 nats/step but failed its residual base-model NLL gate, so it supports no ratio. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)

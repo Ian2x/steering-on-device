@@ -1,0 +1,786 @@
+{
+  "actAdd" : {
+    "baseModelNLL" : 1.6609673310753732,
+    "residentMemoryBytes" : 549126144,
+    "text" : "1. Decide what you will eat for lunch:\nIf you are not sure, brainstorm some options first. Focus on what you are interested in doing for the day.\n\n2. Choose a menu plan:\n- Decide on a type of meal (breakfast, lunch, dinner)\n- Decide on the ingredients (protein, carbs",
+    "tokenCount" : 64,
+    "tokenIDs" : [
+      16,
+      13,
+      98881,
+      1128,
+      498,
+      686,
+      8180,
+      369,
+      15786,
+      510,
+      2679,
+      498,
+      525,
+      537,
+      2704,
+      11,
+      86781,
+      1045,
+      2606,
+      1156,
+      13,
+      25806,
+      389,
+      1128,
+      498,
+      525,
+      8014,
+      304,
+      3730,
+      369,
+      279,
+      1899,
+      382,
+      17,
+      13,
+      22201,
+      264,
+      5022,
+      3119,
+      510,
+      12,
+      98881,
+      389,
+      264,
+      943,
+      315,
+      15145,
+      320,
+      8960,
+      9349,
+      11,
+      15786,
+      11,
+      13856,
+      340,
+      12,
+      98881,
+      389,
+      279,
+      13966,
+      320,
+      78465,
+      11,
+      52509
+    ],
+    "tokensPerSecond" : 49.878150872736946,
+    "topicScore" : 0.003199717045359393
+  },
+  "actAddAppliedCoefficient" : 7.29522705078125,
+  "actAddCoefficient" : 7.29522705078125,
+  "actAddCumulativeKL" : 28.13501974104735,
+  "actAddDirectionDiagnostics" : {
+    "alignedPositionCount" : 11,
+    "alignment" : "front-aligned; an absent side contributes zero at suffix positions and is never tokenized",
+    "appliedMatrixNorm" : 81.25495147705078,
+    "appliedPerPositionNorms" : [
+      24.13561248779297,
+      24.680315017700195,
+      24.103160858154297,
+      24.816673278808594,
+      24.12036895751953,
+      25.503665924072266,
+      24.478256225585938,
+      24.70946502685547,
+      24.269784927368164,
+      24.091304779052734,
+      24.546001434326172
+    ],
+    "historicalFinalVectorNorm" : 8.3359375,
+    "injection" : "all aligned prompt positions after the selected block; persistent in downstream KV cache",
+    "mode" : "random-matched-norm",
+    "negativeTokenCount" : 10,
+    "positiveTokenCount" : 11,
+    "semanticMatrixNorm" : 81.25495147705078,
+    "semanticPerPositionNorms" : [
+      62.540531158447266,
+      17.605388641357422,
+      18.20754623413086,
+      16.89960289001465,
+      16.184429168701172,
+      16.574270248413086,
+      16.069313049316406,
+      12.785407066345215,
+      18.540653228759766,
+      16.611175537109375,
+      13.637042999267578
+    ]
+  },
+  "actAddDirectionMode" : "random-matched-norm",
+  "actAddKLCapEnabled" : false,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 1.595031440262975,
+      "perStep" : 1.595031440262975,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.595999068787984,
+      "perStep" : 0.0009676285250089412,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 2.7755625542256803,
+      "perStep" : 1.1795634854376964,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 4.33342738585158,
+      "perStep" : 1.5578648316259003,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.456877702274924,
+      "perStep" : 1.1234503164233436,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 5.54399394124762,
+      "perStep" : 0.08711623897269562,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 6.969321783403989,
+      "perStep" : 1.4253278421563687,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.2729901483007895,
+      "perStep" : 0.30366836489680094,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.319659466439921,
+      "perStep" : 0.04666931813913121,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.85347747026189,
+      "perStep" : 0.5338180038219684,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 8.935649317415859,
+      "perStep" : 1.0821718471539696,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 8.949143870135488,
+      "perStep" : 0.013494552719630425,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.215115758516387,
+      "perStep" : 0.26597188838089747,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.354179240975785,
+      "perStep" : 0.13906348245939879,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.389684531949724,
+      "perStep" : 0.03550529097393853,
+      "step" : 15
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.627267543904043,
+      "perStep" : 1.237583011954319,
+      "step" : 16
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 11.817054400545818,
+      "perStep" : 1.189786856641775,
+      "step" : 17
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 12.558842429346482,
+      "perStep" : 0.741788028800664,
+      "step" : 18
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 12.597776075785312,
+      "perStep" : 0.03893364643882909,
+      "step" : 19
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 14.440824157092507,
+      "perStep" : 1.843048081307196,
+      "step" : 20
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 15.388915279878882,
+      "perStep" : 0.948091122786375,
+      "step" : 21
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.174190533514558,
+      "perStep" : 0.7852752536356775,
+      "step" : 22
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.175050473188076,
+      "perStep" : 0.0008599396735186497,
+      "step" : 23
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.59212972179877,
+      "perStep" : 0.4170792486106933,
+      "step" : 24
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.60714000402063,
+      "perStep" : 0.015010282221857896,
+      "step" : 25
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.795874669241844,
+      "perStep" : 0.1887346652212158,
+      "step" : 26
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 17.00663904478652,
+      "perStep" : 0.2107643755446787,
+      "step" : 27
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 17.007020207611188,
+      "perStep" : 0.00038116282466765436,
+      "step" : 28
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 17.6251135520233,
+      "perStep" : 0.6180933444121121,
+      "step" : 29
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 17.81570018378825,
+      "perStep" : 0.19058663176494733,
+      "step" : 30
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.008199893139615,
+      "perStep" : 0.19249970935136787,
+      "step" : 31
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.250346601328175,
+      "perStep" : 0.24214670818856057,
+      "step" : 32
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.691942749731375,
+      "perStep" : 0.44159614840320077,
+      "step" : 33
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 19.507959460731797,
+      "perStep" : 0.8160167110004225,
+      "step" : 34
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 19.51164606989089,
+      "perStep" : 0.003686609159093985,
+      "step" : 35
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 19.99304754741981,
+      "perStep" : 0.48140147752891976,
+      "step" : 36
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 20.068288668819584,
+      "perStep" : 0.07524112139977376,
+      "step" : 37
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 20.723522831498883,
+      "perStep" : 0.6552341626792993,
+      "step" : 38
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 21.48945748064065,
+      "perStep" : 0.7659346491417675,
+      "step" : 39
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 22.123439978856293,
+      "perStep" : 0.6339824982156436,
+      "step" : 40
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 23.111361220073558,
+      "perStep" : 0.987921241217265,
+      "step" : 41
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 23.58510900811782,
+      "perStep" : 0.4737477880442587,
+      "step" : 42
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 23.829555543233084,
+      "perStep" : 0.2444465351152657,
+      "step" : 43
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 23.91958128309828,
+      "perStep" : 0.09002573986519609,
+      "step" : 44
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.387040171749582,
+      "perStep" : 0.4674588886512989,
+      "step" : 45
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.390010332947174,
+      "perStep" : 0.002970161197592142,
+      "step" : 46
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.60729313103866,
+      "perStep" : 0.21728279809148354,
+      "step" : 47
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.863548122017033,
+      "perStep" : 0.25625499097837307,
+      "step" : 48
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 25.65114771185691,
+      "perStep" : 0.7875995898398773,
+      "step" : 49
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 25.65222446049275,
+      "perStep" : 0.0010767486358396517,
+      "step" : 50
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 25.66430120242309,
+      "perStep" : 0.01207674193034122,
+      "step" : 51
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 26.313231286703402,
+      "perStep" : 0.6489300842803121,
+      "step" : 52
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 26.31489384701004,
+      "perStep" : 0.0016625603066379785,
+      "step" : 53
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 26.417824243122613,
+      "perStep" : 0.10293039611257174,
+      "step" : 54
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 26.681152110676834,
+      "perStep" : 0.2633278675542193,
+      "step" : 55
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 26.681240593334845,
+      "perStep" : 8.848265800944829e-05,
+      "step" : 56
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 26.83447097464585,
+      "perStep" : 0.15323038131100605,
+      "step" : 57
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 27.05470812210088,
+      "perStep" : 0.2202371474550303,
+      "step" : 58
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 27.118689107235475,
+      "perStep" : 0.06398098513459638,
+      "step" : 59
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 27.243467889817342,
+      "perStep" : 0.12477878258186612,
+      "step" : 60
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 27.42835691037632,
+      "perStep" : 0.18488902055897816,
+      "step" : 61
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 27.985853049296303,
+      "perStep" : 0.5574961389199846,
+      "step" : 62
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 28.02748896952796,
+      "perStep" : 0.04163592023165544,
+      "step" : 63
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 28.13501974104735,
+      "perStep" : 0.10753077151939269,
+      "step" : 64
+    }
+  ],
+  "actAddLayer" : 10,
+  "baseline" : {
+    "baseModelNLL" : 0.8687622177805072,
+    "residentMemoryBytes" : 541589504,
+    "text" : "To pack a lunch for work in two short paragraphs:\n\n1. Consider your travel itinerary: Before you pack your lunch, decide what you plan to eat and what time you need to be on the road. This will help you make a meal plan that is both time-efficient and cost-effective.\n\n2. Plan your meals:",
+    "tokenCount" : 64,
+    "tokenIDs" : [
+      1249,
+      3769,
+      264,
+      15786,
+      369,
+      975,
+      304,
+      1378,
+      2805,
+      42643,
+      1447,
+      16,
+      13,
+      21144,
+      697,
+      5821,
+      72904,
+      25,
+      13235,
+      498,
+      3769,
+      697,
+      15786,
+      11,
+      10279,
+      1128,
+      498,
+      3119,
+      311,
+      8180,
+      323,
+      1128,
+      882,
+      498,
+      1184,
+      311,
+      387,
+      389,
+      279,
+      5636,
+      13,
+      1096,
+      686,
+      1492,
+      498,
+      1281,
+      264,
+      15145,
+      3119,
+      429,
+      374,
+      2176,
+      882,
+      72816,
+      323,
+      2783,
+      52321,
+      382,
+      17,
+      13,
+      9680,
+      697,
+      20969,
+      25
+    ],
+    "tokensPerSecond" : 328.51806271871794,
+    "topicScore" : 0.036850420409336566
+  },
+  "biasStrength" : 8.490829467773438,
+  "buildConfiguration" : "Release",
+  "controlOnly" : true,
+  "cumulativeKL" : 0,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+
+  ],
+  "lexicon" : "ocean",
+  "maxTokens" : 64,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Explain how to pack a lunch for work in two short paragraphs.",
+  "seed" : 42,
+  "stage3RunMode" : "evaluate-random",
+  "staticBiasKLCapEnabled" : false,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 0,
+    "text" : "",
+    "tokenCount" : 0,
+    "tokenIDs" : [
+
+    ],
+    "tokensPerSecond" : 0
+  },
+  "teacherForcedActAdd" : {
+    "appliedScalar" : 7.29522705078125,
+    "continuationTokenCount" : 64,
+    "directionDiagnostics" : {
+      "alignedPositionCount" : 11,
+      "alignment" : "front-aligned; an absent side contributes zero at suffix positions and is never tokenized",
+      "appliedMatrixNorm" : 81.25495147705078,
+      "appliedPerPositionNorms" : [
+        24.13561248779297,
+        24.680315017700195,
+        24.103160858154297,
+        24.816673278808594,
+        24.12036895751953,
+        25.503665924072266,
+        24.478256225585938,
+        24.70946502685547,
+        24.269784927368164,
+        24.091304779052734,
+        24.546001434326172
+      ],
+      "historicalFinalVectorNorm" : 8.3359375,
+      "injection" : "all aligned prompt positions after the selected block; persistent in downstream KV cache",
+      "mode" : "random-matched-norm",
+      "negativeTokenCount" : 10,
+      "positiveTokenCount" : 11,
+      "semanticMatrixNorm" : 81.25495147705078,
+      "semanticPerPositionNorms" : [
+        62.540531158447266,
+        17.605388641357422,
+        18.20754623413086,
+        16.89960289001465,
+        16.184429168701172,
+        16.574270248413086,
+        16.069313049316406,
+        12.785407066345215,
+        18.540653228759766,
+        16.611175537109375,
+        13.637042999267578
+      ]
+    },
+    "meanNatsPerStep" : 0.29083145319321296,
+    "method" : "random-matched-norm",
+    "perStepNats" : [
+      1.595031440262975,
+      0.5638783052378813,
+      1.9995692889063479,
+      0.08542334843922458,
+      0.19933561030886165,
+      0.03705976956163941,
+      0.32303681277598373,
+      0.6767557557043954,
+      0.7372765524634008,
+      0.01940029420537934,
+      0.2516314764218104,
+      0.005347754703749916,
+      0.006102462262266938,
+      1.3293974288711103,
+      0.11694928071612977,
+      0.1285397482704498,
+      0.9631975519721091,
+      0.24283077630049804,
+      0.4390141326837508,
+      0.5220973197162126,
+      0.8978610662149255,
+      0.3357219638741611,
+      0.01070046598561681,
+      0.0413829303588407,
+      0.37206218302353683,
+      0.21285335389618537,
+      0.14619120256765086,
+      0.06398305247996708,
+      0.002520449267985359,
+      0.2540684135919566,
+      0.10020789457942993,
+      0.1758030185120797,
+      0.23423786752081152,
+      0.004088613062810482,
+      0.019660031977340637,
+      0.009762337935607181,
+      0.4383018510494073,
+      0.09964127170791437,
+      0.10025390150601941,
+      0.2153256454255297,
+      0.23523273478967405,
+      0.23995067303428247,
+      0.127229691602438,
+      0.01541019449925813,
+      0.006884837312148897,
+      0.26286789181549003,
+      0.1776969016197548,
+      0.7186519229812169,
+      0.05147729744870511,
+      0.6462194168265025,
+      0.27145907469195013,
+      0.08305532019113772,
+      0.15970727932051587,
+      0.1641102421484606,
+      0.00031834950505991565,
+      0.17493413925149726,
+      0.003816630277154777,
+      0.09855961541657962,
+      0.05027351827424473,
+      0.008313073825361032,
+      0.4488819637375729,
+      0.12439158190131935,
+      0.2889762162537961,
+      0.27829181331955183
+    ]
+  },
+  "teacherForcedContinuationTokenIDs" : [
+    1249,
+    3769,
+    264,
+    15786,
+    369,
+    975,
+    304,
+    1378,
+    2805,
+    42643,
+    1447,
+    16,
+    13,
+    21144,
+    697,
+    5821,
+    72904,
+    25,
+    13235,
+    498,
+    3769,
+    697,
+    15786,
+    11,
+    10279,
+    1128,
+    498,
+    3119,
+    311,
+    8180,
+    323,
+    1128,
+    882,
+    498,
+    1184,
+    311,
+    387,
+    389,
+    279,
+    5636,
+    13,
+    1096,
+    686,
+    1492,
+    498,
+    1281,
+    264,
+    15145,
+    3119,
+    429,
+    374,
+    2176,
+    882,
+    72816,
+    323,
+    2783,
+    52321,
+    382,
+    17,
+    13,
+    9680,
+    697,
+    20969,
+    25
+  ],
+  "teacherForcedTargetKL" : 0.43523801873284795,
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T17:51:31Z"
+}

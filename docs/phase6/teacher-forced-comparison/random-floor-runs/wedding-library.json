@@ -1,0 +1,790 @@
+{
+  "actAdd" : {
+    "baseModelNLL" : 1.804438669914559,
+    "residentMemoryBytes" : 550223872,
+    "text" : "Studying in a quiet room for an extended period is a quiet study session. One can focus completely on the task at hand and prohibit distractions like the TV, the internet, or the phone. Reading silently in a quiet area of a library can be a great way to absorb the knowledge in a quiet environment. The",
+    "tokenCount" : 64,
+    "tokenIDs" : [
+      623,
+      661,
+      7024,
+      304,
+      264,
+      11340,
+      3054,
+      369,
+      458,
+      11577,
+      4168,
+      374,
+      264,
+      11340,
+      3920,
+      3797,
+      13,
+      3776,
+      646,
+      5244,
+      6587,
+      389,
+      279,
+      3383,
+      518,
+      1424,
+      323,
+      47386,
+      76449,
+      1075,
+      279,
+      5883,
+      11,
+      279,
+      7602,
+      11,
+      476,
+      279,
+      4540,
+      13,
+      17769,
+      49394,
+      304,
+      264,
+      11340,
+      3082,
+      315,
+      264,
+      6733,
+      646,
+      387,
+      264,
+      2244,
+      1616,
+      311,
+      34306,
+      279,
+      6540,
+      304,
+      264,
+      11340,
+      4573,
+      13,
+      576
+    ],
+    "tokensPerSecond" : 63.02827729192113,
+    "topicScore" : -0.0009689688549064884
+  },
+  "actAddAppliedCoefficient" : 6.7822265625,
+  "actAddCoefficient" : 6.7822265625,
+  "actAddCumulativeKL" : 33.864863375519576,
+  "actAddDirectionDiagnostics" : {
+    "alignedPositionCount" : 12,
+    "alignment" : "front-aligned; an absent side contributes zero at suffix positions and is never tokenized",
+    "appliedMatrixNorm" : 49.63871765136719,
+    "appliedPerPositionNorms" : [
+      14.229626655578613,
+      14.072750091552734,
+      14.137998580932617,
+      13.900839805603027,
+      14.572139739990234,
+      14.351141929626465,
+      13.958013534545898,
+      14.741194725036621,
+      14.351123809814453,
+      15.089140892028809,
+      14.570021629333496,
+      13.928658485412598
+    ],
+    "historicalFinalVectorNorm" : 7.34765625,
+    "injection" : "all aligned prompt positions after the selected block; persistent in downstream KV cache",
+    "mode" : "random-matched-norm",
+    "negativeTokenCount" : 10,
+    "positiveTokenCount" : 12,
+    "semanticMatrixNorm" : 49.63871765136719,
+    "semanticPerPositionNorms" : [
+      0,
+      13.380754470825195,
+      15.876214027404785,
+      11.873050689697266,
+      6.686996936798096,
+      16.891569137573242,
+      17.300275802612305,
+      13.96045207977295,
+      17.73993492126465,
+      15.903179168701172,
+      17.434974670410156,
+      14.00373363494873
+    ]
+  },
+  "actAddDirectionMode" : "random-matched-norm",
+  "actAddKLCapEnabled" : false,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 1.12824910949838,
+      "perStep" : 1.12824910949838,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.1718633586042964,
+      "perStep" : 0.04361424910591633,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 1.1719889584438632,
+      "perStep" : 0.00012559983956691122,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.3906512269368037,
+      "perStep" : 2.2186622684929405,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.630612566557628,
+      "perStep" : 0.23996133962082433,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 3.6472833785675265,
+      "perStep" : 0.016670812009898398,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.937189090148595,
+      "perStep" : 4.289905711581069,
+      "step" : 7
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 8.556848657321627,
+      "perStep" : 0.6196595671730319,
+      "step" : 8
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.139567164639272,
+      "perStep" : 0.5827185073176454,
+      "step" : 9
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.599845722079488,
+      "perStep" : 0.46027855744021484,
+      "step" : 10
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 9.721043791377872,
+      "perStep" : 0.12119806929838309,
+      "step" : 11
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 10.31642704005429,
+      "perStep" : 0.5953832486764188,
+      "step" : 12
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 11.752612240333988,
+      "perStep" : 1.4361852002796989,
+      "step" : 13
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 12.654610764477694,
+      "perStep" : 0.9019985241437055,
+      "step" : 14
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 15.276958330982374,
+      "perStep" : 2.6223475665046805,
+      "step" : 15
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 15.289636703081662,
+      "perStep" : 0.01267837209928824,
+      "step" : 16
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 15.57090788561563,
+      "perStep" : 0.28127118253396816,
+      "step" : 17
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 15.797412106248805,
+      "perStep" : 0.2265042206331738,
+      "step" : 18
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.38306570027552,
+      "perStep" : 0.5856535940267148,
+      "step" : 19
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 16.86593416432666,
+      "perStep" : 0.4828684640511399,
+      "step" : 20
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 17.110894122675685,
+      "perStep" : 0.24495995834902484,
+      "step" : 21
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 17.11591021022167,
+      "perStep" : 0.005016087545987383,
+      "step" : 22
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 17.315164426522333,
+      "perStep" : 0.1992542163006628,
+      "step" : 23
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.068454964212677,
+      "perStep" : 0.7532905376903429,
+      "step" : 24
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.178108589438352,
+      "perStep" : 0.10965362522567502,
+      "step" : 25
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.17822753270288,
+      "perStep" : 0.00011894326452827746,
+      "step" : 26
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.345439509538075,
+      "perStep" : 0.1672119768351928,
+      "step" : 27
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.612491189300346,
+      "perStep" : 0.2670516797622723,
+      "step" : 28
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 18.76633906369078,
+      "perStep" : 0.15384787439043457,
+      "step" : 29
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 19.92579263426776,
+      "perStep" : 1.1594535705769828,
+      "step" : 30
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 20.54797038262754,
+      "perStep" : 0.622177748359778,
+      "step" : 31
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 20.81244614475395,
+      "perStep" : 0.2644757621264102,
+      "step" : 32
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 20.871378531282094,
+      "perStep" : 0.05893238652814451,
+      "step" : 33
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 21.78194489947447,
+      "perStep" : 0.9105663681923764,
+      "step" : 34
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 22.279736657395738,
+      "perStep" : 0.497791757921267,
+      "step" : 35
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 22.46508592155256,
+      "perStep" : 0.18534926415682237,
+      "step" : 36
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.361531380612924,
+      "perStep" : 1.8964454590603632,
+      "step" : 37
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 24.792156681137687,
+      "perStep" : 0.4306253005247645,
+      "step" : 38
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 25.447178966235388,
+      "perStep" : 0.6550222850977009,
+      "step" : 39
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 25.918813027590332,
+      "perStep" : 0.4716340613549455,
+      "step" : 40
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 26.034041643810404,
+      "perStep" : 0.11522861622007158,
+      "step" : 41
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 26.67930847719143,
+      "perStep" : 0.6452668333810272,
+      "step" : 42
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 27.050338504754954,
+      "perStep" : 0.37103002756352277,
+      "step" : 43
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 27.866189771693175,
+      "perStep" : 0.8158512669382221,
+      "step" : 44
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 28.02138441081973,
+      "perStep" : 0.15519463912655707,
+      "step" : 45
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 28.82312358077828,
+      "perStep" : 0.8017391699585493,
+      "step" : 46
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 29.106762064779655,
+      "perStep" : 0.28363848400137737,
+      "step" : 47
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 29.18107175138082,
+      "perStep" : 0.07430968660116485,
+      "step" : 48
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 29.205781178508534,
+      "perStep" : 0.024709427127714352,
+      "step" : 49
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 29.81842783168111,
+      "perStep" : 0.6126466531725744,
+      "step" : 50
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 29.97529317649632,
+      "perStep" : 0.15686534481520834,
+      "step" : 51
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 30.56084966615782,
+      "perStep" : 0.5855564896615012,
+      "step" : 52
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 30.922964989814318,
+      "perStep" : 0.3621153236564967,
+      "step" : 53
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 31.493768475277186,
+      "perStep" : 0.570803485462867,
+      "step" : 54
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 31.494399029332726,
+      "perStep" : 0.0006305540555411488,
+      "step" : 55
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 31.92857995080749,
+      "perStep" : 0.4341809214747624,
+      "step" : 56
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 32.12171748734053,
+      "perStep" : 0.1931375365330441,
+      "step" : 57
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 32.29054495935829,
+      "perStep" : 0.16882747201775952,
+      "step" : 58
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 32.36769897789493,
+      "perStep" : 0.07715401853663566,
+      "step" : 59
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 32.446186791116006,
+      "perStep" : 0.0784878132210701,
+      "step" : 60
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 33.3524473195879,
+      "perStep" : 0.9062605284718973,
+      "step" : 61
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 33.45585115269693,
+      "perStep" : 0.10340383310902611,
+      "step" : 62
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 33.62758346878233,
+      "perStep" : 0.171732316085407,
+      "step" : 63
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 33.864863375519576,
+      "perStep" : 0.23727990673724317,
+      "step" : 64
+    }
+  ],
+  "actAddLayer" : 10,
+  "baseline" : {
+    "baseModelNLL" : 0.8612421327356399,
+    "residentMemoryBytes" : 542998528,
+    "text" : "A quiet library study session in a comfortable and cozy environment is a peaceful and peaceful experience. As you sit in your comfortable chair and lean back in your book, you feel relaxed and at ease. The sound of the library’s quiet hum and the comfortable lighting of the room create a peaceful atmosphere. The quiet library study session",
+    "tokenCount" : 64,
+    "tokenIDs" : [
+      32,
+      11340,
+      6733,
+      3920,
+      3797,
+      304,
+      264,
+      10655,
+      323,
+      42435,
+      4573,
+      374,
+      264,
+      25650,
+      323,
+      25650,
+      3139,
+      13,
+      1634,
+      498,
+      2444,
+      304,
+      697,
+      10655,
+      10496,
+      323,
+      15651,
+      1182,
+      304,
+      697,
+      2311,
+      11,
+      498,
+      2666,
+      30367,
+      323,
+      518,
+      14219,
+      13,
+      576,
+      5112,
+      315,
+      279,
+      6733,
+      748,
+      11340,
+      2784,
+      323,
+      279,
+      10655,
+      17716,
+      315,
+      279,
+      3054,
+      1855,
+      264,
+      25650,
+      16566,
+      13,
+      576,
+      11340,
+      6733,
+      3920,
+      3797
+    ],
+    "tokensPerSecond" : 301.5396193636173,
+    "topicScore" : 0.04856337976824826
+  },
+  "biasStrength" : 11.144790649414062,
+  "buildConfiguration" : "Release",
+  "controlOnly" : true,
+  "cumulativeKL" : 0,
+  "droppedTokenStrings" : [
+
+  ],
+  "klBudget" : 8,
+  "klHistory" : [
+
+  ],
+  "lexicon" : "wedding",
+  "maxTokens" : 64,
+  "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
+  "prompt" : "Describe a quiet library study session in two short paragraphs.",
+  "seed" : 42,
+  "stage3RunMode" : "evaluate-random",
+  "staticBiasKLCapEnabled" : false,
+  "status" : "Complete — all inference stayed on-device",
+  "steered" : {
+    "residentMemoryBytes" : 0,
+    "text" : "",
+    "tokenCount" : 0,
+    "tokenIDs" : [
+
+    ],
+    "tokensPerSecond" : 0
+  },
+  "teacherForcedActAdd" : {
+    "appliedScalar" : 6.7822265625,
+    "continuationTokenCount" : 64,
+    "directionDiagnostics" : {
+      "alignedPositionCount" : 12,
+      "alignment" : "front-aligned; an absent side contributes zero at suffix positions and is never tokenized",
+      "appliedMatrixNorm" : 49.63871765136719,
+      "appliedPerPositionNorms" : [
+        14.229626655578613,
+        14.072750091552734,
+        14.137998580932617,
+        13.900839805603027,
+        14.572139739990234,
+        14.351141929626465,
+        13.958013534545898,
+        14.741194725036621,
+        14.351123809814453,
+        15.089140892028809,
+        14.570021629333496,
+        13.928658485412598
+      ],
+      "historicalFinalVectorNorm" : 7.34765625,
+      "injection" : "all aligned prompt positions after the selected block; persistent in downstream KV cache",
+      "mode" : "random-matched-norm",
+      "negativeTokenCount" : 10,
+      "positiveTokenCount" : 12,
+      "semanticMatrixNorm" : 49.63871765136719,
+      "semanticPerPositionNorms" : [
+        0,
+        13.380754470825195,
+        15.876214027404785,
+        11.873050689697266,
+        6.686996936798096,
+        16.891569137573242,
+        17.300275802612305,
+        13.96045207977295,
+        17.73993492126465,
+        15.903179168701172,
+        17.434974670410156,
+        14.00373363494873
+      ]
+    },
+    "meanNatsPerStep" : 0.5622973516562637,
+    "method" : "random-matched-norm",
+    "perStepNats" : [
+      1.12824910949838,
+      6.164586507333699e-05,
+      3.7531979739877928,
+      5.328553118504392,
+      0.0009755266665158955,
+      1.1153861664397486,
+      0.05946870956724253,
+      0.7244388262069816,
+      0.3223688714271403,
+      0.3746737618733869,
+      0.9333275615527425,
+      1.8859844265634944,
+      0.313753050704484,
+      0.8216982622915491,
+      0.10219361097544923,
+      0.5673901497548256,
+      0.3253812447099703,
+      0.09069395090721308,
+      0.0698355358644113,
+      0.11817057622473656,
+      0.05405627747218861,
+      0.5926898730008755,
+      0.2466815036869749,
+      0.18312878916275907,
+      0.016009484206982637,
+      0.03407557937172527,
+      0.5689442658153543,
+      0.2575839801745029,
+      0.2627240114742434,
+      0.25930231821662814,
+      0.16577724813649544,
+      0.12271485067189895,
+      0.1358008235251616,
+      0.3812624953025113,
+      0.17590416735984435,
+      0.0007388713698813728,
+      0.16005009478897123,
+      0.1783008828811565,
+      0.00786264852433977,
+      0.012407265036121249,
+      0.19881766407783344,
+      0.00018721685121835498,
+      0.1555302811616278,
+      0.3750207097169534,
+      1.4471967898328075,
+      0.6583849220240819,
+      0.8467883684882321,
+      1.9264281077346679,
+      0.007426865899297103,
+      0.372851309186423,
+      0.24870720094595825,
+      0.11245960877665755,
+      0.01397765023439114,
+      0.228313936967554,
+      0.15061405654711763,
+      0.009753526724926196,
+      0.06843670794562165,
+      0.3116209295011284,
+      0.04780226326193586,
+      0.18620698097607105,
+      0.33326416122642244,
+      3.428268328187188,
+      2.9786769313393027,
+      0.028478478629312725
+    ]
+  },
+  "teacherForcedContinuationTokenIDs" : [
+    32,
+    11340,
+    6733,
+    3920,
+    3797,
+    304,
+    264,
+    10655,
+    323,
+    42435,
+    4573,
+    374,
+    264,
+    25650,
+    323,
+    25650,
+    3139,
+    13,
+    1634,
+    498,
+    2444,
+    304,
+    697,
+    10655,
+    10496,
+    323,
+    15651,
+    1182,
+    304,
+    697,
+    2311,
+    11,
+    498,
+    2666,
+    30367,
+    323,
+    518,
+    14219,
+    13,
+    576,
+    5112,
+    315,
+    279,
+    6733,
+    748,
+    11340,
+    2784,
+    323,
+    279,
+    10655,
+    17716,
+    315,
+    279,
+    3054,
+    1855,
+    264,
+    25650,
+    16566,
+    13,
+    576,
+    11340,
+    6733,
+    3920,
+    3797
+  ],
+  "teacherForcedTargetKL" : 0.43523801873284795,
+  "temperature" : 0.699999988079071,
+  "timestamp" : "2026-08-06T17:50:14Z"
+}

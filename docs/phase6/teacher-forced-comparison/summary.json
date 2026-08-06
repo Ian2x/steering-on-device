@@ -1,0 +1,362 @@
+{
+  "achievedMeanTeacherForcedKL": {
+    "ocean": {
+      "logit": 0.43524400960089443,
+      "residual": 0.43507153910644886
+    },
+    "wedding": {
+      "logit": 0.43523780024832015,
+      "residual": 0.435236843732678
+    }
+  },
+  "amendment": "docs/phase6/teacher-forced-comparison/amendment-1.md",
+  "calibratedScalars": {
+    "ocean": {
+      "logit": 8.490829467773438,
+      "residual": 7.29522705078125
+    },
+    "wedding": {
+      "logit": 11.144790649414062,
+      "residual": 6.7822265625
+    }
+  },
+  "crossTopicIdentityByPrompt": [
+    false,
+    false,
+    false,
+    false
+  ],
+  "denominatorIntervalContainsZero": false,
+  "denominatorPromptClusterBootstrap95": [
+    0.06565481318355762,
+    0.3195294702689614
+  ],
+  "directionDependencePass": true,
+  "klMatchPass": true,
+  "lengthPass": true,
+  "meanShifts": {
+    "semanticResidual": 0.18149355104146342,
+    "staticLogitBias": 0.15027594248010442
+  },
+  "medianBaseModelNLL": {
+    "baseline": 0.8650021752580735,
+    "logit": 1.3753065219043714,
+    "random": 1.57679393097232,
+    "residual": 1.9841590550709545
+  },
+  "medianLengths": {
+    "baseline": 64.0,
+    "logit": 64.0,
+    "random": 64.0,
+    "residual": 64.0
+  },
+  "medianRepeatedTrigramFractions": {
+    "baseline": 0.0,
+    "logit": 0.2096774193548387,
+    "random": 0.024193548387096753,
+    "residual": 0.0
+  },
+  "n": {
+    "promptTopicUnits": 8,
+    "prompts": 4,
+    "topics": 2
+  },
+  "nllPass": false,
+  "protocol": "docs/phase6/teacher-forced-comparison/protocol.md",
+  "ratio": null,
+  "ratioPrecisionRule": "two decimal places if defined; no ratio interval",
+  "ratioStatus": "withheld-validity-gate",
+  "repetitionPass": true,
+  "rows": [
+    {
+      "baselineText": "Organizing a small bookshelf can be a fun and rewarding activity that enhances both personal organization and mental well-being. Here are two short paragraphs to describe the process:\n\n1. Begin by deciding how you will use the space for your bookshelf. Do you want to keep it cluttered for years to come, or do",
+      "lengths": {
+        "baseline": 64,
+        "logit": 64,
+        "random": 64,
+        "residual": 64
+      },
+      "logitShift": 0.14643466056018078,
+      "nll": {
+        "baseline": 0.8157555895739306,
+        "logit": 1.9991534781311113,
+        "random": 1.5799241235418275,
+        "residual": 2.5518010976970147
+      },
+      "prompt": "bookshelf",
+      "randomResidualShift": 0.06594264621984995,
+      "repetition": {
+        "baseline": 0.0,
+        "logit": 0.0,
+        "random": 0.032258064516129004,
+        "residual": 0.0
+      },
+      "residualShift": 0.27987449626022565,
+      "residualText": "To organize a small bookshelf in two short paragraphs would be a detail-oriented process that involves planning, selecting couples, and creating a balanced layout. First, the list must be compiled. Then, the couple must choose a layout that fits the size of the bookshelf and includes every person's name. This includes ensuring there",
+      "teacherForcedKL": {
+        "logit": 0.06778629116522009,
+        "residual": 0.3720059922231634
+      },
+      "topic": "wedding"
+    },
+    {
+      "baselineText": "Preparing for a rainy afternoon walk in the rain involves a few key steps to ensure that you can enjoy the weather and enjoy your walk without the usual rain cloud. Here are some tips:\n\n1. Pack your bags: Before you hit the trail, make sure to pack your essentials. This includes comfortable boots, rain boots,",
+      "lengths": {
+        "baseline": 64,
+        "logit": 64,
+        "random": 64,
+        "residual": 64
+      },
+      "logitShift": 0.24722699796053005,
+      "nll": {
+        "baseline": 0.9576070377190363,
+        "logit": 1.5704071721544426,
+        "random": 1.0091515931477157,
+        "residual": 1.5901762138739788
+      },
+      "prompt": "rainwalk",
+      "randomResidualShift": 0.035994269454099254,
+      "repetition": {
+        "baseline": 0.0,
+        "logit": 0.6129032258064516,
+        "random": 0.048387096774193505,
+        "residual": 0.0
+      },
+      "residualShift": 0.016347898351412586,
+      "residualText": "Preparing for a rainy afternoon walk in the rain involves a few key steps to ensure that you can enjoy the scenery and not suffer from the rain. First, ensure you have appropriate waterproof footwear such as waterproof boots or waterproof sandals for protection. If you\u2019re planning to take off your raincoat, check all your rain protection items",
+      "teacherForcedKL": {
+        "logit": 0.5269907738604028,
+        "residual": 0.5150521523304803
+      },
+      "topic": "wedding"
+    },
+    {
+      "baselineText": "A quiet library study session in a comfortable and cozy environment is a peaceful and peaceful experience. As you sit in your comfortable chair and lean back in your book, you feel relaxed and at ease. The sound of the library\u2019s quiet hum and the comfortable lighting of the room create a peaceful atmosphere. The quiet library study session",
+      "lengths": {
+        "baseline": 64,
+        "logit": 64,
+        "random": 64,
+        "residual": 64
+      },
+      "logitShift": 0.20207393552707176,
+      "nll": {
+        "baseline": 0.8612421327356399,
+        "logit": 0.7826514678590972,
+        "random": 1.804438669914559,
+        "residual": 2.9554450835221466
+      },
+      "prompt": "library",
+      "randomResidualShift": -0.04953234862315475,
+      "repetition": {
+        "baseline": 0.032258064516129004,
+        "logit": 0.7741935483870968,
+        "random": 0.032258064516129004,
+        "residual": 0.016129032258064502
+      },
+      "residualShift": 0.39382860506024736,
+      "residualText": "A bride and her guests (a bride and her mother) are in a quiet room in a well-organized and stylish study. The room is filled with beautiful art and decor, a good plan, good marriage. The bride is in a relaxed position with her hands behind her head. She\u2019s wearing a wedding dress,",
+      "teacherForcedKL": {
+        "logit": 1.0957027182332788,
+        "residual": 0.47659424526929495
+      },
+      "topic": "wedding"
+    },
+    {
+      "baselineText": "To pack a lunch for work in two short paragraphs:\n\n1. Consider your travel itinerary: Before you pack your lunch, decide what you plan to eat and what time you need to be on the road. This will help you make a meal plan that is both time-efficient and cost-effective.\n\n2. Plan your meals:",
+      "lengths": {
+        "baseline": 64,
+        "logit": 64,
+        "random": 64,
+        "residual": 64
+      },
+      "logitShift": 0.0,
+      "nll": {
+        "baseline": 0.8687622177805072,
+        "logit": 0.8687622177805072,
+        "random": 1.227078154485444,
+        "residual": 1.9494258389509858
+      },
+      "prompt": "lunch",
+      "randomResidualShift": -0.04004767096379788,
+      "repetition": {
+        "baseline": 0.0,
+        "logit": 0.0,
+        "random": 0.048387096774193505,
+        "residual": 0.0
+      },
+      "residualShift": 0.06415026648332045,
+      "residualText": "To pack a lunch for work in two short paragraphs would be to detail the process of preparing a bouquet of dishes and packing them into a container. First, prepare a list of dishes to be included in the meal including a variety of flavors and styles of cuisine. Then, create a container for the ingredients; you\u2019ll need",
+      "teacherForcedKL": {
+        "logit": 0.05047141773437877,
+        "residual": 0.3772949851077733
+      },
+      "topic": "wedding"
+    },
+    {
+      "baselineText": "Organizing a small bookshelf can be a fun and rewarding activity that enhances both personal organization and mental well-being. Here are two short paragraphs to describe the process:\n\n1. Begin by deciding how you will use the space for your bookshelf. Do you want to keep it cluttered for years to come, or do",
+      "lengths": {
+        "baseline": 64,
+        "logit": 64,
+        "random": 64,
+        "residual": 64
+      },
+      "logitShift": 0.0,
+      "nll": {
+        "baseline": 0.8157555895739306,
+        "logit": 0.8157555895739306,
+        "random": 1.5736637384028125,
+        "residual": 1.694306667433609
+      },
+      "prompt": "bookshelf",
+      "randomResidualShift": 0.027739546458091013,
+      "repetition": {
+        "baseline": 0.0,
+        "logit": 0.0,
+        "random": 0.0,
+        "residual": 0.016129032258064502
+      },
+      "residualShift": 0.0017832303267522037,
+      "residualText": "To organize a small bookshelf for a small area such as a library or open-air library, you can follow these steps:\n\n1. **Plan Your Collection**: Determine the type of books you plan to include. For a small area, groups of books can be organized into piles.\n\n2. **Start with the Largest Section",
+      "teacherForcedKL": {
+        "logit": 0.002852884196944078,
+        "residual": 0.11010148376138579
+      },
+      "topic": "ocean"
+    },
+    {
+      "baselineText": "Preparing for a rainy afternoon walk in the rain involves a few key steps to ensure that you can enjoy the weather and enjoy your walk without the usual rain cloud. Here are some tips:\n\n1. Pack your bags: Before you hit the trail, make sure to pack your essentials. This includes comfortable boots, rain boots,",
+      "lengths": {
+        "baseline": 64,
+        "logit": 64,
+        "random": 64,
+        "residual": 64
+      },
+      "logitShift": 0.09473916632200158,
+      "nll": {
+        "baseline": 0.9576070377190363,
+        "logit": 1.4817704600559392,
+        "random": 1.491254564952684,
+        "residual": 1.8306143007632643
+      },
+      "prompt": "rainwalk",
+      "randomResidualShift": 0.03425275424818744,
+      "repetition": {
+        "baseline": 0.0,
+        "logit": 0.4193548387096774,
+        "random": 0.016129032258064502,
+        "residual": 0.0
+      },
+      "residualShift": 0.3391798537490946,
+      "residualText": "Preparing for a rainy afternoon walk in the Pacific Ocean can be a challenging yet exhilarating activity. Here\u2019s a step-by-step guide to ensure you\u2019re ready for a good time on the beach or rest of the shoreline.\n\n1. Set a Scheduling Calendar: Start with a carefully crafted itinerary. This includes your preferred",
+      "teacherForcedKL": {
+        "logit": 0.43410655025789713,
+        "residual": 0.506079615763134
+      },
+      "topic": "ocean"
+    },
+    {
+      "baselineText": "A quiet library study session in a comfortable and cozy environment is a peaceful and peaceful experience. As you sit in your comfortable chair and lean back in your book, you feel relaxed and at ease. The sound of the library\u2019s quiet hum and the comfortable lighting of the room create a peaceful atmosphere. The quiet library study session",
+      "lengths": {
+        "baseline": 64,
+        "logit": 64,
+        "random": 64,
+        "residual": 64
+      },
+      "logitShift": 0.33701142934078415,
+      "nll": {
+        "baseline": 0.8612421327356399,
+        "logit": 1.6036716787623215,
+        "random": 2.289622248670708,
+        "residual": 2.159905466873971
+      },
+      "prompt": "library",
+      "randomResidualShift": 0.07608716892599271,
+      "repetition": {
+        "baseline": 0.032258064516129004,
+        "logit": 0.4354838709677419,
+        "random": 0.0,
+        "residual": 0.0
+      },
+      "residualShift": 0.3643640734613237,
+      "residualText": "A quiet library study session in the shade of a sandy beige sandbar on the horizon. The library is a place of contemplation and reflection, filled with the sounds of ocean, sand, and waves. The air is crisp and cool, with the breeze whispering through the sandy depths. The sun is just grazing over",
+      "teacherForcedKL": {
+        "logit": 1.1439888451256452,
+        "residual": 0.8799743115929541
+      },
+      "topic": "ocean"
+    },
+    {
+      "baselineText": "To pack a lunch for work in two short paragraphs:\n\n1. Consider your travel itinerary: Before you pack your lunch, decide what you plan to eat and what time you need to be on the road. This will help you make a meal plan that is both time-efficient and cost-effective.\n\n2. Plan your meals:",
+      "lengths": {
+        "baseline": 64,
+        "logit": 64,
+        "random": 64,
+        "residual": 64
+      },
+      "logitShift": 0.174721350130267,
+      "nll": {
+        "baseline": 0.8687622177805072,
+        "logit": 1.2688425837528037,
+        "random": 1.6609673310753732,
+        "residual": 2.018892271190923
+      },
+      "prompt": "lunch",
+      "randomResidualShift": -0.03365070336397717,
+      "repetition": {
+        "baseline": 0.0,
+        "logit": 0.0,
+        "random": 0.016129032258064502,
+        "residual": 0.016129032258064502
+      },
+      "residualShift": -0.007580015360669205,
+      "residualText": "To pack a lunch for work in the winter, I recommend bringing a bucket, a towel, a sturdy container, and a filter. I use the bucket as a container, and the towel as a cover. The container serves as a base for our lunch, and holds our food carefully so that all the food touches the",
+      "teacherForcedKL": {
+        "logit": 0.16002775882309128,
+        "residual": 0.24413074530832146
+      },
+      "topic": "ocean"
+    }
+  ],
+  "status": "invalid-comparison",
+  "targetMeanTeacherForcedKL": 0.43523801873284795,
+  "topics": {
+    "ocean": {
+      "passed": true,
+      "randomMedianShift": 0.030996150353139226,
+      "randomShifts": [
+        0.027739546458091013,
+        0.03425275424818744,
+        0.07608716892599271,
+        -0.03365070336397717
+      ],
+      "semanticMedianShift": 0.1704815420379234,
+      "semanticMinusRandomMedian": 0.1394853916847842,
+      "semanticPositiveCount": 3,
+      "semanticShifts": [
+        0.0017832303267522037,
+        0.3391798537490946,
+        0.3643640734613237,
+        -0.007580015360669205
+      ]
+    },
+    "wedding": {
+      "passed": true,
+      "randomMedianShift": -0.0020267007548493143,
+      "randomShifts": [
+        0.06594264621984995,
+        0.035994269454099254,
+        -0.04953234862315475,
+        -0.04004767096379788
+      ],
+      "semanticMedianShift": 0.17201238137177305,
+      "semanticMinusRandomMedian": 0.17403908212662236,
+      "semanticPositiveCount": 4,
+      "semanticShifts": [
+        0.27987449626022565,
+        0.016347898351412586,
+        0.39382860506024736,
+        0.06415026648332045
+      ]
+    }
+  }
+}

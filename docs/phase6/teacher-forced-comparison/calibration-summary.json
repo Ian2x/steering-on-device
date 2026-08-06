@@ -1,0 +1,369 @@
+{
+  "amendment": "docs/phase6/teacher-forced-comparison/amendment-1.md",
+  "calibration": {
+    "ocean": {
+      "actadd": {
+        "amendment": "docs/phase6/teacher-forced-comparison/amendment-1.md",
+        "iterations": 18,
+        "lowerBracket": 7.29522705078125,
+        "meanTeacherForcedKL": 0.43507153910644886,
+        "scalar": 7.29522705078125,
+        "selectionRule": "minimum absolute tested mean-KL error; ties choose lower scalar",
+        "target": 0.43523801873284795,
+        "tested": [
+          {
+            "meanTeacherForcedKL": 7.31678380002935,
+            "scalar": 40.0
+          },
+          {
+            "meanTeacherForcedKL": 3.8763907543245795,
+            "scalar": 20.0
+          },
+          {
+            "meanTeacherForcedKL": 0.8112251912033395,
+            "scalar": 10.0
+          },
+          {
+            "meanTeacherForcedKL": 0.1341472868025298,
+            "scalar": 5.0
+          },
+          {
+            "meanTeacherForcedKL": 0.4694048700909843,
+            "scalar": 7.5
+          },
+          {
+            "meanTeacherForcedKL": 0.2742734711259302,
+            "scalar": 6.25
+          },
+          {
+            "meanTeacherForcedKL": 0.3692775157860848,
+            "scalar": 6.875
+          },
+          {
+            "meanTeacherForcedKL": 0.42000531796274304,
+            "scalar": 7.1875
+          },
+          {
+            "meanTeacherForcedKL": 0.443658491488404,
+            "scalar": 7.34375
+          },
+          {
+            "meanTeacherForcedKL": 0.4316937850129321,
+            "scalar": 7.265625
+          },
+          {
+            "meanTeacherForcedKL": 0.43741862330029413,
+            "scalar": 7.3046875
+          },
+          {
+            "meanTeacherForcedKL": 0.43419107411118424,
+            "scalar": 7.28515625
+          },
+          {
+            "meanTeacherForcedKL": 0.4348574577013299,
+            "scalar": 7.294921875
+          },
+          {
+            "meanTeacherForcedKL": 0.4364447090277878,
+            "scalar": 7.2998046875
+          },
+          {
+            "meanTeacherForcedKL": 0.43607785049105713,
+            "scalar": 7.29736328125
+          },
+          {
+            "meanTeacherForcedKL": 0.436535601892687,
+            "scalar": 7.296142578125
+          },
+          {
+            "meanTeacherForcedKL": 0.43546471656347635,
+            "scalar": 7.2955322265625
+          },
+          {
+            "meanTeacherForcedKL": 0.43507153910644886,
+            "scalar": 7.29522705078125
+          },
+          {
+            "meanTeacherForcedKL": 0.43560027777119786,
+            "scalar": 7.295379638671875
+          }
+        ],
+        "tolerance": 0.002,
+        "upperBracket": 7.295379638671875
+      },
+      "logit": {
+        "amendment": "docs/phase6/teacher-forced-comparison/amendment-1.md",
+        "iterations": 18,
+        "lowerBracket": 8.490753173828125,
+        "meanTeacherForcedKL": 0.43524400960089443,
+        "scalar": 8.490829467773438,
+        "selectionRule": "minimum absolute tested mean-KL error; ties choose lower scalar",
+        "target": 0.43523801873284795,
+        "tested": [
+          {
+            "meanTeacherForcedKL": 18.18469707330353,
+            "scalar": 20.0
+          },
+          {
+            "meanTeacherForcedKL": 0.9798523855723934,
+            "scalar": 10.0
+          },
+          {
+            "meanTeacherForcedKL": 0.019577813238875773,
+            "scalar": 5.0
+          },
+          {
+            "meanTeacherForcedKL": 0.21756288757955336,
+            "scalar": 7.5
+          },
+          {
+            "meanTeacherForcedKL": 0.5087542564965096,
+            "scalar": 8.75
+          },
+          {
+            "meanTeacherForcedKL": 0.34339169330000546,
+            "scalar": 8.125
+          },
+          {
+            "meanTeacherForcedKL": 0.42099413202713654,
+            "scalar": 8.4375
+          },
+          {
+            "meanTeacherForcedKL": 0.46358559192836024,
+            "scalar": 8.59375
+          },
+          {
+            "meanTeacherForcedKL": 0.44197051379565094,
+            "scalar": 8.515625
+          },
+          {
+            "meanTeacherForcedKL": 0.4314027805678455,
+            "scalar": 8.4765625
+          },
+          {
+            "meanTeacherForcedKL": 0.4366667266144429,
+            "scalar": 8.49609375
+          },
+          {
+            "meanTeacherForcedKL": 0.4340297779228385,
+            "scalar": 8.486328125
+          },
+          {
+            "meanTeacherForcedKL": 0.4353470077991254,
+            "scalar": 8.4912109375
+          },
+          {
+            "meanTeacherForcedKL": 0.43468808181306096,
+            "scalar": 8.48876953125
+          },
+          {
+            "meanTeacherForcedKL": 0.43501746703546745,
+            "scalar": 8.489990234375
+          },
+          {
+            "meanTeacherForcedKL": 0.43518221797354806,
+            "scalar": 8.4906005859375
+          },
+          {
+            "meanTeacherForcedKL": 0.43526460802527706,
+            "scalar": 8.49090576171875
+          },
+          {
+            "meanTeacherForcedKL": 0.4352234117841596,
+            "scalar": 8.490753173828125
+          },
+          {
+            "meanTeacherForcedKL": 0.43524400960089443,
+            "scalar": 8.490829467773438
+          }
+        ],
+        "tolerance": 0.002,
+        "upperBracket": 8.490829467773438
+      }
+    },
+    "wedding": {
+      "actadd": {
+        "amendment": "docs/phase6/teacher-forced-comparison/amendment-1.md",
+        "iterations": 18,
+        "lowerBracket": 6.7852783203125,
+        "meanTeacherForcedKL": 0.435236843732678,
+        "scalar": 6.7822265625,
+        "selectionRule": "minimum absolute tested mean-KL error; ties choose lower scalar",
+        "target": 0.43523801873284795,
+        "tested": [
+          {
+            "meanTeacherForcedKL": 3.102343872580822,
+            "scalar": 40.0
+          },
+          {
+            "meanTeacherForcedKL": 1.9708860761352378,
+            "scalar": 20.0
+          },
+          {
+            "meanTeacherForcedKL": 0.9243219254152173,
+            "scalar": 10.0
+          },
+          {
+            "meanTeacherForcedKL": 0.19566334919328632,
+            "scalar": 5.0
+          },
+          {
+            "meanTeacherForcedKL": 0.5528260739050608,
+            "scalar": 7.5
+          },
+          {
+            "meanTeacherForcedKL": 0.3543560568818195,
+            "scalar": 6.25
+          },
+          {
+            "meanTeacherForcedKL": 0.45023650833169304,
+            "scalar": 6.875
+          },
+          {
+            "meanTeacherForcedKL": 0.40106552543996193,
+            "scalar": 6.5625
+          },
+          {
+            "meanTeacherForcedKL": 0.42475226689306234,
+            "scalar": 6.71875
+          },
+          {
+            "meanTeacherForcedKL": 0.43802781235043103,
+            "scalar": 6.796875
+          },
+          {
+            "meanTeacherForcedKL": 0.4318192696448876,
+            "scalar": 6.7578125
+          },
+          {
+            "meanTeacherForcedKL": 0.4345104185035763,
+            "scalar": 6.77734375
+          },
+          {
+            "meanTeacherForcedKL": 0.43620525339397426,
+            "scalar": 6.787109375
+          },
+          {
+            "meanTeacherForcedKL": 0.435236843732678,
+            "scalar": 6.7822265625
+          },
+          {
+            "meanTeacherForcedKL": 0.43477367707994063,
+            "scalar": 6.78466796875
+          },
+          {
+            "meanTeacherForcedKL": 0.43608863289014665,
+            "scalar": 6.785888671875
+          },
+          {
+            "meanTeacherForcedKL": 0.4350030632563578,
+            "scalar": 6.7852783203125
+          },
+          {
+            "meanTeacherForcedKL": 0.4360251742260422,
+            "scalar": 6.78558349609375
+          },
+          {
+            "meanTeacherForcedKL": 0.4356272683305774,
+            "scalar": 6.785430908203125
+          }
+        ],
+        "tolerance": 0.002,
+        "upperBracket": 6.785430908203125
+      },
+      "logit": {
+        "amendment": "docs/phase6/teacher-forced-comparison/amendment-1.md",
+        "iterations": 18,
+        "lowerBracket": 11.144790649414062,
+        "meanTeacherForcedKL": 0.43523780024832015,
+        "scalar": 11.144790649414062,
+        "selectionRule": "minimum absolute tested mean-KL error; ties choose lower scalar",
+        "target": 0.43523801873284795,
+        "tested": [
+          {
+            "meanTeacherForcedKL": 18.06467488323816,
+            "scalar": 20.0
+          },
+          {
+            "meanTeacherForcedKL": 0.20918564562164574,
+            "scalar": 10.0
+          },
+          {
+            "meanTeacherForcedKL": 4.562555743834574,
+            "scalar": 15.0
+          },
+          {
+            "meanTeacherForcedKL": 1.0563049138709077,
+            "scalar": 12.5
+          },
+          {
+            "meanTeacherForcedKL": 0.4648632797090558,
+            "scalar": 11.25
+          },
+          {
+            "meanTeacherForcedKL": 0.3147584379009115,
+            "scalar": 10.625
+          },
+          {
+            "meanTeacherForcedKL": 0.3825339099411713,
+            "scalar": 10.9375
+          },
+          {
+            "meanTeacherForcedKL": 0.4215975021701718,
+            "scalar": 11.09375
+          },
+          {
+            "meanTeacherForcedKL": 0.4426653553742993,
+            "scalar": 11.171875
+          },
+          {
+            "meanTeacherForcedKL": 0.4319953434905673,
+            "scalar": 11.1328125
+          },
+          {
+            "meanTeacherForcedKL": 0.4372956940874761,
+            "scalar": 11.15234375
+          },
+          {
+            "meanTeacherForcedKL": 0.43463693499986633,
+            "scalar": 11.142578125
+          },
+          {
+            "meanTeacherForcedKL": 0.43596415864007776,
+            "scalar": 11.1474609375
+          },
+          {
+            "meanTeacherForcedKL": 0.435300009091723,
+            "scalar": 11.14501953125
+          },
+          {
+            "meanTeacherForcedKL": 0.4349683377694258,
+            "scalar": 11.143798828125
+          },
+          {
+            "meanTeacherForcedKL": 0.4351341398420397,
+            "scalar": 11.1444091796875
+          },
+          {
+            "meanTeacherForcedKL": 0.4352170660673187,
+            "scalar": 11.14471435546875
+          },
+          {
+            "meanTeacherForcedKL": 0.435258535479333,
+            "scalar": 11.144866943359375
+          },
+          {
+            "meanTeacherForcedKL": 0.43523780024832015,
+            "scalar": 11.144790649414062
+          }
+        ],
+        "tolerance": 0.002,
+        "upperBracket": 11.144866943359375
+      }
+    }
+  },
+  "continuationSteps": 64,
+  "promptCount": 4,
+  "status": "pass",
+  "targetMeanTeacherForcedKL": 0.43523801873284795
+}
