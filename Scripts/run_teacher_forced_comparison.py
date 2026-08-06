@@ -128,6 +128,11 @@ def run_packet(
         str(APP),
     ]
     subprocess.run(command, check=True, stdout=subprocess.DEVNULL)
+    launch_deadline = time.time() + 5
+    while not path.exists() and not app_pids() and time.time() < launch_deadline:
+        time.sleep(0.1)
+    if not path.exists() and not app_pids():
+        raise RuntimeError(f"SteerDemo did not launch for {path}")
     deadline = time.time() + 180
     while not path.exists() and time.time() < deadline:
         if not app_pids():
