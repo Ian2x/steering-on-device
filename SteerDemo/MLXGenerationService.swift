@@ -480,7 +480,7 @@ actor MLXGenerationService {
                 ) { tokenString in
                     context.tokenizer.encode(text: tokenString, addSpecialTokens: false)
                 }
-                return try teacherForcedLogitKL(
+                return try Self.teacherForcedLogitKL(
                     model: context.model,
                     promptTokens: input.text.tokens.asArray(Int.self),
                     continuationTokens: continuationTokens,
@@ -494,14 +494,14 @@ actor MLXGenerationService {
                 guard (0 ..< model.hiddenLayerCount).contains(actAddLayer) else {
                     throw DemoError.invalidActAddLayer(actAddLayer, model.hiddenLayerCount)
                 }
-                let direction = try residualDirection(
+                let direction = try Self.residualDirection(
                     context: context,
                     model: model,
                     lexicon: lexicon,
                     layer: actAddLayer,
                     mode: residualDirectionMode
                 )
-                return try teacherForcedActAddKL(
+                return try Self.teacherForcedActAddKL(
                     model: model,
                     promptTokens: input.text.tokens.asArray(Int.self),
                     continuationTokens: continuationTokens,
