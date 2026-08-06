@@ -12,6 +12,22 @@ enum ResidualDirectionMode: String, Sendable, Codable {
     case randomMatchedNorm = "random-matched-norm"
 }
 
+enum Stage3RunMode: String, Sendable, Codable {
+    case calibrateLogit = "calibrate-logit"
+    case calibrateActAdd = "calibrate-actadd"
+    case evaluate
+    case evaluateRandom = "evaluate-random"
+}
+
+struct TeacherForcedKLResult: Sendable, Codable {
+    let method: String
+    let meanNatsPerStep: Double
+    let perStepNats: [Double]
+    let continuationTokenCount: Int
+    let appliedScalar: Double
+    let directionDiagnostics: ResidualDirectionDiagnostics?
+}
+
 struct ResidualDirectionDiagnostics: Sendable, Codable {
     let mode: String
     let positiveTokenCount: Int

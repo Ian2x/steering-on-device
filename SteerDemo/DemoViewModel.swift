@@ -10,6 +10,7 @@ final class DemoViewModel: ObservableObject {
         let actAddCoefficient: Double
         let actAddLayer: Int
         let residualDirectionMode: ResidualDirectionMode
+        let staticBiasMode: Bool
         let maxTokens: Int
         let klBudget: Double
     }
@@ -41,6 +42,12 @@ final class DemoViewModel: ObservableObject {
         let actAddKLCapEnabled: Bool
         let actAddDirectionDiagnostics: ResidualDirectionDiagnostics?
         let controlOnly: Bool
+        let stage3RunMode: String?
+        let staticBiasKLCapEnabled: Bool
+        let teacherForcedTargetKL: Double?
+        let teacherForcedContinuationTokenIDs: [Int]
+        let teacherForcedLogit: TeacherForcedKLResult?
+        let teacherForcedActAdd: TeacherForcedKLResult?
         let maxTokens: Int
         let seed: UInt64
         let temperature: Double
@@ -103,6 +110,12 @@ final class DemoViewModel: ObservableObject {
     private var actAddAppliedCoefficient: Double?
     private var actAddDirectionDiagnostics: ResidualDirectionDiagnostics?
     private var controlOnly = false
+    private var stage3RunMode: Stage3RunMode?
+    private var staticBiasMode = false
+    private var teacherForcedContinuationTokenIDs: [Int] = []
+    private var teacherForcedLogit: TeacherForcedKLResult?
+    private var teacherForcedActAdd: TeacherForcedKLResult?
+    private let teacherForcedTargetKL = 0.435_238_018_732_847_95
 
     private let service = MLXGenerationService()
     private let stopFlag = StopFlag()
@@ -134,6 +147,11 @@ final class DemoViewModel: ObservableObject {
             residualDirectionMode = .randomMatchedNorm
         }
         controlOnly = ProcessInfo.processInfo.environment["STEERDEMO_CONTROL_ONLY"] == "1"
+        if let value = ProcessInfo.processInfo.environment["STEERDEMO_STAGE3_MODE"] {
+            stage3RunMode = Stage3RunMode(rawValue: value)
+            staticBiasMode = stage3RunMode != nil
+            controlOnly = stage3RunMode == .evaluateRandom
+        }
         if let value = ProcessInfo.processInfo.environment["STEERDEMO_PROMPT"], !value.isEmpty {
             prompt = value
         }
@@ -206,6 +224,7 @@ final class DemoViewModel: ObservableObject {
             actAddCoefficient: actAddCoefficient,
             actAddLayer: actAddLayer,
             residualDirectionMode: residualDirectionMode,
+            staticBiasMode: staticBiasMode,
             maxTokens: maxTokens,
             klBudget: klBudget
         )
@@ -219,6 +238,9 @@ final class DemoViewModel: ObservableObject {
         droppedTokenStrings = []
         actAddAppliedCoefficient = nil
         actAddDirectionDiagnostics = nil
+        teacherForcedContinuationTokenIDs = []
+        teacherForcedLogit = nil
+        teacherForcedActAdd = nil
         errorMessage = nil
         isGenerating = true
         stopFlag.reset()
@@ -232,45 +254,96 @@ final class DemoViewModel: ObservableObject {
                 status = "Warming the matched prompt outside the timing window"
                 try await service.warmUp(prompt: configuration.prompt)
                 try Task.checkCancellation()
-                if topicScorer == nil {
-                    status = "Loading the Core ML topic judge"
-                    topicScorer = try await CoreMLTopicScorer.load()
+
+                var shouldGenerate = true
+                if let stage3RunMode {
+                    status = "Building the fixed 64-step baseline continuation"
+                    teacherForcedContinuationTokenIDs = try await service.fixedBaselineContinuation(
+                        prompt: configuration.prompt,
+                        steps: 64
+                    )
+                    if stage3RunMode == .calibrateLogit || stage3RunMode == .evaluate {
+                        status = "Measuring teacher-forced static-bias KL"
+                        teacherForcedLogit = try await service.teacherForcedKL(
+                            method: .steered,
+                            prompt: configuration.prompt,
+                            continuationTokens: teacherForcedContinuationTokenIDs,
+                            lexicon: configuration.lexicon,
+                            strength: configuration.strength,
+                            actAddCoefficient: configuration.actAddCoefficient,
+                            actAddLayer: configuration.actAddLayer,
+                            residualDirectionMode: configuration.residualDirectionMode
+                        )
+                    }
+                    if stage3RunMode == .calibrateActAdd
+                        || stage3RunMode == .evaluate
+                        || stage3RunMode == .evaluateRandom
+                    {
+                        status = "Measuring teacher-forced residual-edit KL"
+                        teacherForcedActAdd = try await service.teacherForcedKL(
+                            method: .actAdd,
+                            prompt: configuration.prompt,
+                            continuationTokens: teacherForcedContinuationTokenIDs,
+                            lexicon: configuration.lexicon,
+                            strength: configuration.strength,
+                            actAddCoefficient: configuration.actAddCoefficient,
+                            actAddLayer: configuration.actAddLayer,
+                            residualDirectionMode: configuration.residualDirectionMode
+                        )
+                        actAddAppliedCoefficient = teacherForcedActAdd?.appliedScalar
+                        actAddDirectionDiagnostics = teacherForcedActAdd?.directionDiagnostics
+                    }
+                    shouldGenerate = stage3RunMode == .evaluate || stage3RunMode == .evaluateRandom
                 }
                 try Task.checkCancellation()
 
-                status = "Generating baseline (fixed seed, temperature 0.7)"
-                baseline.isActive = true
-                let baselineSummary = try await run(
-                    pane: .baseline,
-                    configuration: configuration
-                )
-                baseline.isActive = false
-                try apply(summary: baselineSummary, lexicon: configuration.lexicon)
+                if shouldGenerate {
+                    if topicScorer == nil {
+                        status = "Loading the Core ML topic judge"
+                        topicScorer = try await CoreMLTopicScorer.load()
+                    }
+                    try Task.checkCancellation()
 
-                if !controlOnly, !stopFlag.isStopped(), !Task.isCancelled {
-                    status = "Generating logit-bias pass from the same prompt"
-                    steered.isActive = true
-                    let steeredSummary = try await run(
-                        pane: .steered,
+                    status = "Generating baseline (fixed seed, temperature 0.7)"
+                    baseline.isActive = true
+                    let baselineSummary = try await run(
+                        pane: .baseline,
                         configuration: configuration
                     )
-                    steered.isActive = false
-                    droppedTokenStrings = steeredSummary.droppedTokenStrings
-                    klHistory = steeredSummary.klHistory
-                    try apply(summary: steeredSummary, lexicon: configuration.lexicon)
+                    baseline.isActive = false
+                    try apply(summary: baselineSummary, lexicon: configuration.lexicon)
+
+                    if !controlOnly, !stopFlag.isStopped(), !Task.isCancelled {
+                        status = configuration.staticBiasMode
+                            ? "Generating sustained calibrated static-bias pass"
+                            : "Generating logit-bias pass from the same prompt"
+                        steered.isActive = true
+                        let steeredSummary = try await run(
+                            pane: .steered,
+                            configuration: configuration
+                        )
+                        steered.isActive = false
+                        droppedTokenStrings = steeredSummary.droppedTokenStrings
+                        klHistory = steeredSummary.klHistory
+                        try apply(summary: steeredSummary, lexicon: configuration.lexicon)
+                    }
+                    if !stopFlag.isStopped(), !Task.isCancelled {
+                        status = "Generating persistent residual prompt edit (direct coefficient; KL cap off)"
+                        actAdd.isActive = true
+                        let actAddSummary = try await run(
+                            pane: .actAdd,
+                            configuration: configuration
+                        )
+                        actAdd.isActive = false
+                        actAddKLHistory = actAddSummary.klHistory
+                        try apply(summary: actAddSummary, lexicon: configuration.lexicon)
+                    }
                 }
-                if !stopFlag.isStopped(), !Task.isCancelled {
-                    status = "Generating persistent residual prompt edit (direct coefficient; KL cap off)"
-                    actAdd.isActive = true
-                    let actAddSummary = try await run(
-                        pane: .actAdd,
-                        configuration: configuration
-                    )
-                    actAdd.isActive = false
-                    actAddKLHistory = actAddSummary.klHistory
-                    try apply(summary: actAddSummary, lexicon: configuration.lexicon)
-                }
-                status = stopFlag.isStopped() ? "Stopped" : "Complete — all inference stayed on-device"
+                status = stopFlag.isStopped()
+                    ? "Stopped"
+                    : shouldGenerate
+                        ? "Complete — all inference stayed on-device"
+                        : "Complete — teacher-forced calibration packet"
             } catch is CancellationError {
                 status = "Stopped"
             } catch {
@@ -394,6 +467,7 @@ final class DemoViewModel: ObservableObject {
                     actAddCoefficient: configuration.actAddCoefficient,
                     actAddLayer: configuration.actAddLayer,
                     residualDirectionMode: configuration.residualDirectionMode,
+                    staticBiasMode: configuration.staticBiasMode,
                     maxTokens: configuration.maxTokens,
                     klBudget: configuration.klBudget,
                     stopFlag: stopFlag
@@ -526,6 +600,12 @@ final class DemoViewModel: ObservableObject {
             actAddKLCapEnabled: false,
             actAddDirectionDiagnostics: actAddDirectionDiagnostics,
             controlOnly: controlOnly,
+            stage3RunMode: stage3RunMode?.rawValue,
+            staticBiasKLCapEnabled: !activeRun.staticBiasMode,
+            teacherForcedTargetKL: stage3RunMode == nil ? nil : teacherForcedTargetKL,
+            teacherForcedContinuationTokenIDs: teacherForcedContinuationTokenIDs,
+            teacherForcedLogit: teacherForcedLogit,
+            teacherForcedActAdd: teacherForcedActAdd,
             maxTokens: activeRun.maxTokens,
             seed: MLXGenerationService.samplingSeed,
             temperature: Double(MLXGenerationService.samplingTemperature),

@@ -104,3 +104,45 @@ struct SparseBiasProcessor: LogitProcessor {
 
     mutating func didSample(token: MLXArray) {}
 }
+
+/// Applies the calibrated sparse bias at every step. Unlike
+/// `SparseBiasProcessor`, this processor has no cumulative budget or adaptive
+/// rescaling; it is used only by the teacher-forced Phase 6 comparison.
+struct FixedSparseBiasProcessor: LogitProcessor {
+    let tokenIDs: [UInt32]
+    let biasValues: [Float]
+    let temperature: Double
+    let sink: KLMetricsSink
+
+    init(biases: [TokenBias], temperature: Float, sink: KLMetricsSink) {
+        precondition(temperature > 0)
+        tokenIDs = biases.map { UInt32($0.tokenID) }
+        biasValues = biases.map { Float($0.value) }
+        self.temperature = Double(temperature)
+        self.sink = sink
+    }
+
+    mutating func prompt(_ prompt: MLXArray) {}
+
+    func process(logits: MLXArray) -> MLXArray {
+        guard !tokenIDs.isEmpty else { return logits }
+        let base = logits.asType(.float32)
+        let edited = base + zeros(like: base)
+        let indices = MLXArray(tokenIDs)
+        edited[0..., indices] = edited[0..., indices] + MLXArray(biasValues)
+        eval(base, edited)
+        do {
+            let inverseTemperature = 1 / temperature
+            let divergence = try KLMeter.divergence(
+                biasedLogits: edited.asArray(Float.self).map { Double($0) * inverseTemperature },
+                baseLogits: base.asArray(Float.self).map { Double($0) * inverseTemperature }
+            )
+            sink.append(divergence)
+        } catch {
+            sink.fail(DemoError.invalidKLDivergence(error.localizedDescription))
+        }
+        return edited.asType(logits.dtype)
+    }
+
+    mutating func didSample(token: MLXArray) {}
+}

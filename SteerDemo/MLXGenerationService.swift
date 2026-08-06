@@ -129,6 +129,7 @@ actor MLXGenerationService {
         actAddCoefficient: Double,
         actAddLayer: Int,
         residualDirectionMode: ResidualDirectionMode,
+        staticBiasMode: Bool,
         maxTokens: Int,
         klBudget: Double,
         stopFlag: StopFlag,
@@ -174,23 +175,42 @@ actor MLXGenerationService {
                 construction = BiasConstruction(biases: [], droppedTokenStrings: [])
             }
 
-            let sink = KLMetricsSink(budget: klBudget)
+            let sink = KLMetricsSink(
+                budget: staticBiasMode ? Double.greatestFiniteMagnitude : klBudget
+            )
             let iterator: TokenIterator
             if pane == .steered {
-                iterator = try TokenIterator(
-                    input: input,
-                    model: context.model,
-                    processor: SparseBiasProcessor(
-                        biases: construction.biases,
-                        temperature: Self.samplingTemperature,
-                        sink: sink
-                    ),
-                    sampler: SeededCategoricalSampler(
-                        temperature: Self.samplingTemperature,
-                        seed: Self.samplingSeed
-                    ),
-                    maxTokens: maxTokens
-                )
+                if staticBiasMode {
+                    iterator = try TokenIterator(
+                        input: input,
+                        model: context.model,
+                        processor: FixedSparseBiasProcessor(
+                            biases: construction.biases,
+                            temperature: Self.samplingTemperature,
+                            sink: sink
+                        ),
+                        sampler: SeededCategoricalSampler(
+                            temperature: Self.samplingTemperature,
+                            seed: Self.samplingSeed
+                        ),
+                        maxTokens: maxTokens
+                    )
+                } else {
+                    iterator = try TokenIterator(
+                        input: input,
+                        model: context.model,
+                        processor: SparseBiasProcessor(
+                            biases: construction.biases,
+                            temperature: Self.samplingTemperature,
+                            sink: sink
+                        ),
+                        sampler: SeededCategoricalSampler(
+                            temperature: Self.samplingTemperature,
+                            seed: Self.samplingSeed
+                        ),
+                        maxTokens: maxTokens
+                    )
+                }
             } else {
                 iterator = try TokenIterator(
                     input: input,
@@ -289,24 +309,12 @@ actor MLXGenerationService {
         guard (0 ..< model.hiddenLayerCount).contains(layer) else {
             throw DemoError.invalidActAddLayer(layer, model.hiddenLayerCount)
         }
-        guard let positivePrompt = lexicon.actAddPositivePrompt,
-              let negativePrompt = lexicon.actAddNegativePrompt
-        else {
-            throw DemoError.missingResource("ActAdd contrast prompts for \(lexicon.id)")
-        }
-
-        let positive = context.tokenizer.encode(text: positivePrompt, addSpecialTokens: false)
-        let negative = context.tokenizer.encode(text: negativePrompt, addSpecialTokens: false)
-        guard let paddingID = context.tokenizer.eosTokenId else {
-            throw DemoError.missingResource("tokenizer EOS token for historical direction diagnostics")
-        }
-        let direction = model.residualDirection(
-            positiveTokens: positive,
-            negativeTokens: negative,
-            historicalPaddingTokenID: paddingID,
-            afterLayer: layer,
-            mode: directionMode,
-            randomSeed: 20_260_806
+        let direction = try residualDirection(
+            context: context,
+            model: model,
+            lexicon: lexicon,
+            layer: layer,
+            mode: directionMode
         )
 
         let promptTokens = input.text.tokens.asArray(Int.self)
@@ -410,6 +418,215 @@ actor MLXGenerationService {
             scaled.reduce(0.0) { $0 + Foundation.exp($1 - maximum) }
         )
         return logNormalizer - scaled[token]
+    }
+
+    func fixedBaselineContinuation(prompt: String, steps: Int) async throws -> [Int] {
+        guard let container else {
+            throw DemoError.missingResource("loaded MLX model")
+        }
+        precondition(steps > 0)
+        return try await container.perform { context in
+            let input = try await context.processor.prepare(
+                input: UserInput(chat: [.user(prompt)])
+            )
+            let cache = context.model.newCache(parameters: nil)
+            var logits = context.model(input.text.tokens, cache: cache)[0, -1, 0...]
+                .asType(.float32)
+            let sampler = SeededCategoricalSampler(
+                temperature: Self.samplingTemperature,
+                seed: Self.samplingSeed
+            )
+            var tokens: [Int] = []
+            tokens.reserveCapacity(steps)
+            for index in 0 ..< steps {
+                let sampled = sampler.sample(logits: logits)
+                eval(sampled)
+                let token = sampled.item(Int.self)
+                tokens.append(token)
+                if index + 1 < steps {
+                    logits = context.model(MLXArray([token])[.newAxis], cache: cache)[0, -1, 0...]
+                        .asType(.float32)
+                }
+            }
+            return tokens
+        }
+    }
+
+    func teacherForcedKL(
+        method: GenerationPane,
+        prompt: String,
+        continuationTokens: [Int],
+        lexicon: SteeringLexicon,
+        strength: Double,
+        actAddCoefficient: Double,
+        actAddLayer: Int,
+        residualDirectionMode: ResidualDirectionMode
+    ) async throws -> TeacherForcedKLResult {
+        guard let container else {
+            throw DemoError.missingResource("loaded MLX model")
+        }
+        guard !continuationTokens.isEmpty else {
+            throw DemoError.invalidKLDivergence("teacher-forced continuation is empty")
+        }
+        return try await container.perform { context in
+            let input = try await context.processor.prepare(
+                input: UserInput(chat: [.user(prompt)])
+            )
+            switch method {
+            case .steered:
+                let construction = try LexiconBias.build(
+                    for: lexicon,
+                    strength: strength
+                ) { tokenString in
+                    context.tokenizer.encode(text: tokenString, addSpecialTokens: false)
+                }
+                return try teacherForcedLogitKL(
+                    model: context.model,
+                    promptTokens: input.text.tokens.asArray(Int.self),
+                    continuationTokens: continuationTokens,
+                    biases: construction.biases,
+                    appliedStrength: strength
+                )
+            case .actAdd:
+                guard let model = context.model as? SteerableQwen2Model else {
+                    throw DemoError.missingResource("steerable Qwen2 model implementation")
+                }
+                guard (0 ..< model.hiddenLayerCount).contains(actAddLayer) else {
+                    throw DemoError.invalidActAddLayer(actAddLayer, model.hiddenLayerCount)
+                }
+                let direction = try residualDirection(
+                    context: context,
+                    model: model,
+                    lexicon: lexicon,
+                    layer: actAddLayer,
+                    mode: residualDirectionMode
+                )
+                return try teacherForcedActAddKL(
+                    model: model,
+                    promptTokens: input.text.tokens.asArray(Int.self),
+                    continuationTokens: continuationTokens,
+                    direction: direction,
+                    coefficient: actAddCoefficient,
+                    layer: actAddLayer
+                )
+            case .baseline:
+                throw DemoError.invalidKLDivergence("baseline has no intervention KL")
+            }
+        }
+    }
+
+    private nonisolated static func teacherForcedLogitKL(
+        model: any LanguageModel,
+        promptTokens: [Int],
+        continuationTokens: [Int],
+        biases: [TokenBias],
+        appliedStrength: Double
+    ) throws -> TeacherForcedKLResult {
+        let cache = model.newCache(parameters: nil)
+        var logits = model(MLXArray(promptTokens)[.newAxis], cache: cache)[0, -1, 0...]
+            .asType(.float32)
+        let tokenIDs = MLXArray(biases.map { UInt32($0.tokenID) })
+        let values = MLXArray(biases.map { Float($0.value) })
+        let inverseTemperature = 1 / Double(Self.samplingTemperature)
+        var perStep: [Double] = []
+        perStep.reserveCapacity(continuationTokens.count)
+        for (index, token) in continuationTokens.enumerated() {
+            let edited = logits + zeros(like: logits)
+            edited[0..., tokenIDs] = edited[0..., tokenIDs] + values
+            eval(logits, edited)
+            perStep.append(
+                try KLMeter.divergence(
+                    biasedLogits: edited.asArray(Float.self).map { Double($0) * inverseTemperature },
+                    baseLogits: logits.asArray(Float.self).map { Double($0) * inverseTemperature }
+                )
+            )
+            if index + 1 < continuationTokens.count {
+                logits = model(MLXArray([token])[.newAxis], cache: cache)[0, -1, 0...]
+                    .asType(.float32)
+            }
+        }
+        return TeacherForcedKLResult(
+            method: "static-logit-bias",
+            meanNatsPerStep: perStep.reduce(0, +) / Double(perStep.count),
+            perStepNats: perStep,
+            continuationTokenCount: continuationTokens.count,
+            appliedScalar: appliedStrength,
+            directionDiagnostics: nil
+        )
+    }
+
+    private nonisolated static func teacherForcedActAddKL(
+        model: SteerableQwen2Model,
+        promptTokens: [Int],
+        continuationTokens: [Int],
+        direction: SteerableQwen2Direction,
+        coefficient: Double,
+        layer: Int
+    ) throws -> TeacherForcedKLResult {
+        let baseCache = model.newCache(parameters: nil)
+        let editedCache = model.newCache(parameters: nil)
+        let prompt = MLXArray(promptTokens)[.newAxis]
+        var baseLogits = model(prompt, cache: baseCache)[0, -1, 0...].asType(.float32)
+        var editedLogits = model.prefillLogits(
+            prompt,
+            cache: editedCache,
+            direction: direction.matrix,
+            coefficient: coefficient,
+            afterLayer: layer
+        ).asType(.float32)
+        let inverseTemperature = 1 / Double(Self.samplingTemperature)
+        var perStep: [Double] = []
+        perStep.reserveCapacity(continuationTokens.count)
+        for (index, token) in continuationTokens.enumerated() {
+            eval(baseLogits, editedLogits)
+            perStep.append(
+                try KLMeter.divergence(
+                    biasedLogits: editedLogits.asArray(Float.self).map { Double($0) * inverseTemperature },
+                    baseLogits: baseLogits.asArray(Float.self).map { Double($0) * inverseTemperature }
+                )
+            )
+            if index + 1 < continuationTokens.count {
+                let next = MLXArray([token])[.newAxis]
+                baseLogits = model(next, cache: baseCache)[0, -1, 0...].asType(.float32)
+                editedLogits = model(next, cache: editedCache)[0, -1, 0...].asType(.float32)
+            }
+        }
+        return TeacherForcedKLResult(
+            method: direction.diagnostics.mode == ResidualDirectionMode.semantic.rawValue
+                ? "residual-edit" : "random-matched-norm",
+            meanNatsPerStep: perStep.reduce(0, +) / Double(perStep.count),
+            perStepNats: perStep,
+            continuationTokenCount: continuationTokens.count,
+            appliedScalar: coefficient,
+            directionDiagnostics: direction.diagnostics
+        )
+    }
+
+    private nonisolated static func residualDirection(
+        context: ModelContext,
+        model: SteerableQwen2Model,
+        lexicon: SteeringLexicon,
+        layer: Int,
+        mode: ResidualDirectionMode
+    ) throws -> SteerableQwen2Direction {
+        guard let positivePrompt = lexicon.actAddPositivePrompt,
+              let negativePrompt = lexicon.actAddNegativePrompt
+        else {
+            throw DemoError.missingResource("ActAdd contrast prompts for \(lexicon.id)")
+        }
+        let positive = context.tokenizer.encode(text: positivePrompt, addSpecialTokens: false)
+        let negative = context.tokenizer.encode(text: negativePrompt, addSpecialTokens: false)
+        guard let paddingID = context.tokenizer.eosTokenId else {
+            throw DemoError.missingResource("tokenizer EOS token for historical direction diagnostics")
+        }
+        return model.residualDirection(
+            positiveTokens: positive,
+            negativeTokens: negative,
+            historicalPaddingTokenID: paddingID,
+            afterLayer: layer,
+            mode: mode,
+            randomSeed: 20_260_806
+        )
     }
 
     private nonisolated static func baseModelNLL(
