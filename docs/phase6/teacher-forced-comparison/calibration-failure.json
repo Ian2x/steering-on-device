@@ -1,0 +1,27 @@
+{
+  "status": "failed-monotonicity-gate",
+  "protocol": "docs/phase6/teacher-forced-comparison/protocol.md",
+  "protocolCommit": "d2e229b6daf5f6c8f4ddf491d8b1dfd27d8d7d05",
+  "packetCount": 152,
+  "completedTopics": [
+    "wedding"
+  ],
+  "completedMethods": [
+    "static-logit-bias",
+    "residual-edit"
+  ],
+  "topicOutputsObserved": false,
+  "allPaneTokenCountsZero": true,
+  "allTeacherForcedContinuationCounts": 64,
+  "firstMonotonicityReversal": {
+    "method": "residual-edit",
+    "topic": "wedding",
+    "lowerScalar": 6.7822265625,
+    "lowerMeanTeacherForcedKL": 0.435236843732678,
+    "upperScalar": 6.78466796875,
+    "upperMeanTeacherForcedKL": 0.43477367707994063,
+    "meanKLDifference": -0.000463166652737379
+  },
+  "calibrationPacketAggregateSHA256": "3bba31abd9a720d94215d3799747be92d356390d18cb4bb16bb52e9b34c7a399",
+  "conclusion": "The original monotonic-bisection calibration protocol failed before any Core ML topic score or intervention output was produced. This is not a controller result."
+}
