@@ -183,7 +183,9 @@ struct ContentView: View {
     private var errorBinding: Binding<Bool> {
         Binding(
             get: { model.errorMessage != nil },
-            set: { _ in }
+            set: { isPresented in
+                if !isPresented { model.dismissError() }
+            }
         )
     }
 }

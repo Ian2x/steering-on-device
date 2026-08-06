@@ -57,3 +57,15 @@ struct KLFixture: Codable {
     #expect(abs(second.budgetFraction - second.cumulative / 0.1) < 1e-12)
 }
 
+@Test func returnedTokenViewDropsSpeculativeReadAhead() throws {
+    var meter = KLMeter(budget: 10)
+    _ = try meter.record(divergence: 0.1)
+    _ = try meter.record(divergence: 0.2)
+    _ = try meter.record(divergence: 0.3)
+
+    let delivered = meter.readings(forReturnedTokenCount: 2)
+    #expect(delivered.count == 2)
+    #expect(abs((delivered.last?.cumulative ?? 0) - 0.3) < 1e-12)
+    #expect(meter.reading(forReturnedTokenCount: 2) == delivered.last)
+    #expect(meter.reading(forReturnedTokenCount: 4) == nil)
+}

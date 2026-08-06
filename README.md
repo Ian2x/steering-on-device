@@ -14,7 +14,7 @@ The app is deliberately a research interface, not a chat client:
 - The **topic judge** is `sentence-transformers/all-MiniLM-L6-v2`, mean-pooled and normalized inside a Core ML program. It compares each continuation with a precomputed lexicon centroid.
 - Both passes stream token by token and report tokens/second and process resident memory.
 
-The first launch downloads `mlx-community/Qwen2.5-0.5B-Instruct-4bit` from Hugging Face and then uses the local cache. Prompt text is never sent to a service. MLX executes the LLM through its Metal-backed runtime; there is no standalone Metal implementation here.
+The first launch downloads `mlx-community/Qwen2.5-0.5B-Instruct-4bit` at pinned revision `a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3` from Hugging Face and then uses the local cache. Prompt text is never sent to a service. MLX executes the LLM through its Metal-backed runtime; there is no standalone Metal implementation here.
 
 ## Run it
 
@@ -62,13 +62,13 @@ These are real 64-token app runs, not illustrative values. Every row used the sa
 
 The result is directional, not monotonic. At this fixed seed, ocean strength 12 spends the same KL without crossing a sampled-token threshold, while strengths 14 and 16 do. Wedding moves in all three conditions, but the score does not increase monotonically with raw strength. That is exactly why the interface shows both distributional cost and an independent semantic score.
 
-The default 96-token wedding run in [`docs/final-demo-run.json`](docs/final-demo-run.json) measured 43.7 baseline and 43.2 steered tokens/second, about 568 MB resident memory, exactly 8.0000 cumulative KL, and a Core ML topic-score change from `-0.0338` to `0.3815`. Treat these as one-machine prototype measurements, not a benchmark.
+The default 96-token wedding run in [`docs/final-demo-run.json`](docs/final-demo-run.json) measured 69.9 baseline and 68.4 steered tokens/second, about 570 MB resident memory, exactly 8.0000 cumulative KL, and a Core ML topic-score change from `-0.0338` to `0.3815`. Treat these as one-machine prototype measurements, not a benchmark.
 
 ## Validation
 
-`SteeringKit` has seven tests, including hand-computed three-token KL cases and golden values generated independently in Python. The Core ML export was compared with its PyTorch source on 20 sentences; the minimum cosine agreement was `0.9999735`, with all 20 cases above the `0.999` gate. See [`docs/coreml-parity.md`](docs/coreml-parity.md) and the raw [`docs/coreml-parity.json`](docs/coreml-parity.json).
+`SteeringKit` has eight tests, including hand-computed three-token KL cases, speculative-read-ahead accounting, and golden values generated independently in Python. The Core ML export was compared with its PyTorch source on 20 sentences; the minimum cosine agreement was `0.9999735`, with all 20 cases above the `0.999` gate. See [`docs/coreml-parity.md`](docs/coreml-parity.md) and the raw [`docs/coreml-parity.json`](docs/coreml-parity.json).
 
-The Core ML package is 43 MB in FP16. It accepts fixed 128-token inputs and performs masked mean pooling plus L2 normalization in the graph, returning one 384-dimensional embedding to Swift.
+The Core ML package is 43 MB in FP16, exported from `all-MiniLM-L6-v2` revision `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`. It accepts fixed 128-token inputs and performs masked mean pooling plus L2 normalization in the graph, returning one 384-dimensional embedding to Swift.
 
 ## Relationship to the audit
 

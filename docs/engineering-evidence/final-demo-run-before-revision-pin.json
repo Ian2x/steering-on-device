@@ -1,9 +1,9 @@
 {
   "baseline" : {
-    "residentMemoryBytes" : 593575936,
+    "residentMemoryBytes" : 595820544,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works for me, such as 6 AM on weekends.\n\n2. Set an alarm clock and go to bed at a comfortable time to ensure I'm fully awake and",
     "tokenCount" : 96,
-    "tokensPerSecond" : 69.85052052637,
+    "tokensPerSecond" : 43.717876790072694,
     "topicScore" : -0.03384056850600485
   },
   "biasStrength" : 14,
@@ -14,14 +14,13 @@
   "klBudget" : 8,
   "lexicon" : "wedding",
   "modelID" : "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
-  "modelRevision" : "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
   "status" : "Complete — all inference stayed on-device",
   "steered" : {
-    "residentMemoryBytes" : 597639168,
+    "residentMemoryBytes" : 595247104,
     "text" : " honeymoon ceremony: I start my day with a quiet morning prayer and meditation session, which gives me a chance to clear my mind and prepare for the day ahead.\n\nMorning routine: I start my day with a simple breakfast consisting of a balanced meal of rice, eggs, and milk. I enjoy the warmth of the sun on my skin, and feel refreshed.\n\nAfter breakfast, I walk for 10-15 minutes to a quiet place such as the park or a quiet residential",
     "tokenCount" : 96,
-    "tokensPerSecond" : 68.44622697749215,
+    "tokensPerSecond" : 43.16814379848301,
     "topicScore" : 0.3815146675040164
   },
-  "timestamp" : "2026-08-06T07:48:28Z"
+  "timestamp" : "2026-08-06T07:32:29Z"
 }

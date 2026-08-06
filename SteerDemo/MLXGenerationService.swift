@@ -30,6 +30,7 @@ final class StopFlag: @unchecked Sendable {
 
 actor MLXGenerationService {
     static let modelID = "mlx-community/Qwen2.5-0.5B-Instruct-4bit"
+    static let modelRevision = "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3"
     static let samplingTemperature: Float = 0.7
 
     private var container: ModelContainer?
@@ -41,6 +42,7 @@ actor MLXGenerationService {
         }
         let configuration = ModelConfiguration(
             id: Self.modelID,
+            revision: Self.modelRevision,
             defaultPrompt: "Describe a quiet morning routine."
         )
         container = try await LLMModelFactory.shared.loadContainer(
@@ -130,7 +132,9 @@ actor MLXGenerationService {
                 }
                 tokens.append(token)
                 let elapsed = max(0.001, start.duration(to: .now).seconds)
-                let latestKL = pane == .steered ? sink.latest() : nil
+                let latestKL = pane == .steered
+                    ? sink.reading(forReturnedTokenCount: tokens.count)
+                    : nil
                 let newKLReading: KLReading?
                 if let latestKL, latestKL.step > lastReportedKLStep {
                     newKLReading = latestKL
@@ -157,7 +161,7 @@ actor MLXGenerationService {
                 tokenCount: tokens.count,
                 seconds: seconds,
                 residentMemoryBytes: residentMemoryBytes(),
-                klHistory: sink.history(),
+                klHistory: sink.history(forReturnedTokenCount: tokens.count),
                 droppedTokenStrings: construction.droppedTokenStrings
             )
         }

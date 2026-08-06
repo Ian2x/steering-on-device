@@ -28,6 +28,17 @@ public struct KLMeter: Sendable {
         self.budget = max(0, budget)
     }
 
+    /// TokenIterator may evaluate one token ahead of the token it returns.
+    /// This view excludes KL readings for tokens that were never delivered.
+    public func readings(forReturnedTokenCount count: Int) -> [KLReading] {
+        Array(history.prefix(max(0, count)))
+    }
+
+    public func reading(forReturnedTokenCount count: Int) -> KLReading? {
+        guard count > 0, count <= history.count else { return nil }
+        return history[count - 1]
+    }
+
     @discardableResult
     public mutating func record(
         biasedLogits: [Double],

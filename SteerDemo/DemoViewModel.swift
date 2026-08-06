@@ -13,6 +13,7 @@ final class DemoViewModel: ObservableObject {
         }
 
         let modelID: String
+        let modelRevision: String
         let timestamp: String
         let status: String
         let error: String?
@@ -131,7 +132,7 @@ final class DemoViewModel: ObservableObject {
                     lexicon: lexicon
                 )
                 baseline.isActive = false
-                apply(summary: baselineSummary, lexicon: lexicon)
+                try apply(summary: baselineSummary, lexicon: lexicon)
 
                 if !stopFlag.isStopped() {
                     status = "Generating steered pass from the same prompt"
@@ -143,7 +144,7 @@ final class DemoViewModel: ObservableObject {
                     steered.isActive = false
                     droppedTokenStrings = steeredSummary.droppedTokenStrings
                     klHistory = steeredSummary.klHistory
-                    apply(summary: steeredSummary, lexicon: lexicon)
+                    try apply(summary: steeredSummary, lexicon: lexicon)
                 }
                 status = stopFlag.isStopped() ? "Stopped" : "Complete — all inference stayed on-device"
             } catch {
@@ -162,6 +163,10 @@ final class DemoViewModel: ObservableObject {
     func stop() {
         stopFlag.stop()
         status = "Stopping after the current token"
+    }
+
+    func dismissError() {
+        errorMessage = nil
     }
 
     private func run(
@@ -190,7 +195,12 @@ final class DemoViewModel: ObservableObject {
         state.tokensPerSecond = update.tokensPerSecond
         state.residentMemoryBytes = update.residentMemoryBytes
         if update.tokenCount % 8 == 0, let topicScorer {
-            state.topicScore = try? topicScorer.score(text: update.text, lexicon: lexicon)
+            do {
+                state.topicScore = try topicScorer.score(text: update.text, lexicon: lexicon)
+            } catch {
+                errorMessage = "Core ML topic judge failed: \(error.localizedDescription)"
+                stop()
+            }
         }
         if update.pane == .baseline {
             baseline = state
@@ -209,13 +219,16 @@ final class DemoViewModel: ObservableObject {
         }
     }
 
-    private func apply(summary: GenerationSummary, lexicon: SteeringLexicon) {
+    private func apply(summary: GenerationSummary, lexicon: SteeringLexicon) throws {
         var state = summary.pane == .baseline ? baseline : steered
         state.text = summary.text
         state.tokenCount = summary.tokenCount
         state.tokensPerSecond = Double(summary.tokenCount) / summary.seconds
         state.residentMemoryBytes = summary.residentMemoryBytes
-        state.topicScore = try? topicScorer?.score(text: summary.text, lexicon: lexicon)
+        guard let topicScorer else {
+            throw DemoError.missingResource("Core ML topic judge")
+        }
+        state.topicScore = try topicScorer.score(text: summary.text, lexicon: lexicon)
         if summary.pane == .baseline {
             baseline = state
         } else {
@@ -235,6 +248,7 @@ final class DemoViewModel: ObservableObject {
         else { return }
         let report = RunReport(
             modelID: MLXGenerationService.modelID,
+            modelRevision: MLXGenerationService.modelRevision,
             timestamp: ISO8601DateFormatter().string(from: Date()),
             status: status,
             error: errorMessage,

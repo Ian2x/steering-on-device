@@ -17,16 +17,16 @@ final class KLMetricsSink: @unchecked Sendable {
         _ = try? meter.record(divergence: value)
     }
 
-    func latest() -> KLReading? {
+    func reading(forReturnedTokenCount count: Int) -> KLReading? {
         lock.lock()
         defer { lock.unlock() }
-        return meter.history.last
+        return meter.reading(forReturnedTokenCount: count)
     }
 
-    func history() -> [KLReading] {
+    func history(forReturnedTokenCount count: Int) -> [KLReading] {
         lock.lock()
         defer { lock.unlock() }
-        return meter.history
+        return meter.readings(forReturnedTokenCount: count)
     }
 
     func isExhausted() -> Bool {

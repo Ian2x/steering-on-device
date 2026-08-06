@@ -18,6 +18,7 @@ from transformers import AutoModel, AutoTokenizer
 
 
 MODEL_ID = "sentence-transformers/all-MiniLM-L6-v2"
+MODEL_REVISION = "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
 MAX_LENGTH = 128
 VALIDATION_SENTENCES = [
     "The bride and groom exchanged vows beside the lake.",
@@ -104,6 +105,7 @@ def render_table(rows: list[dict[str, object]], metadata: dict[str, object]) -> 
         "Cosine similarity is computed between their normalized 384-dimensional embeddings.",
         "",
         f"- Model: `{metadata['model_id']}`",
+        f"- Revision: `{metadata['model_revision']}`",
         f"- Core ML Tools: `{metadata['coremltools']}`",
         f"- PyTorch: `{metadata['torch']}`",
         f"- Maximum length: `{metadata['max_length']}` tokens",
@@ -130,8 +132,8 @@ def main() -> int:
     docs_dir.mkdir(parents=True, exist_ok=True)
 
     torch.manual_seed(0)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-    encoder = AutoModel.from_pretrained(MODEL_ID)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, revision=MODEL_REVISION)
+    encoder = AutoModel.from_pretrained(MODEL_ID, revision=MODEL_REVISION)
     wrapper = MeanPooledEncoder(encoder).eval()
 
     example_ids, example_mask = tokenize(tokenizer, ["A short on-device topic test."])
@@ -149,8 +151,8 @@ def main() -> int:
         compute_precision=ct.precision.FLOAT16,
         minimum_deployment_target=ct.target.macOS14,
     )
-    mlmodel.author = "Ian Wang"
     mlmodel.short_description = "Fixed-shape MiniLM sentence encoder for on-device topic scoring."
+    mlmodel.license = "Apache License 2.0; see LICENSES/all-MiniLM-L6-v2-LICENSE.txt."
     mlmodel.input_description["input_ids"] = "Token IDs, padded or truncated to 128 tokens."
     mlmodel.input_description["attention_mask"] = "One for real tokens and zero for padding."
     mlmodel.output_description["embedding"] = "L2-normalized 384-dimensional sentence embedding."
@@ -180,6 +182,7 @@ def main() -> int:
     minimum_cosine = min(float(row["cosine"]) for row in rows)
     metadata = {
         "model_id": MODEL_ID,
+        "model_revision": MODEL_REVISION,
         "max_length": MAX_LENGTH,
         "minimum_cosine": minimum_cosine,
         "threshold": 0.999,
@@ -205,6 +208,7 @@ def main() -> int:
             centroids[lexicon["id"]] = centroid.astype(np.float32).tolist()
     centroid_payload = {
         "model_id": MODEL_ID,
+        "model_revision": MODEL_REVISION,
         "method": "normalized mean of embeddings for 'This text is about <term>.'",
         "dimensions": 384,
         "centroids": centroids,

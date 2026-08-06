@@ -4,6 +4,7 @@ The same fixed-length token tensors were evaluated by PyTorch and the exported C
 Cosine similarity is computed between their normalized 384-dimensional embeddings.
 
 - Model: `sentence-transformers/all-MiniLM-L6-v2`
+- Revision: `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`
 - Core ML Tools: `9.0`
 - PyTorch: `2.7.0`
 - Maximum length: `128` tokens
