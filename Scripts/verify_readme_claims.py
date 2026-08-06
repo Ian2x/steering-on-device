@@ -29,20 +29,28 @@ def main() -> None:
 
     final = json.loads((ROOT / "docs/final-demo-run.json").read_text())
     check(
-        final["baseline"]["tokenCount"] == final["steered"]["tokenCount"] == 96,
-        "final run is not a matched 96-token pair",
+        final["baseline"]["tokenCount"]
+        == final["steered"]["tokenCount"]
+        == final["actAdd"]["tokenCount"]
+        == 96,
+        "final run is not a matched 96-token triple",
     )
     require("default 96-token")
     require(f"{final['baseline']['tokensPerSecond']:.1f} baseline")
-    require(f"{final['steered']['tokensPerSecond']:.1f} steered")
+    require(f"{final['steered']['tokensPerSecond']:.1f} logit-bias")
+    require(f"{final['actAdd']['tokensPerSecond']:.1f} ActAdd")
     memory_mib = 10 * round(
-        max(final[p]["residentMemoryBytes"] for p in ("baseline", "steered")) / 2**20 / 10
+        max(final[p]["residentMemoryBytes"] for p in ("baseline", "steered", "actAdd"))
+        / 2**20
+        / 10
     )
-    require(f"about {memory_mib} MB resident memory")
-    require(f"{final['cumulativeKL']:.4f} cumulative KL")
+    require(f"about {memory_mib} MB peak resident memory")
+    check(final["cumulativeKL"] <= final["klBudget"] + 1e-6, "logit-bias KL exceeded cap")
+    check(final["actAddCumulativeKL"] <= final["klBudget"] + 1e-6, "ActAdd KL exceeded cap")
+    require(f"{final['cumulativeKL']:.4f} cumulative KL for each intervention")
     require(
-        f"`{final['baseline']['topicScore']:.4f}` to "
-        f"`{final['steered']['topicScore']:.4f}`"
+        f"`{final['steered']['topicScore']:.4f}` under logit bias and "
+        f"`{final['actAdd']['topicScore']:.4f}` under ActAdd"
     )
     check(final["buildConfiguration"] == "Release", "final run was not recorded in Release")
     require("Evidence runs use Release builds")
@@ -93,6 +101,43 @@ def main() -> None:
     require("wedding plateaus by 4 nats")
     print("PASS all six KL-4/KL-8 comparisons and linked-directory conclusions")
 
+    sweep = json.loads((ROOT / "docs/phase6/layer-sweep/summary.json").read_text())
+    sweep_paths = sorted((ROOT / "docs/phase6/layer-sweep/runs").glob("*.json"))
+    check(len(sweep_paths) == sweep["runCount"] == 24, "layer-sweep packet count changed")
+    sweep_packets = [json.loads(path.read_text()) for path in sweep_paths]
+    check(all(row["buildConfiguration"] == "Release" for row in sweep_packets), "a layer sweep packet is not Release")
+    check(all(row["actAddCumulativeKL"] <= row["klBudget"] + 1e-6 for row in sweep_packets), "a layer sweep packet exceeds KL")
+    check(sweep["selectedLayer"] == 3, "selected ActAdd layer changed")
+    selected = next(row for row in sweep["perLayer"] if row["layer"] == 3)
+    require("all 24 Release packets")
+    require("Blocks 3 and 19 tied")
+    require(f"`{selected['medianAbsoluteTopicShift']}`")
+    require("block **3** was therefore selected")
+    print("PASS preregistered 24-packet layer sweep and selected layer")
+
+    rho = json.loads((ROOT / "docs/phase6/on-device-rho/summary.json").read_text())
+    rho_paths = sorted((ROOT / "docs/phase6/on-device-rho/runs").glob("*.json"))
+    check(len(rho_paths) == rho["n"] == 8, "on-device rho packet count changed")
+    rho_packets = [json.loads(path.read_text()) for path in rho_paths]
+    check(all(row["buildConfiguration"] == "Release" for row in rho_packets), "a rho packet is not Release")
+    check(all(row["cumulativeKL"] <= row["klBudget"] + 1e-6 for row in rho_packets), "a rho logit pass exceeds KL")
+    check(all(row["actAddCumulativeKL"] <= row["klBudget"] + 1e-6 for row in rho_packets), "a rho ActAdd pass exceeds KL")
+    require(f"`n = {rho['n']}`")
+    require(f"`{rho['logitBiasMeanShift']}`")
+    require(f"`{rho['actAddMeanShift']}`")
+    require(f"`rho = {rho['rho']}`")
+    require(f"on-device result was **`rho = {rho['rho']}`**")
+    require("No confidence interval is reported")
+    check(rho["confidenceInterval"] is None, "small-n rho unexpectedly has a CI")
+    print("PASS held-out on-device rho, n, KL caps, and no-CI claim")
+
+    zero = json.loads((ROOT / "docs/phase6/coefficient-zero/report.json").read_text())
+    check(zero["actAddCoefficient"] == 0, "coefficient-zero packet is not zero")
+    check(zero["baseline"]["text"] == zero["actAdd"]["text"], "coefficient-zero text differs")
+    check(zero["baseline"]["tokenCount"] == zero["actAdd"]["tokenCount"], "coefficient-zero count differs")
+    require("identical baseline and ActAdd text and token count")
+    print("PASS coefficient-zero Release packet identity")
+
     decomposition = json.loads((ROOT / "docs/judge-decomposition.json").read_text())
     scores = decomposition["scores"]
     for key in ("baseline", "steered", "prefix_plus_baseline", "steered_prefix_removed"):
@@ -130,8 +175,7 @@ def main() -> None:
         path.read_text().count("@Test")
         for path in (ROOT / "SteeringKit/Tests/SteeringKitTests").glob("*.swift")
     )
-    number_words = {10: "ten"}
-    require(f"has {number_words.get(test_count, str(test_count))} tests")
+    require(f"has {test_count} tests")
     print("PASS test-count claim: SteeringKit/Tests/SteeringKitTests/*.swift")
 
     service_source = (ROOT / "SteerDemo/MLXGenerationService.swift").read_text()
@@ -149,6 +193,25 @@ def main() -> None:
     require(f"verdict is `{audit['verdict']['class']}`")
     require("95% CI 85.3%–107.1%")
     print("PASS upstream audit point, interval, n, and verdict: docs/audit-reference.json")
+
+    before = json.loads((ROOT / "LoRA/results/before.json").read_text())
+    after = json.loads((ROOT / "LoRA/results/after.json").read_text())
+    adapter = ROOT / "LoRA/adapter/adapters.safetensors"
+    check(before["n"] == after["n"] == 9, "LoRA evaluation n changed")
+    check(before["exactMatches"] == 0 and after["exactMatches"] == 9, "LoRA exact-match result changed")
+    check(adapter.stat().st_size > 0, "LoRA adapter is empty")
+    require("**MLX Python**, not MLX Swift")
+    require("120 optimizer steps on 36 toy codebook examples")
+    require("`0/9` before training to `9/9` after training")
+    require("3 MB adapter")
+    print("PASS toy MLX Python LoRA adapter and held-out evaluation")
+
+    notices = (ROOT / "THIRD_PARTY_NOTICES.md").read_text()
+    vendored_revision = "9bff95ca5f0b9e8c021acc4d71a2bbe4a7441631"
+    check(vendored_revision in notices, "vendored MLX revision missing from notices")
+    require(f"`{vendored_revision}`")
+    check((ROOT / "LICENSES/mlx-swift-examples-LICENSE.txt").exists(), "vendored MIT license missing")
+    print("PASS vendored Qwen provenance and license")
 
     require("Codex generated most of the implementation, tests, and documentation")
     require("directed, agent-assisted work")

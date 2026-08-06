@@ -1,9 +1,63 @@
 {
+  "actAdd" : {
+    "residentMemoryBytes" : 515227648,
+    "text" : " When the dawn breaks and the first rays of sunlight pierce the sky, I wake up feeling refreshed and energized. I take a short breakfast of eggs and toast and drink a glass of hot water. I then take a quick shower and stretch my body to prepare for the day ahead.\n\nThe most important thing I do",
+    "tokenCount" : 64,
+    "tokensPerSecond" : 8.933107928222269,
+    "topicScore" : 0.07633432865543037
+  },
+  "actAddCoefficient" : 12,
+  "actAddCumulativeKL" : 7.999999999747172,
+  "actAddKLHistory" : [
+    {
+      "budget" : 8,
+      "cumulative" : 7.9321078253844215,
+      "perStep" : 7.9321078253844215,
+      "step" : 1
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.997611003078571,
+      "perStep" : 0.06550317769414937,
+      "step" : 2
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999974012899727,
+      "perStep" : 0.0023630098211566202,
+      "step" : 3
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999839544766,
+      "perStep" : 2.5826645038631703e-05,
+      "step" : 4
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999839544766,
+      "perStep" : 0,
+      "step" : 5
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999978406299,
+      "perStep" : 1.3886153317304128e-07,
+      "step" : 6
+    },
+    {
+      "budget" : 8,
+      "cumulative" : 7.999999999747172,
+      "perStep" : 2.1340873166686242e-08,
+      "step" : 7
+    }
+  ],
+  "actAddLayer" : 3,
   "baseline" : {
-    "residentMemoryBytes" : 527859712,
+    "residentMemoryBytes" : 543162368,
     "text" : "A quiet morning routine can vary depending on personal preferences and circumstances, but a typical morning in my experience typically includes the following steps:\n\n1. Wake up at a time that suits me. I may start my day at a consistent time each day, such as 6 AM, every morning, or a specific schedule that works",
     "tokenCount" : 64,
-    "tokensPerSecond" : 321.6420502111585,
+    "tokensPerSecond" : 280.9326822829624,
     "topicScore" : -0.03826335192825014
   },
   "biasStrength" : 16,
@@ -35,12 +89,12 @@
   "seed" : 42,
   "status" : "Complete — all inference stayed on-device",
   "steered" : {
-    "residentMemoryBytes" : 536182784,
+    "residentMemoryBytes" : 551763968,
     "text" : " honeymooning with my own diary for the first time! In the morning, I wake up feeling refreshed after a long night of rest and relaxation. I start the day with a healthy breakfast on the terrace with open windows to the ocean and a view of the harbour. I then snack on some fresh fruit and vegetables,",
     "tokenCount" : 64,
-    "tokensPerSecond" : 346.3313565839823,
+    "tokensPerSecond" : 395.78682696395964,
     "topicScore" : 0.22614440838417324
   },
   "temperature" : 0.699999988079071,
-  "timestamp" : "2026-08-06T14:19:31Z"
+  "timestamp" : "2026-08-06T14:55:56Z"
 }

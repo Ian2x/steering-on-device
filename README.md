@@ -1,19 +1,20 @@
 # Steering on Device
 
-The steering audit (Wang, 2026) reported that a static logit-bias output controller reproduced 95.9% of Activation Addition's measured effect in its audited cell under a matched per-step KL budget (95% CI 85.3%–107.1%; the audit classified the cell **Mixed**). This prototype puts that comparison on-device: a native macOS app runs Qwen2.5-0.5B-Instruct (4-bit) locally through MLX Swift, generates baseline and logit-bias-steered continuations from the same prompt and random seed, shows the KL interface budget being spent, and uses a Core ML sentence encoder to score topic drift. Prompts and generated text stay on the Mac.
+The steering audit (Wang, 2026) reported that a static logit-bias controller reproduced 95.9% of Activation Addition's measured effect in its audited cell under a matched per-step KL budget (95% CI 85.3%–107.1%; **Mixed** verdict). This prototype tests that comparison on-device: a native macOS app runs Qwen2.5-0.5B-Instruct (4-bit) through MLX Swift and streams three common-random-number passes—baseline, static logit bias, and residual-stream activation addition—while enforcing the same cumulative KL cap and scoring topic drift with a Core ML sentence encoder. The held-out `n = 8` check did **not** reproduce equivalence (`rho = 11.51541576343149`); that disagreement is retained as the result. Prompts and generated text stay on the Mac.
 
-![SteerDemo streaming a baseline and wedding-steered continuation](docs/steerdemo.gif)
+![SteerDemo streaming baseline, logit-bias, and activation-addition continuations](docs/steerdemo.gif)
 
 ## What the demo measures
 
 The app is deliberately a research interface, not a chat client:
 
-- The **baseline** and **steered** passes use the same Qwen prompt, chat template, seed (`42`), temperature (`0.7`), and 4-bit MLX model.
+- All three passes use the same Qwen prompt, chat template, seed (`42`), temperature (`0.7`), and 4-bit MLX model. Each pass starts with a fresh seeded random state; the baseline and logit-bias passes start with fresh KV caches, while the exact ActAdd comparison recomputes from the full prefix without a KV cache.
 - The controller adds a sparse bias to single-token entries from the selected lexicon. Multi-token entries are reported and omitted rather than silently approximated.
-- The orange trace is `KL(biased || baseline)` between the actual temperature-scaled sampling distributions. A bisection step rescales the last bias so cumulative KL does not exceed the selected budget.
-- At the documented default settings, the budget is exhausted in the first few steps. Generation then continues without additional bias from the steered prefix. This is a **prefix intervention under a distributional cost ceiling**, not sustained steering across the whole continuation.
+- The ActAdd controller measures `h(A) - h(B)` at a selected residual boundary, adds a scaled version at the current final token, and then runs the remaining transformer tail.
+- The orange and purple traces are `KL(candidate || baseline)` between the actual temperature-scaled sampling distributions. A common bisection selector independently rescales each controller so cumulative KL cannot exceed the selected budget.
+- In the six documented logit-bias sanity rows, the budget is exhausted over 2–18 biased steps. Generation then continues without additional logit bias from the steered prefix. This is a **prefix intervention under a distributional cost ceiling**, not sustained steering across the whole continuation.
 - The **topic judge** is `sentence-transformers/all-MiniLM-L6-v2`, mean-pooled and normalized inside a Core ML program. It compares each continuation with a precomputed lexicon centroid.
-- Both passes stream token by token and report tokens/second and process resident memory.
+- All three passes stream token by token and report tokens/second and process resident memory.
 
 The first launch downloads `mlx-community/Qwen2.5-0.5B-Instruct-4bit` at pinned revision `a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3` from Hugging Face and then uses the local cache. Prompt text is never sent to a service. MLX executes the LLM through its Metal-backed runtime; there is no standalone Metal implementation here.
 
@@ -76,7 +77,23 @@ The cap is reached numerically and is a behaviorally live control, not a formali
 
 The KL-4 packets are in [`docs/negative-results/matched-kl4`](docs/negative-results/matched-kl4); the KL-8 packets are in [`docs/sanity-runs`](docs/sanity-runs). Together they show both regimes: the permitted cost changes sampled behavior for ocean, while wedding plateaus by 4 nats. In every row, bias stops once the cap is spent and generation continues from the resulting prefix.
 
-The default 96-token wedding run in [`docs/final-demo-run.json`](docs/final-demo-run.json) measured 214.7 baseline and 362.6 steered tokens/second, about 590 MB resident memory, 8.0000 cumulative KL, and a Core ML topic-score change from `-0.0338` to `0.3815`. Treat these as one-machine prototype measurements, not a benchmark or a controlled estimate of controller overhead.
+The default 96-token wedding run in [`docs/final-demo-run.json`](docs/final-demo-run.json) measured 312.9 baseline, 358.0 logit-bias, and 10.0 ActAdd tokens/second, about 610 MB peak resident memory across the three passes, and 8.0000 cumulative KL for each intervention. Topic scores moved from `-0.0338` at baseline to `0.3815` under logit bias and `0.0942` under ActAdd. The ActAdd path is intentionally measurement-first: each dense bisection probe reruns the transformer tail and the pass recomputes from the full prefix, so its rate is not an optimized serving result. Treat all rates as one-machine prototype measurements, not a benchmark or a controlled estimate of controller overhead.
+
+## Activation addition and layer choice
+
+The app vendors and adapts Qwen2 from `mlx-swift-examples` revision `9bff95ca5f0b9e8c021acc4d71a2bbe4a7441631` under its MIT License. For each lexicon, it tokenizes a positive and negative contrast prompt without special tokens, **left-pads the shorter sequence with the tokenizer's EOS token**, and aligns their final positions. The direction is the final aligned residual vector `h(A) - h(B)` captured after block `L`.
+
+Qwen2.5-0.5B has 24 blocks, so the GPT-2-XL layer from the audit was not reused. The layer protocol was committed before its outcomes: blocks 3, 7, 11, 15, 19, and 23 were swept across four disjoint neutral prompt/lexicon cases at coefficient 12 and an 8-nat cap. The predeclared statistic was median absolute `ActAdd score - baseline score`, with an earlier-layer tie break. Blocks 3 and 19 tied at `0.05868894949011073`; block **3** was therefore selected. The protocol, all 24 Release packets, and summary are in [`docs/phase6/layer-sweep`](docs/phase6/layer-sweep).
+
+There is a deliberate ActAdd deviation. The original construction adds aligned vectors at prompt positions. This app takes the single final aligned contrast vector and injects it only at the **current final prefix token** on each budget-active decode step. That makes a per-step, distribution-level KL match possible in a streaming interface, but it is not the paper's position convention. At each generation step, activations through block 3 are cached once in memory; each bisection probe reruns only blocks 4–23. After the cap is spent, the app continues from the intervention-shaped prefix without another edit. Coefficient zero routes through the exact baseline iterator; the committed Release packet in [`docs/phase6/coefficient-zero`](docs/phase6/coefficient-zero) has identical baseline and ActAdd text and token count.
+
+## Held-out on-device controller ratio
+
+The held-out protocol was also committed before its results and did not reuse the four layer-sweep prompts. Four neutral prompts crossed with wedding and ocean produced `n = 8` Release packets, all at seed 42, temperature 0.7, 64 tokens, logit-bias strength 14, ActAdd coefficient 12 after block 3, and independent 8-nat KL caps.
+
+Using the predeclared definition `mean(logit-bias topic-score shift) / mean(ActAdd topic-score shift)`, the logit-bias mean shift was `0.22071032114208497`, the ActAdd mean shift was `0.01916650911059379`, and the on-device result was **`rho = 11.51541576343149`**. This does not reproduce the audit's `0.9586776859504132` point estimate. Signed rows were retained, including two zero logit-bias shifts and four negative or near-zero ActAdd shifts; no layer, coefficient, lexicon, or row was changed after seeing the result. The protocol, all packets, and machine-readable summary are in [`docs/phase6/on-device-rho`](docs/phase6/on-device-rho).
+
+No confidence interval is reported for this small set. It is a consistency check on a different model, layer convention, judge, and device path—not an independent estimate comparable to the audit's `n = 150` result.
 
 ### What the judge shift contains
 
@@ -93,7 +110,7 @@ Relative to the baseline, prepending those two lexicon words reproduces `0.2843 
 
 ## Validation
 
-`SteeringKit` has ten tests, including hand-computed three-token KL cases, speculative-read-ahead accounting, randomized budget-bound checks, and high-precision golden values generated independently with Python `decimal` through direct normalization plus entropy/cross-entropy. `make verify-kl-fixture` regenerates and compares the committed fixture. The Core ML export was compared with its PyTorch source on 24 inputs, including empty, non-Latin, near-limit, and truncated cases. The minimum cosine agreement was `0.999914432`, above the `0.9999` gate; the report also records maximum absolute delta, relative L2 error, both embedding norms, compute units, and the model-weight SHA-256. See [`docs/coreml-parity.md`](docs/coreml-parity.md) and the raw [`docs/coreml-parity.json`](docs/coreml-parity.json).
+`SteeringKit` has 12 tests, including hand-computed three-token KL cases, speculative-read-ahead accounting, randomized sparse- and dense-candidate budget-bound checks, the coefficient-zero baseline route, and high-precision golden values generated independently with Python `decimal` through direct normalization plus entropy/cross-entropy. `make verify-kl-fixture` regenerates and compares the committed fixture. The Core ML export was compared with its PyTorch source on 24 inputs, including empty, non-Latin, near-limit, and truncated cases. The minimum cosine agreement was `0.999914432`, above the `0.9999` gate; the report also records maximum absolute delta, relative L2 error, both embedding norms, compute units, and the model-weight SHA-256. See [`docs/coreml-parity.md`](docs/coreml-parity.md) and the raw [`docs/coreml-parity.json`](docs/coreml-parity.json).
 
 The Core ML package is 43 MB in FP16, exported from `all-MiniLM-L6-v2` revision `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`. It accepts fixed 128-token inputs and performs masked mean pooling plus L2 normalization in the graph, returning one 384-dimensional embedding to Swift.
 
@@ -108,17 +125,21 @@ python Scripts/export_topic_encoder.py
 
 The exporter stages the model, centroids, and reports in a temporary directory and replaces the committed artifacts only after every validation case passes.
 
+### Toy MLX Python fine-tune
+
+The optional [`LoRA`](LoRA) artifact exercises **MLX Python**, not MLX Swift. A four-layer rank-8 LoRA trained Qwen2.5-0.5B-Instruct-4bit for 120 optimizer steps on 36 toy codebook examples. Held-out exact match moved from `0/9` before training to `9/9` after training. The 3 MB adapter, disjoint train/validation/test JSONL, loss log, before/after rows, pinned requirements, and reproduction script are committed. This is a toy-scale toolchain demonstration, not a research result or evidence of production fine-tuning.
+
 ## Relationship to the audit
 
-The demo preserves the audit controller's important support rule: only lexicon strings that map to exactly one tokenizer token receive bias. There is one deliberate deviation. The audit controller used magnitude-thresholded mean-logit deltas with a calibrated scalar on its audited model; this demo uses uniform positive weights for a new Qwen model and three human-readable lexicons. It is therefore an interface port of the output-control construction, not a byte-for-byte reproduction of the paper experiment.
+The demo preserves the audit output controller's important support rule: only lexicon strings that map to exactly one tokenizer token receive bias. That controller still deliberately differs from the audit: the audit used magnitude-thresholded mean-logit deltas with a calibrated scalar on its audited model, while this app uses uniform positive weights for a new Qwen model and three human-readable lexicons. The ActAdd position deviation is documented above. This is an on-device replication attempt of the controller comparison under a shared distributional cost interface, not a byte-for-byte reproduction of the paper experiment.
 
-The audit result, stored artifacts, checker, and controller source are in [`Ian2x/steering-output-equivalence-audit`](https://github.com/Ian2x/steering-output-equivalence-audit). The 95.9% figure above is its `rho = 0.9586776859504132` point estimate over `n = 150` evaluation prompts; the stored 95% interval is `[0.8527131782945736, 1.0714446589446587]`, so `rho_lo < 0.9` fails the audit's dissolution rule and the stored verdict is `Mixed`. None of those numbers is measured by this app.
+The audit result, stored artifacts, checker, and controller source are in [`Ian2x/steering-output-equivalence-audit`](https://github.com/Ian2x/steering-output-equivalence-audit). Its 95.9% figure is `rho = 0.9586776859504132` over `n = 150` evaluation prompts; the stored 95% interval is `[0.8527131782945736, 1.0714446589446587]`, so `rho_lo < 0.9` fails the audit's dissolution rule and the stored verdict is `Mixed`. These are upstream reference values, distinct from the app's `n = 8` disagreement above.
 
 ## Scope and limitations
 
 - This is a research **prototype** and Ian's first Swift project, not evidence of production Swift experience.
-- It performs inference only. It does not train or fine-tune with MLX, implement RLHF, or make an MLX-training claim.
-- It does not implement Activation Addition or edit the residual stream. The comparison is baseline versus an output-logit controller.
+- The macOS app performs inference only; it does not train or fine-tune. The separate toy LoRA artifact fine-tunes with MLX Python and does not turn the app into a training system.
+- The ActAdd pane edits Qwen's residual stream through the vendored MLX Swift model tail, with the explicit position deviation above. It is prototype research code, not an optimized inference service.
 - Core ML runs the small topic encoder. The LLM was not converted to Core ML.
 - MLX is Metal-backed. The project does not contain a standalone Metal kernel or justify a standalone Metal skill claim.
 - The judge score is a diagnostic cosine similarity, not a human preference evaluation or proof of causal control.

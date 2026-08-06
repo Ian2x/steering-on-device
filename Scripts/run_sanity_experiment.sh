@@ -36,6 +36,8 @@ for lexicon in wedding ocean; do
       --env STEERDEMO_AUTORUN=1 \
       --env STEERDEMO_LEXICON="$lexicon" \
       --env STEERDEMO_BIAS_STRENGTH="$strength" \
+      --env STEERDEMO_ACTADD_COEFFICIENT=12 \
+      --env STEERDEMO_ACTADD_LAYER=3 \
       --env STEERDEMO_KL_BUDGET=8 \
       --env STEERDEMO_MAX_TOKENS=64 \
       --env STEERDEMO_REPORT_PATH="$report" \
@@ -50,7 +52,7 @@ for lexicon in wedding ocean; do
       exit 1
     fi
 
-    for _ in {1..120}; do
+    for _ in {1..300}; do
       [[ -f "$report" ]] && break
       if ! kill -0 "$app_pid" 2>/dev/null; then
         wait "$app_pid" 2>/dev/null || true
@@ -71,6 +73,7 @@ row = json.load(open(os.environ["REPORT"]))
 assert row["status"].startswith("Complete"), row
 assert row["baseline"]["tokenCount"] > 0, row
 assert row["steered"]["tokenCount"] > 0, row
+assert row["actAdd"]["tokenCount"] > 0, row
 print(
     row["lexicon"], row["biasStrength"],
     f"KL={row['cumulativeKL']:.4f}",

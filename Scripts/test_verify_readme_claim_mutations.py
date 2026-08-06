@@ -32,12 +32,21 @@ def must_reject(name: str, before: str, after: str) -> None:
 
 
 memory_mib = 10 * round(
-    max(FINAL[p]["residentMemoryBytes"] for p in ("baseline", "steered")) / 2**20 / 10
+    max(FINAL[p]["residentMemoryBytes"] for p in ("baseline", "steered", "actAdd"))
+    / 2**20
+    / 10
 )
-must_reject("memory", f"about {memory_mib} MB resident memory", "about 999 MB resident memory")
-must_reject("test count", "has ten tests", "has nine tests")
+must_reject("memory", f"about {memory_mib} MB peak resident memory", "about 999 MB peak resident memory")
+must_reject("test count", "has 12 tests", "has 11 tests")
 must_reject(
     "Qwen revision",
     "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3",
     "a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f0",
 )
+must_reject(
+    "on-device rho",
+    "on-device result was **`rho = 11.51541576343149`**",
+    "on-device result was **`rho = 0.9586776859504132`**",
+)
+must_reject("ActAdd layer", "block **3** was therefore selected", "block **11** was therefore selected")
+must_reject("LoRA result", "`0/9` before training to `9/9` after training", "`9/9` before training to `9/9` after training")

@@ -219,7 +219,7 @@ struct ContentView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
-                    Text("The last biased step is rescaled to respect the budget; only one-token entries receive it.")
+                    Text("Each controller bisects its final active step to respect the cap; logit bias uses only single-token entries.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
