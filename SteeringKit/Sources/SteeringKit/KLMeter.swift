@@ -37,10 +37,19 @@ public struct KLMeter: Sendable {
             biasedLogits: biasedLogits,
             baseLogits: baseLogits
         )
-        cumulative += value
+        return try record(divergence: value)
+    }
+
+    /// Records a KL value computed on an accelerator without copying its full
+    /// vocabulary logits back to the CPU.
+    @discardableResult
+    public mutating func record(divergence value: Double) throws -> KLReading {
+        guard value.isFinite else { throw KLMeterError.nonFiniteLogit }
+        let clamped = max(0, value)
+        cumulative += clamped
         let reading = KLReading(
             step: history.count + 1,
-            perStep: value,
+            perStep: clamped,
             cumulative: cumulative,
             budget: budget
         )
@@ -87,4 +96,3 @@ public struct KLMeter: Sendable {
         return maximum + Foundation.log(shifted)
     }
 }
-
