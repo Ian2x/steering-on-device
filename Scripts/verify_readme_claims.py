@@ -19,6 +19,133 @@ def check(condition: bool, message: str) -> None:
         raise AssertionError(message)
 
 
+# The share of an intervention's cumulative KL that has to land in step one for
+# the README to call it collapsed. The README quotes this threshold, so it is
+# rendered from here rather than restated.
+FIRST_STEP_COLLAPSE_SHARE = 0.97
+
+# The biased-step count at or below which the README calls a sanity run short.
+SHORT_BIASED_RUN_STEPS = 5
+
+
+# --- numeric-literal sweep -------------------------------------------------
+#
+# require() is exact-substring with an exact-count assertion, so pinning one
+# rendered fragment does not guard the same number where it appears with a
+# different suffix. The sweep below closes that structurally: it extracts every
+# numeric literal from the README and demands that each one sit inside a span
+# that some require() call actually pinned, or inside an allowlisted context
+# with a stated reason. Coverage is decided by character position, never by
+# re-matching the bare literal, so a second occurrence of an already-pinned
+# number is still reported as unguarded.
+
+# Regions whose digits are excluded from the sweep, by rule:
+EXCLUDED_REGIONS = (
+    # Fenced code blocks: reproduction commands and flags, not result claims.
+    re.compile(r"^```.*?^```", re.MULTILINE | re.DOTALL),
+    # Markdown links whose text is an inline code span: both halves are
+    # repository paths, whose digits name files and directories rather than
+    # assert anything.
+    re.compile(r"\[`[^`]*`\]\([^)\s]*\)"),
+    # Every other markdown link and image target. Prose link text and image alt
+    # text are deliberately left in scope.
+    re.compile(r"\]\([^)\s]*\)"),
+)
+
+# A numeric literal is a digit run with an optional decimal part that is not
+# glued to a letter or an underscore, and does not begin immediately after a
+# decimal point. That adjacency rule — and nothing else — is what removes model
+# names, git revisions, and unit-suffixed identifiers (Qwen2.5, 0.5B, 4bit,
+# all-MiniLM-L6-v2, FP16, arm64, 0d5a15e, a5339a4131f135d0fdc6a5c8b5bbed2753bbe0f3)
+# without an allowlist entry. A trailing period is left outside the match so
+# that a sentence-final decimal is still swept. Signs, percent signs, and
+# multiplication crosses are outside the match but inside the pinned fragments,
+# so they still have to line up.
+NUMERIC_LITERAL = re.compile(r"(?<![0-9A-Za-z_.])[0-9]+(?:\.[0-9]+)?(?![0-9A-Za-z_])(?!\.[0-9])")
+
+# Literals that no artifact can supply, keyed by the exact README context that
+# contains them. Each key must occur exactly once in the README and stay short,
+# so an entry cannot silently rot or quietly blanket a paragraph.
+ALLOWED_NUMERIC_CONTEXTS = {
+    "Xcode 26 or newer": "external toolchain floor chosen by the author; no artifact records it",
+    "model-weight SHA-256": "digest algorithm name; the digest itself is checked for SHA-256 length",
+    "Historical Phase 6 comparison invalidated": "project phase label, not a measurement",
+    "historical Phase 6 protocol": "project phase label, not a measurement",
+    "the stored 95% interval": "confidence level is not recorded in audit-reference.json; its bounds are pinned",
+}
+ALLOWED_CONTEXT_MAX_LENGTH = 120
+
+
+def _mask(length: int, spans: list[tuple[int, int]]) -> bytearray:
+    mask = bytearray(length)
+    for start, end in spans:
+        mask[start:end] = b"\x01" * (end - start)
+    return mask
+
+
+def _occurrences(haystack: str, needle: str) -> list[tuple[int, int]]:
+    spans = []
+    start = haystack.find(needle)
+    while start != -1:
+        spans.append((start, start + len(needle)))
+        start = haystack.find(needle, start + 1)
+    return spans
+
+
+def sweep_numeric_literals(readme: str, fragments: list[str]) -> None:
+    for context, reason in ALLOWED_NUMERIC_CONTEXTS.items():
+        check(bool(reason), f"allowlisted numeric context {context!r} has no reason")
+        check(
+            len(context) <= ALLOWED_CONTEXT_MAX_LENGTH,
+            f"allowlisted numeric context {context!r} is too broad "
+            f"({len(context)} > {ALLOWED_CONTEXT_MAX_LENGTH} characters)",
+        )
+        check(
+            any(character.isdigit() for character in context),
+            f"allowlisted numeric context {context!r} contains no digit",
+        )
+        found = readme.count(context)
+        check(found == 1, f"allowlisted numeric context {context!r}: expected 1, found {found}")
+
+    covered = _mask(len(readme), [span for f in fragments for span in _occurrences(readme, f)])
+    allowed = _mask(
+        len(readme),
+        [span for c in ALLOWED_NUMERIC_CONTEXTS for span in _occurrences(readme, c)],
+    )
+    excluded = _mask(
+        len(readme),
+        [m.span() for pattern in EXCLUDED_REGIONS for m in pattern.finditer(readme)],
+    )
+
+    unguarded: list[str] = []
+    pinned = 0
+    excused = 0
+    for match in NUMERIC_LITERAL.finditer(readme):
+        start, end = match.span()
+        if any(excluded[start:end]):
+            continue
+        if all(covered[start:end]):
+            pinned += 1
+            continue
+        if all(allowed[start:end]):
+            excused += 1
+            continue
+        line = readme.count("\n", 0, start) + 1
+        context = readme[max(0, start - 45) : end + 45].replace("\n", " ")
+        unguarded.append(f"  line {line}: {match.group()!r} in ...{context}...")
+
+    check(
+        not unguarded,
+        f"{len(unguarded)} README numeric literal(s) are neither pinned to an artifact "
+        "nor allowlisted:\n" + "\n".join(unguarded),
+    )
+    print(
+        f"PASS numeric-literal sweep: {pinned + excused} literals in scope, "
+        f"{pinned} pinned to artifacts, {excused} excused by "
+        f"{len(ALLOWED_NUMERIC_CONTEXTS)} allowlisted contexts"
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--readme", type=Path, default=ROOT / "README.md")
@@ -48,12 +175,15 @@ def main() -> None:
     check(f"replaying {hero_name}," in readme, "hero alt text does not name the rendered packet")
     print("PASS hero screenshot matches final frame, discloses the NLL gate, and names the packet")
 
+    required_fragments: list[str] = []
+
     def require(fragment: str, count: int = 1) -> None:
         actual = readme.count(fragment)
         check(
             actual == count,
             f"README fragment count for {fragment!r}: expected {count}, found {actual}",
         )
+        required_fragments.append(fragment)
 
     def forbid(fragment: str) -> None:
         check(fragment not in readme, f"forbidden README fragment found: {fragment!r}")
@@ -110,7 +240,7 @@ def main() -> None:
         == 96,
         "final run is not a matched 96-token triple",
     )
-    require("default 96-token")
+    require(f"default {final['baseline']['tokenCount']}-token")
     memory_mib = 10 * round(
         max(final[p]["residentMemoryBytes"] for p in ("baseline", "steered", "actAdd"))
         / 2**20
@@ -128,14 +258,22 @@ def main() -> None:
     for pane in ("baseline", "steered", "actAdd"):
         forbid(f"{final[pane]['tokensPerSecond']:.1f} {pane}")
     require("Single-run token rates were removed from the headline")
-    require("about 30× slower than baseline")
     legacy_slowdown = final["baseline"]["tokensPerSecond"] / final["actAdd"]["tokensPerSecond"]
     check(29 <= legacy_slowdown <= 32, "final-run residual slowdown is no longer about 30x")
+    # Rounded to the nearest ten, matching the "about ... MB" convention above.
+    approximate_slowdown = 10 * round(legacy_slowdown / 10)
+    require(f"about {approximate_slowdown}× slower than baseline")
+    require(f"Do not carry {approximate_slowdown}× forward as the current cost")
     check(
         "actAddAppliedCoefficient" not in final and "actAddDirectionDiagnostics" not in final,
         "final-demo packet now records remediated residual fields; the pre-remediation note must be revisited",
     )
     require("this packet predates the residual remediation")
+    require(
+        f"(block {final['actAddLayer']}, nominal coefficient {final['actAddCoefficient']:g}, "
+        "no recorded applied coefficient or direction diagnostics)"
+    )
+    require(f"its {final['baseline']['tokenCount']}-token length inflates a path")
     print("PASS final-run memory, KL, hero topic scores, and scoped timing claims")
 
     rendered_table = subprocess.run(
@@ -149,13 +287,21 @@ def main() -> None:
     check(len(sanity_paths) == 6, f"expected 6 sanity packets, found {len(sanity_paths)}")
     sanity = [json.loads(path.read_text()) for path in sanity_paths]
     check(all(row["buildConfiguration"] == "Release" for row in sanity), "a sanity run is not Release")
+    sanity_budgets = {row["klBudget"] for row in sanity}
+    sanity_token_limits = {row["maxTokens"] for row in sanity}
+    check(len(sanity_budgets) == 1, "sanity packets no longer share one KL cap")
+    check(len(sanity_token_limits) == 1, "sanity packets no longer share one token limit")
+    sanity_budget = sanity_budgets.pop()
+    require(f"These are real {sanity_token_limits.pop()}-token app runs")
+    require(f"fixed seed, temperature, and an {sanity_budget:.4f}-nat KL cap")
     history_lengths = [len(row["klHistory"]) for row in sanity]
     require(f"**{min(history_lengths)}–{max(history_lengths)} biased steps**")
     sanity_median = statistics.median(history_lengths)
-    sanity_short = sum(1 for value in history_lengths if value <= 5)
+    sanity_short = sum(1 for value in history_lengths if value <= SHORT_BIASED_RUN_STEPS)
     require(
         f"**{min(history_lengths)}–{max(history_lengths)} biased steps**, "
-        f"median {sanity_median:g}, {sanity_short} of {len(history_lengths)} at 5 or fewer"
+        f"median {sanity_median:g}, {sanity_short} of {len(history_lengths)} at "
+        f"{SHORT_BIASED_RUN_STEPS} or fewer"
     )
     check(sanity_median == 3, "sanity median biased-step count changed")
     check(sanity_short == 5, "sanity short-run count changed")
@@ -166,6 +312,11 @@ def main() -> None:
 
     comparison_rows: list[str] = []
     cap4_paths = sorted((ROOT / "docs/negative-results/matched-kl4").glob("*.json"))
+    cap4_packets = [json.loads(path.read_text()) for path in cap4_paths]
+    cap4_budgets = {row["klBudget"] for row in cap4_packets}
+    check(len(cap4_budgets) == 1, "historical KL-4 packets no longer share one KL cap")
+    cap4_budget = cap4_budgets.pop()
+    check(cap4_budget * 2 == sanity_budget, "the KL-4/KL-8 pair is no longer a doubling")
     for cap4_path in cap4_paths:
         cap8_path = ROOT / "docs/sanity-runs" / cap4_path.name
         check(cap8_path.exists(), f"missing cap-8 match for {cap4_path.name}")
@@ -185,11 +336,40 @@ def main() -> None:
         comparison_rows.append(row)
         require(row)
     check(len(comparison_rows) == 6, f"expected 6 KL-cap comparisons, found {len(comparison_rows)}")
-    check(all("buildConfiguration" not in row for row in map(json.loads, (p.read_text() for p in cap4_paths))), "historical KL-4 packet unexpectedly has build configuration")
+    check(all("buildConfiguration" not in row for row in cap4_packets), "historical KL-4 packet unexpectedly has build configuration")
+    require(f"including the KL-{cap4_budget:g} half of the comparison below")
     require("predate build-configuration recording and are not claimed as Release evidence")
+    require(
+        f"| Lexicon | Bias strength | Steered text identical? | Topic score (KL cap {cap4_budget:g}) "
+        f"| Topic score (KL cap {sanity_budget:g}) |"
+    )
+    require(f"The KL-{cap4_budget:g} packets are in")
+    require(f"the KL-{sanity_budget:g} packets are in")
     require("the permitted cost changes sampled behavior for ocean")
-    require("wedding plateaus by 4 nats")
-    print("PASS KL-4/KL-8 table and honest historical-build scope")
+    require(f"wedding plateaus by {cap4_budget:g} nats")
+
+    strengths = sorted({row["biasStrength"] for row in sanity})
+    check(len(strengths) == 3, "the sanity sweep no longer tests three bias strengths")
+    check(
+        {row["biasStrength"] for row in cap4_packets} == set(strengths),
+        "the KL-4 and KL-8 halves no longer test the same bias strengths",
+    )
+    require(
+        f"ocean strength {strengths[0]:g} spends the same KL without crossing a sampled-token "
+        f"threshold, while strengths {strengths[1]:g} and {strengths[2]:g} do"
+    )
+    require(
+        f"a {cap4_budget:g}-nat cap never crosses a sampled-token threshold at the three tested "
+        f"strengths; at {sanity_budget:g} nats, strengths {strengths[1]:g} and {strengths[2]:g} do"
+    )
+    ocean_gain = next(
+        row["steered"]["topicScore"] - row["baseline"]["topicScore"]
+        for row in sanity
+        if row["lexicon"] == "ocean" and row["biasStrength"] == strengths[1]
+    )
+    require(f"moving the score by {ocean_gain:+.4f}")
+    require(f"already saturated by {cap4_budget:g} nats")
+    print("PASS KL-4/KL-8 table, matched strengths, cap labels, and honest historical-build scope")
 
     analysis_path = ROOT / "docs/phase6/invalid-comparison-analysis.json"
     subprocess.run(
@@ -214,7 +394,7 @@ def main() -> None:
     check(layer["runCount"] == 24, "layer sweep packet count changed")
     check(layer["block3Vs19CaseCount"] == layer["byteIdenticalCaseCount"] == 4, "block 3/19 identity changed")
     check(layer["selectedLayer"] is None, "invalid sweep selected a layer")
-    require("blocks 3 and 19 produced byte-identical residual-edit text in all four matched cases")
+
     sweep_path = ROOT / "docs/phase6/layer-sweep/summary.json"
     sweep_before = sweep_path.read_bytes()
     subprocess.run(
@@ -238,15 +418,47 @@ def main() -> None:
         json.loads(path.read_text())
         for path in sorted((ROOT / "docs/phase6/layer-sweep/runs").glob("*.json"))
     ]
-    check(
-        len(sweep_packets) == sweep_summary["rawPacketCount"] == layer["runCount"],
-        "layer sweep packet count changed",
-    )
+    check(len(sweep_packets) == sweep_summary["rawPacketCount"] == layer["runCount"], "layer sweep packet count changed")
     check(all(row["buildConfiguration"] == "Release" for row in sweep_packets), "a layer-sweep packet is not Release")
+    sweep_layers = sorted({row["actAddLayer"] for row in sweep_packets})
+    check(sweep_layers == sweep_summary["candidateLayers"], "layer-sweep summary no longer lists its packets' blocks")
+    sweep_settings = {
+        key: {row[key] for row in sweep_packets}
+        for key in ("actAddCoefficient", "klBudget", "maxTokens")
+    }
     check(
-        sorted({row["actAddLayer"] for row in sweep_packets}) == sweep_summary["candidateLayers"],
-        "layer-sweep summary no longer lists its packets' blocks",
+        all(len(values) == 1 for values in sweep_settings.values()),
+        "layer-sweep packets no longer share one coefficient, cap, and token limit",
     )
+    sweep_coefficient = sweep_settings["actAddCoefficient"].pop()
+    sweep_budget = sweep_settings["klBudget"].pop()
+    sweep_token_limit = sweep_settings["maxTokens"].pop()
+    sweep_cases: dict[tuple[str, str], dict[int, str]] = {}
+    for row in sweep_packets:
+        sweep_cases.setdefault((row["prompt"], row["lexicon"]), {})[row["actAddLayer"]] = row["actAdd"]["text"]
+    # "four matched cases" and "four neutral prompt-topic cases" below are the
+    # word form of this count, already asserted as 4 through layerSweep above.
+    check(len(sweep_cases) == layer["block3Vs19CaseCount"], "layer-sweep matched-case count changed")
+    identical_pairs = [
+        (low_block, high_block)
+        for index, low_block in enumerate(sweep_layers)
+        for high_block in sweep_layers[index + 1 :]
+        if all(texts[low_block] == texts[high_block] for texts in sweep_cases.values())
+    ]
+    check(len(identical_pairs) == 1, f"layer-sweep degeneracy is no longer a single pair: {identical_pairs}")
+    degenerate = identical_pairs[0]
+    require(
+        f"blocks {degenerate[0]} and {degenerate[1]} produced byte-identical residual-edit text "
+        "in all four matched cases"
+    )
+    require(
+        "blocks " + ", ".join(str(block) for block in sweep_layers[:-1])
+        + f", and {sweep_layers[-1]} were swept across four neutral prompt-topic cases at a nominal "
+        f"coefficient of {sweep_coefficient:g}, an {sweep_budget:g}-nat cumulative cap, "
+        f"and at most {sweep_token_limit} generated tokens. "
+        f"All {len(sweep_packets)} Release packets are retained"
+    )
+    require(f"Because blocks {degenerate[0]} and {degenerate[1]} produced the same text in every matched case")
 
     rho_summary = json.loads((ROOT / "docs/phase6/on-device-rho/summary.json").read_text())
     check(rho_summary["status"] == "invalidated" and rho_summary["ratio"] is None, "ratio summary was not invalidated")
@@ -256,7 +468,7 @@ def main() -> None:
     forbid("materially disagrees")
     forbid("same cumulative KL cap")
     check(not re.search(r"rho\s*=\s*1\d(?:\.\d+)?", readme), "invalid two-digit app ratio remains")
-    print("PASS invalid comparison, layer degeneracy, first-step fractions, and claim removal")
+    print("PASS invalid comparison, reproducible layer sweep, first-step fractions, and claim removal")
 
     blocking_path = ROOT / "docs/phase6/blocking-control/summary.json"
     blocking_before = blocking_path.read_bytes()
@@ -285,22 +497,50 @@ def main() -> None:
         blocking["selectedCellByPredeclaredTieBreak"] == {"layer": 10, "coefficient": 4.0},
         "blocking selected cell changed",
     )
+    tie_break = blocking["selectedCellByPredeclaredTieBreak"]
     selected = next(
         cell
         for cell in blocking["cells"]
-        if cell["layer"] == 10 and cell["coefficient"] == 4.0
+        if cell["layer"] == tie_break["layer"] and cell["coefficient"] == tie_break["coefficient"]
     )
     check(selected["passed"], "selected blocking cell no longer passes")
     check(not any(selected["crossLexiconIdentityByPrompt"]), "selected cell has cross-topic identity")
+
+    grid = {
+        "layers": len({row["actAddLayer"] for row in blocking_packets}),
+        "coefficients": len({row["actAddCoefficient"] for row in blocking_packets}),
+        "directions": len({row["actAddDirectionMode"] for row in blocking_packets}),
+        "topics": len({row["lexicon"] for row in blocking_packets}),
+        "prompts": len({row["prompt"] for row in blocking_packets}),
+    }
+    cells = grid["layers"] * grid["coefficients"]
+    product = cells * grid["directions"] * grid["topics"] * grid["prompts"]
+    check(product == len(blocking_packets), "the blocking grid is no longer full and balanced")
+    require(
+        f"{grid['layers']} layers × {grid['coefficients']} direct coefficients × "
+        f"{grid['directions']} directions × {grid['topics']} topics × {grid['prompts']} neutral "
+        f"prompts = **{len(blocking_packets)} Release packets**"
+    )
     require("**180 Release packets**")
-    require("**2/15 layer/coefficient cells passed**")
-    require("**block 10, coefficient 4**")
+    require(f"**{blocking['passingCellCount']}/{cells} layer/coefficient cells passed**")
+    require(f"**block {tie_break['layer']}, coefficient {tie_break['coefficient']:g}**")
     for topic in ("wedding", "ocean"):
         row = selected["topics"][topic]
         require(f"`{row['semanticMedianShift']:+.6f}`")
         require(f"`{row['randomMedianShift']:+.6f}`")
-    require("Median returned length was 32 tokens in every arm")
+    selected_lengths = set(selected["medianLengths"].values())
+    check(len(selected_lengths) == 1, "the selected cell's arms no longer share one median length")
+    require(f"Median returned length was {selected_lengths.pop():g} tokens in every arm")
+    check(
+        set(selected["medianRepeatedTrigramFractions"].values()) == {0.0},
+        "the selected cell's repeated-trigram fractions are no longer zero",
+    )
     require("repeated-trigram fraction was zero")
+    nll = selected["medianBaseModelNLL"]
+    require(
+        f"base-model mean token NLL was `{nll['baseline']:.6f}` baseline, "
+        f"`{nll['semantic']:.6f}` semantic, and `{nll['random']:.6f}` random"
+    )
     check(
         not any(
             "crossTopic" in key or "offTarget" in key or "otherTopic" in key
@@ -312,6 +552,16 @@ def main() -> None:
     )
     require("or show **topic specificity**")
     require("no gate compared a direction's effect on the other topic's centroid")
+    blocking_protocol = (ROOT / "docs/phase6/blocking-control/protocol.md").read_text()
+    gates = re.findall(r"^(\d+)\. \*\*([^:*]+):\*\*", blocking_protocol, re.MULTILINE)
+    check(
+        [name for _, name in gates[:2]] == ["Direction dependence", "On-target movement"],
+        "the frozen blocking protocol's first two gates are no longer direction dependence and on-target movement",
+    )
+    require(
+        f"because gate {gates[0][0]} asks only that the wedding and ocean outputs be byte-different "
+        f"and gate {gates[1][0]} scores every packet against its own selected topic centroid"
+    )
 
     blocking_actadd = [row["actAdd"]["tokensPerSecond"] for row in blocking_packets]
     preserved_actadd = [row["actAdd"]["tokensPerSecond"] for row in preserved_packets]
@@ -322,8 +572,20 @@ def main() -> None:
         row["baseline"]["tokensPerSecond"] / row["actAdd"]["tokensPerSecond"]
         for row in blocking_packets + preserved_packets
     ]
-    require(f"`{min(blocking_actadd):.1f}`–`{max(blocking_actadd):.1f}` tok/s over 32 tokens")
-    require(f"`{min(preserved_actadd):.1f}`–`{max(preserved_actadd):.1f}` tok/s over 64 tokens")
+    blocking_token_limits = {row["maxTokens"] for row in blocking_packets}
+    preserved_token_limits = {row["maxTokens"] for row in preserved_packets}
+    check(
+        len(blocking_token_limits) == len(preserved_token_limits) == 1,
+        "the remediated run sets no longer share one token limit each",
+    )
+    require(
+        f"`{min(blocking_actadd):.1f}`–`{max(blocking_actadd):.1f}` tok/s over "
+        f"{blocking_token_limits.pop()} tokens ({len(blocking_packets)} blocking-control packets)"
+    )
+    require(
+        f"`{min(preserved_actadd):.1f}`–`{max(preserved_actadd):.1f}` tok/s over "
+        f"{preserved_token_limits.pop()} tokens ({len(preserved_packets)} teacher-forced packets)"
+    )
     require(f"`{min(remediated_baseline):.1f}`–`{max(remediated_baseline):.1f}` tok/s baseline")
     require(f"**{min(remediated_slowdowns):.1f}×–{max(remediated_slowdowns):.1f}×**")
     check(
@@ -351,9 +613,17 @@ def main() -> None:
     random_paths = sorted(
         (ROOT / "docs/phase6/teacher-forced-comparison/random-floor-runs").glob("*.json")
     )
+    calibration_packets = [json.loads(path.read_text()) for path in calibration_paths]
     check(len(calibration_paths) == 304, "teacher-forced calibration packet count changed")
     check(len(comparison_paths) == len(random_paths) == 8, "teacher-forced output packet count changed")
     check(stage3["n"] == {"prompts": 4, "topics": 2, "promptTopicUnits": 8}, "Stage 3 n changed")
+    calibration_summary = json.loads(
+        (ROOT / "docs/phase6/teacher-forced-comparison/calibration-summary.json").read_text()
+    )
+    require(
+        f"to the audit's `{calibration_summary['targetMeanTeacherForcedKL']}`-nat/step target on "
+        f"shared fixed {calibration_summary['continuationSteps']}-token continuations"
+    )
     check(stage3["klMatchPass"], "teacher-forced KL matching failed")
     check(stage3["directionDependencePass"], "Stage 3 direction dependence failed")
     check(all(row["passed"] for row in stage3["topics"].values()), "a Stage 3 topic/floor gate failed")
@@ -362,7 +632,10 @@ def main() -> None:
     check(stage3["status"] == "invalid-comparison", "Stage 3 invalid status changed")
     check(stage3["ratioStatus"] == "withheld-validity-gate", "Stage 3 ratio status changed")
     check(stage3["ratio"] is None, "Stage 3 ratio must remain withheld")
-    require("**4 prompts × 2 topics = 8 prompt-topic units**")
+    require(
+        f"**{stage3['n']['prompts']} prompts × {stage3['n']['topics']} topics = "
+        f"{stage3['n']['promptTopicUnits']} prompt-topic units**"
+    )
     achieved = [
         value
         for topic in stage3["achievedMeanTeacherForcedKL"].values()
@@ -377,13 +650,25 @@ def main() -> None:
     interval = stage3["denominatorPromptClusterBootstrap95"]
     require(f"`[{interval[0]:.6f}, {interval[1]:.6f}]`")
     require("No point ratio or ratio interval is reported.")
-    require("304 calibration packets, 16 output packets")
+    require(
+        f"{len(calibration_paths)} calibration packets, "
+        f"{len(comparison_paths) + len(random_paths)} output packets"
+    )
     failure = json.loads(
         (ROOT / "docs/phase6/teacher-forced-comparison/calibration-failure.json").read_text()
     )
     check(failure["status"] == "failed-monotonicity-gate", "original calibration failure changed")
     check(failure["topicOutputsObserved"] is False, "original calibration observed topic output")
-    print("PASS teacher-forced calibration, invalid NLL gate, packet retention, and ratio withholding")
+    # The blind set is the topics the failed monotonic run had completed before
+    # amendment-1 changed the selection rule; those packets are still on disk.
+    blind = [row for row in calibration_packets if row["lexicon"] in failure["completedTopics"]]
+    check(
+        len(blind) == failure["packetCount"],
+        f"retained blind calibration packets ({len(blind)}) no longer match the recorded "
+        f"count ({failure['packetCount']})",
+    )
+    require(f"all {failure['packetCount']} blind packets were retained")
+    print("PASS teacher-forced calibration, invalid NLL gate, blind-packet retention, and ratio withholding")
 
     rho_paths = sorted((ROOT / "docs/phase6/on-device-rho/runs").glob("*.json"))
     rho_packets = [json.loads(path.read_text()) for path in rho_paths]
@@ -391,8 +676,45 @@ def main() -> None:
     check(all(abs(row["temperature"] - 0.7) < 1e-6 for row in rho_packets), "comparison temperature changed")
     protocol = (ROOT / "docs/phase6/on-device-rho/protocol.md").read_text()
     check("temperature 0.7" in protocol, "precommitted protocol temperature changed")
-    require("temperature `0.7`")
+    temperature = rho_packets[0]["temperature"]
+    require(f"temperature `{temperature:.1f}`")
     check(all(row["buildConfiguration"] == "Release" for row in rho_packets), "a comparison packet is not Release")
+    rho_budgets = {row["klBudget"] for row in rho_packets}
+    rho_token_limits = {row["maxTokens"] for row in rho_packets}
+    check(
+        len(rho_budgets) == len(rho_token_limits) == 1,
+        "comparison packets no longer share one cap and token limit",
+    )
+    rho_budget = rho_budgets.pop()
+    require(f"the cumulative {rho_budget:g}-nat cap in all eight prompt-topic runs")
+    require(f"under the same {rho_budget:g}-nat cap")
+
+    # Every committed packet that records a seed must record the same one. The
+    # historical KL-4 set predates seed recording and is the only exemption.
+    zero = json.loads((ROOT / "docs/phase6/coefficient-zero/report.json").read_text())
+    all_packets = (
+        [final, zero]
+        + sanity
+        + cap4_packets
+        + rho_packets
+        + sweep_packets
+        + blocking_packets
+        + preserved_packets
+        + calibration_packets
+        + [json.loads(path.read_text()) for path in random_paths]
+    )
+    recorded_seeds = [row["seed"] for row in all_packets if "seed" in row]
+    check(len(set(recorded_seeds)) == 1, f"committed packets disagree on the seed: {sorted(set(recorded_seeds))}")
+    check(
+        len(all_packets) - len(recorded_seeds) == len(cap4_packets),
+        "a packet outside the historical KL-4 set omits its seed",
+    )
+    seed = recorded_seeds[0]
+    require(f"chat template, seed (`{seed}`), temperature (`{temperature:.1f}`)")
+    require(
+        f"eight Release packets at seed {seed}, temperature `{temperature:.1f}`, "
+        f"and at most {rho_token_limits.pop()} generated tokens"
+    )
 
     dense_shares, sparse_shares, dense_steps, sparse_steps = [], [], [], []
     for row in rho_packets:
@@ -401,10 +723,11 @@ def main() -> None:
         sparse_shares.append(sparse[0]["perStep"] / sparse[-1]["cumulative"])
         dense_steps.append(len(dense))
         sparse_steps.append(len(sparse))
-    dense_collapsed = sum(1 for share in dense_shares if share > 0.97)
-    sparse_collapsed = sum(1 for share in sparse_shares if share > 0.97)
+    dense_collapsed = sum(1 for share in dense_shares if share > FIRST_STEP_COLLAPSE_SHARE)
+    sparse_collapsed = sum(1 for share in sparse_shares if share > FIRST_STEP_COLLAPSE_SHARE)
     check(dense_collapsed == 8, "dense in-packet first-step collapse count changed")
     check(sparse_collapsed == 1, "sparse in-packet first-step collapse count changed")
+    require(f"put more than {100 * FIRST_STEP_COLLAPSE_SHARE:g}% of its cumulative cap")
     require(f"into step one in **{dense_collapsed} of {len(rho_packets)}** runs")
     require(f"the sparse logit bias did so in **{sparse_collapsed} of {len(rho_packets)}**")
     exception_name, exception_share = max(
@@ -412,7 +735,7 @@ def main() -> None:
         key=lambda pair: pair[1],
     )
     require(f"(`{exception_name}`, at {100 * exception_share:.4f}%)")
-    others = sorted(share for share in sparse_shares if share <= 0.97)
+    others = sorted(share for share in sparse_shares if share <= FIRST_STEP_COLLAPSE_SHARE)
     require(f"only {100 * others[0]:.2f}%–{100 * others[-1]:.1f}% there in the other seven")
     require(
         f"spreading its cap over {min(sparse_steps)}–{max(sparse_steps)} biased steps "
@@ -420,7 +743,6 @@ def main() -> None:
     )
     print("PASS comparison temperature, Release provenance, and matched in-packet first-step contrast")
 
-    zero = json.loads((ROOT / "docs/phase6/coefficient-zero/report.json").read_text())
     check(zero["actAddCoefficient"] == 0, "coefficient-zero packet is not zero")
     check(zero["baseline"]["tokenIDs"] == zero["actAdd"]["tokenIDs"], "coefficient-zero packet token IDs differ")
     check(zero["baseline"]["text"].encode() == zero["actAdd"]["text"].encode(), "coefficient-zero packet bytes differ")
@@ -437,21 +759,22 @@ def main() -> None:
     require(f"{scores['steered_prefix_removed']:.4f}")
     require(f"{decomposition['prefix_only_shift']:.4f} / {decomposition['observed_shift']:.4f}")
     require(f"{100 * decomposition['prefix_fraction_of_observed_shift']:.1f}%")
+    require(f"the full `{decomposition['observed_shift']:+.4f}` shift")
     print("PASS judge decomposition and prominent 68.4% self-measurement")
 
     parity = json.loads((ROOT / "docs/coreml-parity.json").read_text())
     metadata = parity["metadata"]
     check(len(parity["rows"]) == metadata["validation_cases"] == 24, "Core ML case count changed")
-    require("24 inputs")
+    require(f"{metadata['validation_cases']} inputs")
     require(f"`{metadata['minimum_cosine']:.9f}`")
     require(f"`{metadata['threshold']:.4f}` gate")
     check(metadata["max_length"] == 128, "Core ML max length changed")
-    require("fixed 128-token inputs")
+    require(f"fixed {metadata['max_length']}-token inputs")
     check(metadata["compute_units"] == "ALL", "Core ML compute units changed")
     check(len(metadata["weight_sha256"]) == 64, "Core ML digest is not SHA-256")
     centroids = json.loads((ROOT / "Resources/CoreML/topic-centroids.json").read_text())
     check(centroids["dimensions"] == 384, "Core ML dimensions changed")
-    require("384-dimensional embedding")
+    require(f"{centroids['dimensions']}-dimensional embedding")
     require(centroids["model_revision"])
     package_bytes = sum(
         path.stat().st_size
@@ -472,20 +795,33 @@ def main() -> None:
     check(model_id is not None and model_revision is not None, "could not parse pinned Qwen model")
     require(f"`{model_id.group(1)}`")
     require(f"`{model_revision.group(1)}`")
-    print("PASS test count and pinned Qwen identity")
+    quantization = re.search(r"^(.*)-(\d+)bit$", model_id.group(1).split("/")[-1])
+    check(quantization is not None, "the pinned model id no longer names its quantization")
+    require(f"runs {quantization.group(1)} ({quantization.group(2)}-bit) through MLX Swift")
+    require(f"and {quantization.group(2)}-bit MLX model")
+    print("PASS test count, pinned Qwen identity, and quantization label")
 
     audit = json.loads((ROOT / "docs/audit-reference.json").read_text())
     point = audit["rho"]["point"]
+    # The citation year is the year of the audit's own dated results directory.
+    audit_year = re.search(r"/results/(\d{4})-\d{2}-\d{2}-", audit["source"])
+    check(audit_year is not None, "audit source no longer carries a dated results directory")
+    require(f"The steering audit (Wang, {audit_year.group(1)}) reported")
     require(f"{100 * point:.1f}%")
     require(f"`rho = {point}`")
     require(f"`n = {audit['n_eval']}`")
     require(f"[{audit['rho']['ci_lo']}, {audit['rho']['ci_hi']}]")
     require(f"verdict is `{audit['verdict']['class']}`")
-    require("95% CI 85.3%–107.1%")
+    require(f"95% CI {100 * audit['rho']['ci_lo']:.1f}%–{100 * audit['rho']['ci_hi']:.1f}%")
+    dissolution = re.search(r"rho_lo\s*>=\s*([0-9.]+)", audit["verdict"]["dissolved_rule"])
+    check(dissolution is not None, "audit dissolution rule no longer names its rho_lo threshold")
+    require(f"`rho_lo < {dissolution.group(1)}` fails the audit's dissolution rule")
     matched = audit["matched_protocol"]
     require(f"`{matched['mean_teacher_forced_kl_nats_per_step']}` nats per step")
     require(f"fixed {matched['continuation_steps']}-step continuation")
-    require("prompt positions 0 through 6")
+    positions = matched["prompt_positions"]
+    check(positions == list(range(positions[0], positions[-1] + 1)), "audit prompt positions are no longer contiguous")
+    require(f"prompt positions {positions[0]} through {positions[-1]}")
     require(f"layer {matched['residual_layer']} of {matched['transformer_layers']}")
     require("matched-norm random-direction floor")
     require("repetition, length, and NLL degeneracy gates")
@@ -498,10 +834,17 @@ def main() -> None:
     check(before["exactMatches"] == 0 and after["exactMatches"] == 9, "LoRA result changed")
     check(adapter.stat().st_size > 0, "LoRA adapter is empty")
     check(after["adapter"] == "LoRA/adapter", "LoRA report leaked a local path")
+    lora_config = json.loads((ROOT / "LoRA/adapter/adapter_config.json").read_text())
+    train_examples = len((ROOT / "LoRA/data/train.jsonl").read_text().splitlines())
+    check(lora_config["num_layers"] == 4, "the toy LoRA is no longer four-layer")
     require("**MLX Python**, not MLX Swift")
-    require("120 optimizer steps on 36 toy codebook examples")
-    require("`0/9` before training to `9/9` after training")
-    require("3 MB adapter")
+    require(f"A four-layer rank-{lora_config['lora_parameters']['rank']} LoRA")
+    require(f"{lora_config['iters']} optimizer steps on {train_examples} toy codebook examples")
+    require(
+        f"`{before['exactMatches']}/{before['n']}` before training to "
+        f"`{after['exactMatches']}/{after['n']}` after training"
+    )
+    require(f"{round(adapter.stat().st_size / 2**20)} MB adapter")
     print("PASS toy MLX Python LoRA artifact")
 
     notices = (ROOT / "THIRD_PARTY_NOTICES.md").read_text()
@@ -513,6 +856,8 @@ def main() -> None:
     require("directed, agent-assisted work")
     require("makes no claim of personal Swift implementation experience")
     print("PASS vendored license and implementation-provenance disclosure")
+
+    sweep_numeric_literals(readme, required_fragments)
 
 
 if __name__ == "__main__":

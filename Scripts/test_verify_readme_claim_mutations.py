@@ -60,3 +60,43 @@ must_reject("hero residual-gain rank", "**2/8** on residual topic gain", "**6/8*
 must_reject("hero per-prompt KL", "`1.143989` nats/step", "`0.443989` nats/step")
 must_reject("remediated residual slowdown", "**3.5×–6.0×**", "**1.5×–2.0×**")
 must_reject("pre-remediation hero-timing scope", "this packet predates the residual remediation", "this packet already uses the residual remediation")
+
+# Literals the earlier verifier left unguarded, now derived from their artifacts.
+must_reject("blocking baseline NLL", "`0.983149` baseline", "`0.883149` baseline")
+must_reject("blocking semantic NLL", "`1.096959` semantic", "`1.196959` semantic")
+must_reject("blocking random NLL", "`0.916626` random", "`0.916627` random")
+must_reject("blocking grid dimensions", "3 layers × 5 direct coefficients", "3 layers × 6 direct coefficients")
+must_reject("blocking selected-cell length", "Median returned length was 32 tokens", "Median returned length was 30 tokens")
+must_reject("frozen gate ordinals", "because gate 1 asks only", "because gate 3 asks only")
+must_reject("retained blind calibration packets", "all 152 blind packets were retained", "all 151 blind packets were retained")
+must_reject("app pass seed", "seed (`42`), temperature", "seed (`43`), temperature")
+must_reject("preserved packet seed", "at seed 42, temperature", "at seed 7, temperature")
+must_reject("audit citation year", "The steering audit (Wang, 2026)", "The steering audit (Wang, 2025)")
+must_reject("second audit KL target occurrence", "`0.43523801873284795`-nat/step target", "`0.43523801873284790`-nat/step target")
+must_reject("calibration continuation length", "target on shared fixed 64-token continuations", "target on shared fixed 32-token continuations")
+must_reject("model quantization label", "Instruct (4-bit) through MLX Swift", "Instruct (8-bit) through MLX Swift")
+must_reject("sanity KL cap", "an 8.0000-nat KL cap", "an 9.0000-nat KL cap")
+must_reject("sanity run length", "These are real 64-token app runs", "These are real 32-token app runs")
+must_reject("sanity bias strength", "ocean strength 12 spends", "ocean strength 13 spends")
+must_reject("KL-cap table header", "Topic score (KL cap 4)", "Topic score (KL cap 5)")
+must_reject("in-packet cumulative cap", "the cumulative 8-nat cap", "the cumulative 9-nat cap")
+must_reject("first-step collapse threshold", "more than 97% of its cumulative cap", "more than 87% of its cumulative cap")
+must_reject("pre-remediation packet block", "(block 3, nominal coefficient 12,", "(block 5, nominal coefficient 12,")
+must_reject("pre-remediation packet length", "its 96-token length inflates", "its 64-token length inflates")
+must_reject("remediated blocking packet count", "(180 blocking-control packets)", "(179 blocking-control packets)")
+must_reject("layer sweep blocks", "blocks 3, 7, 11, 15, 19, and 23 were swept", "blocks 3, 7, 11, 15, 19, and 21 were swept")
+must_reject("layer sweep coefficient", "at a nominal coefficient of 12", "at a nominal coefficient of 14")
+must_reject("layer sweep packet count", "All 24 Release packets are retained", "All 25 Release packets are retained")
+must_reject("layer sweep degenerate pair", "Because blocks 3 and 19 produced the same text", "Because blocks 3 and 23 produced the same text")
+must_reject("audit dissolution threshold", "`rho_lo < 0.9`", "`rho_lo < 0.8`")
+must_reject("second observed judge shift", "the full `+0.4154` shift", "the full `+0.5154` shift")
+must_reject("toy LoRA rank", "four-layer rank-8 LoRA", "four-layer rank-9 LoRA")
+
+# The sweep itself: a brand-new number that no require() pins must not slip through,
+# and an allowlisted literal is excused from artifact derivation, not from change.
+must_reject(
+    "unguarded number added to the README",
+    "Prompts and generated text stay on the Mac.",
+    "Prompts and generated text stay on the Mac. It sustains 999 tok/s.",
+)
+must_reject("allowlisted toolchain floor", "Xcode 26 or newer", "Xcode 27 or newer")
