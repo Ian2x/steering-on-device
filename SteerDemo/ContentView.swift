@@ -31,12 +31,11 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("On-device steering, made visible")
                     .font(.system(size: 28, weight: .semibold, design: .rounded))
-                Text(model.usesStaticBias
-                    // "a direct residual control" used to name the ActAdd arm here, which reads as
-                    // though ActAdd were the control condition. The control is the logit bias.
-                    ? "One prompt. Three fixed-seed passes. A sustained static-bias control against a direct residual ActAdd edit."
-                    : "One prompt. Three fixed-seed passes. A sparse KL-capped bias control against a direct residual ActAdd edit.")
+                // "a direct residual control" used to name the ActAdd arm here, which reads as
+                // though ActAdd were the control condition. The control is the logit bias.
+                Text(headerSubtitle)
                     .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             Spacer()
             Label("Prompts stay on this Mac", systemImage: "lock.shield.fill")
@@ -46,6 +45,15 @@ struct ContentView: View {
                 .padding(.vertical, 7)
                 .background(.green.opacity(0.12), in: Capsule())
         }
+    }
+
+    private var headerSubtitle: String {
+        if model.usesStaticBias {
+            return "One prompt. Three fixed-seed passes. A sustained static-bias control against a direct residual ActAdd edit."
+        }
+        return model.capActive
+            ? "One prompt. Three fixed-seed passes. Both controllers under one greedy cumulative KL cap — the confound, shown deliberately."
+            : "One prompt. Three fixed-seed passes. Both controllers at a fixed scalar, uncapped, calibrated to the audit's per-step KL target."
     }
 
     private var promptCard: some View {
@@ -86,27 +94,31 @@ struct ContentView: View {
 
                 VStack(alignment: .leading, spacing: 3) {
                     HStack {
-                        Text(model.usesStaticBias ? "Static-bias KL" : "Logit-bias KL cap")
+                        Text(model.capActive ? "Cumulative KL cap" : "Per-step KL target")
                         Spacer()
-                        Text(model.usesStaticBias ? "uncapped" : "\(model.klBudget, specifier: "%.2f") nats")
+                        Text(model.capActive
+                            ? "\(model.klBudget, specifier: "%.2f") nats total"
+                            : "\(DemoViewModel.auditTargetKL, specifier: "%.5f") nats/step")
                             .monospacedDigit()
                     }
-                    if model.usesStaticBias {
-                        Text("Scalar calibrated on a shared continuation")
+                    if model.capActive {
+                        Slider(value: $model.klBudget, in: 0.1 ... 20, step: 0.1)
+                            .accessibilityLabel("Cumulative KL cap")
+                            .accessibilityValue("\(model.klBudget, specifier: "%.2f") nats")
+                    } else {
+                        Text(model.usesStaticBias
+                            ? "Scalar calibrated on a shared continuation"
+                            : "Fixed scalar, applied every step, never attenuated")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
-                        Slider(value: $model.klBudget, in: 0.1 ... 20, step: 0.1)
-                            .accessibilityLabel("Logit-bias KL cap")
-                            .accessibilityValue("\(model.klBudget, specifier: "%.2f") nats")
                     }
                 }
                 .frame(maxWidth: 300)
                 .disabled(model.isGenerating)
 
                 Spacer()
-                if model.isGenerating {
+                if model.isGenerating || model.isCalibrating {
                     Button("Stop", role: .destructive, action: model.stop)
                         .buttonStyle(.bordered)
                 } else {
@@ -117,6 +129,8 @@ struct ContentView: View {
                     .keyboardShortcut(.return, modifiers: [.command])
                 }
             }
+
+            if !model.usesStaticBias { disciplineRow }
 
             HStack(spacing: 18) {
                 VStack(alignment: .leading, spacing: 3) {
@@ -178,6 +192,121 @@ struct ContentView: View {
             }
         }
         .cardStyle()
+    }
+
+    private var disciplineRow: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 18) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("KL discipline").font(.caption).foregroundStyle(.secondary)
+                    Picker("KL discipline", selection: $model.klDiscipline) {
+                        ForEach(KLDiscipline.allCases) { discipline in
+                            Text(discipline.label).tag(discipline)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .accessibilityLabel("KL discipline")
+                }
+                .frame(maxWidth: 340)
+                .disabled(model.isGenerating || model.isCalibrating)
+
+                Button(action: model.calibrateToAuditTarget) {
+                    Label("Calibrate to audit target", systemImage: "scope")
+                }
+                .buttonStyle(.bordered)
+                .disabled(model.isGenerating || model.isCalibrating || model.capActive)
+                .help("Bisects each arm's scalar until its mean teacher-forced KL per step matches the audit's target on one shared, base-generated continuation.")
+
+                if model.isCalibrating {
+                    ProgressView().controlSize(.small)
+                }
+                if let progress = model.calibrationProgress {
+                    Text(progress)
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+            disciplineNote
+            calibrationSummary
+        }
+    }
+
+    private var disciplineNote: some View {
+        Group {
+            switch model.klDiscipline {
+            case .matchedPerStep:
+                Text("Each arm holds a **fixed scalar at every step** and nothing is attenuated. Calibrate picks each scalar by bisection so its *mean* teacher-forced KL per step lands on \(DemoViewModel.auditTargetKL, specifier: "%.5f") nats — the audit's target — measured on one shared base-generated continuation, so the two arms' means are taken over the same tokens. This is the discipline the frozen Phase 6 comparison used.")
+                    .foregroundStyle(.secondary)
+            case .greedyCumulativeCap:
+                // This mode exists to be shown failing. Anyone who lands on it without reading
+                // the meters would take the matched totals as a controlled comparison.
+                Text("**Demonstration of a confound — not a working mode.** One cumulative budget, spent first-come-first-served with no lookahead and nothing held back for later steps. Both arms are attenuated until the budget runs out, then run unmodified. The totals match; the *schedule* does not, so any difference between the arms may come from when each intervened rather than from how. On the eight committed `on-device-rho` packets the first step took 97.4% to 99.9% of an eight-nat cap. Note also that a perfectly spread eight nats over 64 steps is 0.125 nats/step, about a third of the audit's target, so this cap is off on level as well as on schedule.")
+                    .foregroundStyle(.orange)
+            }
+        }
+        .font(.caption)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var calibrationSummary: some View {
+        Group {
+            if model.calibrationLogit != nil || model.calibrationActAdd != nil {
+                VStack(alignment: .leading, spacing: 3) {
+                    if let outcome = model.calibrationLogit {
+                        calibrationLine("Static bias", outcome)
+                    }
+                    if let outcome = model.calibrationActAdd {
+                        calibrationLine("Residual edit", outcome)
+                    }
+                    if !model.calibrationIsCurrent {
+                        // The sliders quantize on drag, so one nudge moves a scalar off its
+                        // calibrated value. Saying nothing would leave the numbers above reading
+                        // as a live match.
+                        Text("**Superseded.** A slider, the prompt, the topic, or the layer changed since these were measured, so they no longer describe what will run. The run report withholds them. Calibrate again to restore the match.")
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top, 2)
+                    }
+                    // Without this the four-prompt scalars in results.md and the one-prompt
+                    // scalars on screen look like the same quantity disagreeing.
+                    Text("Calibrated on **this one prompt**. The frozen comparison averaged every candidate over four fixed prompts before comparing it to the target; its committed scalars are \(frozenScalarReference). A single-prompt run lands somewhere else, and that difference is the prompt-to-prompt spread, not an error.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 2)
+                }
+                .padding(.top, 2)
+            }
+        }
+    }
+
+    private func calibrationLine(_ name: String, _ outcome: CalibrationOutcome) -> some View {
+        HStack(spacing: 6) {
+            Text("\(name):").font(.caption)
+            Text("scalar \(outcome.selectedScalar, specifier: "%.4f")")
+                .font(.caption.monospacedDigit())
+            Text("→").accessibilityHidden(true).font(.caption).foregroundStyle(.secondary)
+            Text("\(outcome.achievedMeanNatsPerStep, specifier: "%.6f") nats/step")
+                .font(.caption.monospacedDigit())
+            Text("(\(outcome.signedError >= 0 ? "+" : "")\(outcome.signedError, specifier: "%.2e") vs target, \(outcome.iterations) iterations, \(outcome.continuationTokenCount) shared tokens)")
+                .font(.caption.monospacedDigit())
+                .foregroundStyle(.secondary)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    /// The frozen four-prompt scalars for whichever topic is selected, quoted from
+    /// `docs/phase6/teacher-forced-comparison/results.md`.
+    private var frozenScalarReference: String {
+        switch model.selectedLexiconID {
+        case "wedding": "11.1447906494 static and 6.7822265625 residual"
+        case "ocean": "8.4908294678 static and 7.2952270508 residual"
+        default: "recorded for wedding and ocean only"
+        }
     }
 
     private var panes: some View {
@@ -252,70 +381,152 @@ struct ContentView: View {
             KLChartView(
                 logitHistory: model.klHistory,
                 actAddHistory: model.actAddKLHistory,
-                budget: model.klBudget
+                budget: model.klBudget,
+                capActive: model.capActive,
+                target: DemoViewModel.auditTargetKL
             )
                 .frame(maxWidth: .infinity)
             VStack(alignment: .leading, spacing: 12) {
-                Text(model.usesStaticBias ? "Interface cost" : "Interface budget").font(.headline)
+                Text(model.capActive ? "Interface budget" : "Interface cost").font(.headline)
                 let cumulative = model.klHistory.last?.cumulative ?? 0
                 let actAddCumulative = model.actAddKLHistory.last?.cumulative ?? 0
-                if !model.usesStaticBias {
+                if model.capActive {
                     ProgressView(value: min(cumulative, model.klBudget), total: model.klBudget)
                         .tint(cumulative > model.klBudget ? .red : .orange)
                         .accessibilityLabel("Cumulative KL budget")
                         .accessibilityValue("\(cumulative, specifier: "%.3f") of \(model.klBudget, specifier: "%.2f") nats")
                 }
-                HStack {
-                    Text(model.usesStaticBias ? "Static-bias KL (uncapped)" : "Logit-bias KL")
-                    Spacer()
-                    Text(model.usesStaticBias
-                        ? "\(cumulative, specifier: "%.3f") nats"
-                        : "\(cumulative, specifier: "%.3f") / \(model.klBudget, specifier: "%.2f") nats")
-                        .monospacedDigit()
-                }
-                .font(.callout)
-                HStack {
-                    Text("Residual-edit KL (uncapped)")
-                    Spacer()
-                    Text("\(actAddCumulative, specifier: "%.3f") nats")
-                        .monospacedDigit()
-                        .foregroundStyle(!model.usesStaticBias && actAddCumulative > model.klBudget ? Color.red : Color.primary)
-                }
-                .font(.callout)
-                // In sparse mode the logit arm is held to the slider's cap and the residual arm is
-                // not held to anything. Nothing else on screen says so, and the two numbers sit
-                // one above the other inviting a straight comparison. A run at 8 nats against a
-                // run at 100 is not a comparison, and the viewer has to be told which one is free.
-                if !model.usesStaticBias, actAddCumulative > model.klBudget {
-                    Text("The residual arm spent \(actAddCumulative / max(model.klBudget, 0.0001), specifier: "%.1f")× the logit arm's cap. Only the logit arm is capped, so these two traces are not KL-matched and the panes are not a controlled comparison.")
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                if !model.droppedTokenStrings.isEmpty {
-                    Text("Dropped multi-token support: \(model.droppedTokenStrings.joined(separator: ", "))")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } else if model.usesStaticBias {
-                    Text("Both traces are diagnostic and uncapped; the frozen comparison was withheld after its residual NLL gate failed.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } else {
-                    Text("Each controller bisects its final active step to respect the cap; logit bias uses only single-token entries.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                armMeter(
+                    name: model.usesStaticBias ? "Static bias" : "Logit bias",
+                    cumulative: cumulative,
+                    mean: model.logitMeanNatsPerStep
+                )
+                armMeter(
+                    name: "Residual edit",
+                    cumulative: actAddCumulative,
+                    mean: model.actAddMeanNatsPerStep
+                )
+                collapseCallout
+                meterFootnote
             }
             .cardStyle()
             .frame(maxWidth: .infinity)
         }
     }
 
+    private func armMeter(name: String, cumulative: Double, mean: Double?) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack {
+                Text(name)
+                Spacer()
+                Text(model.capActive
+                    ? "\(cumulative, specifier: "%.3f") / \(model.klBudget, specifier: "%.2f") nats"
+                    : "\(cumulative, specifier: "%.3f") nats total")
+                    .monospacedDigit()
+            }
+            .font(.callout)
+            if let mean {
+                let delta = mean - DemoViewModel.auditTargetKL
+                HStack {
+                    Text("mean per step").foregroundStyle(.secondary)
+                    Spacer()
+                    Text("\(mean, specifier: "%.5f")  (\(delta >= 0 ? "+" : "")\(delta, specifier: "%.5f") vs target)")
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                }
+                .font(.caption)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("\(name) mean KL per step")
+                .accessibilityValue("\(mean.formatted(.number.precision(.fractionLength(5)))) nats")
+            }
+        }
+    }
+
+    /// The finding, measured on whatever just ran. Only meaningful under the greedy cap, where a
+    /// single cumulative budget can be exhausted by one step.
+    private var collapseCallout: some View {
+        Group {
+            if model.capActive {
+                let logitShare = model.firstStepShare(model.klHistory)
+                let actAddShare = model.firstStepShare(model.actAddKLHistory)
+                if logitShare != nil || actAddShare != nil {
+                    VStack(alignment: .leading, spacing: 3) {
+                        if let share = logitShare {
+                            Text("**Logit arm:** step 1 took \(share * 100, specifier: "%.1f")% of everything the arm spent. \(model.exhaustedStepCount(model.klHistory)) of \(model.klHistory.count) recorded steps ran with the budget already gone.")
+                        }
+                        if let share = actAddShare {
+                            Text("**Residual arm:** step 1 took \(share * 100, specifier: "%.1f")% of everything the arm spent. \(model.exhaustedStepCount(model.actAddKLHistory)) of \(model.actAddKLHistory.count) recorded steps ran with the budget already gone.")
+                        }
+                        Text("Matched on total cost, unmatched on schedule. A step that spends nothing is the unmodified model continuing from a prefix its own first step displaced.")
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    private var meterFootnote: some View {
+        Group {
+            if !model.droppedTokenStrings.isEmpty {
+                Text("Dropped multi-token support: \(model.droppedTokenStrings.joined(separator: ", "))")
+            } else if model.usesStaticBias {
+                Text("Both traces are diagnostic and uncapped; the frozen comparison was withheld after its residual NLL gate failed.")
+            } else if model.capActive {
+                Text("Each arm bisects its final active step to fit what the cap has left. The residual arm is attenuated in logit space, not by rescaling its coefficient, so this reproduces the greedy schedule rather than the committed `on-device-rho` packets.")
+            } else {
+                // The trap this whole mode could fall into: two means side by side look matched.
+                // They are not, and nothing else on screen would say so.
+                Text("Both arms are uncapped. Each mean above is taken over that arm's **own** free-running output, so the two are averages over different token sequences — matching them would not make the arms comparable. Only the teacher-forced calibration, scored on one shared continuation, does that.")
+            }
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var explanationBody: String {
+        let shared = "The residual path front-aligns a per-position contrast direction, injects it after the selected block across the aligned prompt positions, and bakes the edit into downstream KV caches. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments."
+        let gates = "A frozen 180-packet control found direction-dependent, on-target behaviour above a matched-random floor in 2/15 cells. A later teacher-forced comparison matched both controllers to 0.43524 nats/step but failed its residual base-model NLL gate, so it supports no ratio."
+
+        if model.usesStaticBias {
+            return "This preserved packet shows the same prompt under an unchanged baseline, sustained static topic-token bias, and a direct residual prompt edit. The scalars were calibrated teacher-forced to 0.43524 nats/step on a shared continuation, but the frozen comparison failed its residual base-model NLL gate, so it supports no controller ratio. \(shared)"
+        }
+        switch model.klDiscipline {
+        case .matchedPerStep:
+            return """
+            The app runs the same prompt three times with identical seeded sampling: an unchanged \
+            baseline, a sparse topic-token logit bias, and a direct residual prompt edit. Each \
+            controller holds one fixed scalar at every step, with no cumulative cap and no \
+            adaptive rescaling — the discipline the audit used. Calibrate to audit target picks \
+            each scalar by bisection so its mean teacher-forced KL per step lands on 0.43524 nats, \
+            measured on one shared base-generated continuation.
+
+            The free-running panes below are illustrative, not a controlled comparison. \
+            Calibration matches the arms on a shared token sequence; once each arm generates its \
+            own text, their per-step means are averages over different sequences. \(gates) \(shared)
+            """
+        case .greedyCumulativeCap:
+            return """
+            This mode is retained to demonstrate a confound, not to produce a result. Both \
+            controllers draw on one cumulative KL budget, spent first-come-first-served with no \
+            lookahead and nothing reserved for later steps, and each is attenuated until the \
+            budget is gone.
+
+            The arms end up matched on total cost and unmatched on schedule, so a difference \
+            between them may come from when each intervened rather than from how. On the eight \
+            committed docs/phase6/on-device-rho packets the first generated step consumed 97.4% \
+            to 99.9% of an eight-nat cap. The preregistered layer sweep died the same way: blocks \
+            3 and 19 produced byte-identical text, because what they shared was the first-token \
+            shock rather than any property of the blocks. \(gates) \(shared)
+            """
+        }
+    }
+
     private var explanation: some View {
         DisclosureGroup("What am I looking at?") {
-            Text(model.usesStaticBias
-                ? "This preserved packet shows the same prompt under an unchanged baseline, sustained static topic-token bias, and a direct residual prompt edit. The scalars were calibrated teacher-forced to 0.43524 nats/step on a shared continuation, but the frozen comparison failed its residual base-model NLL gate, so it supports no controller ratio. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments."
-                : "The app runs the same prompt three times with identical seeded sampling: an unchanged baseline, a sparse topic-token logit bias under a cumulative cap, and a direct residual prompt edit. The residual path front-aligns a per-position contrast direction, injects it after the selected block across the aligned prompt positions, and bakes the edit into downstream KV caches. A frozen 180-packet control found direction-dependent, on-target behavior above a matched-random floor in 2/15 cells. A later teacher-forced comparison matched both controllers to 0.43524 nats/step but failed its residual base-model NLL gate, so it supports no ratio. Topic scores come from a separate MiniLM encoder running as a Core ML model on-device; they are diagnostic cosine similarities, not preference judgments.")
+            Text(explanationBody)
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
@@ -449,11 +660,23 @@ private struct KLChartView: View {
     let logitHistory: [KLReading]
     let actAddHistory: [KLReading]
     let budget: Double
+    let capActive: Bool
+    let target: Double
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Per-step KL").font(.headline)
             Chart {
+                // The target is the quantity being matched, so it belongs on the axis that shows
+                // whether it was. Under the greedy cap the rule is what the trace fails to sit on.
+                RuleMark(y: .value("Audit target", target))
+                    .foregroundStyle(.secondary)
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                    .annotation(position: .top, alignment: .leading) {
+                        Text("audit target \(target, specifier: "%.5f")")
+                            .font(.caption2.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                    }
                 ForEach(logitHistory, id: \.step) { reading in
                     LineMark(
                         x: .value("Step", reading.step),
@@ -487,16 +710,29 @@ private struct KLChartView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Per-step KL chart")
             .accessibilityValue(chartAccessibilityValue)
-                Text(logitHistory.isEmpty && actAddHistory.isEmpty ? "Traces start with the intervention passes." : "Orange: the logit-bias control. Purple: the ActAdd residual edit. Returned tokens only; cap status is shown alongside the chart.")
+                Text(caption)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .cardStyle()
     }
 
+    private var caption: String {
+        if logitHistory.isEmpty, actAddHistory.isEmpty {
+            return "Traces start with the intervention passes. The dashed rule is the audit's per-step target."
+        }
+        return capActive
+            ? "Orange: the logit-bias control. Purple: the ActAdd residual edit. Under the greedy cap a trace spikes once and then sits on zero, nowhere near the dashed target."
+            : "Orange: the logit-bias control. Purple: the ActAdd residual edit. Calibrated arms scatter around the dashed target instead of spiking; returned tokens only."
+    }
+
     private var chartAccessibilityValue: String {
         guard let latest = logitHistory.last ?? actAddHistory.last else { return "No measurements yet" }
-        return "\(logitHistory.count) logit-bias steps and \(actAddHistory.count) activation-addition steps; latest KL \(latest.perStep.formatted(.number.precision(.fractionLength(4)))) nats; budget \(budget.formatted(.number.precision(.fractionLength(2)))) nats"
+        let discipline = capActive
+            ? "greedy cumulative cap of \(budget.formatted(.number.precision(.fractionLength(2)))) nats"
+            : "uncapped, target \(target.formatted(.number.precision(.fractionLength(5)))) nats per step"
+        return "\(logitHistory.count) logit-bias steps and \(actAddHistory.count) activation-addition steps; latest KL \(latest.perStep.formatted(.number.precision(.fractionLength(4)))) nats; \(discipline)"
     }
 }
 

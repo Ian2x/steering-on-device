@@ -1,0 +1,506 @@
+{
+  "amendment": "docs/phase6/teacher-forced-comparison/amendment-1.md",
+  "arms": [
+    {
+      "candidates": [
+        {
+          "label": "iter02",
+          "meanNatsPerStep": 0.1341472868025298,
+          "promptCount": 4,
+          "scalar": 5
+        },
+        {
+          "label": "iter04",
+          "meanNatsPerStep": 0.2742734711259302,
+          "promptCount": 4,
+          "scalar": 6.25
+        },
+        {
+          "label": "iter05",
+          "meanNatsPerStep": 0.3692775157860848,
+          "promptCount": 4,
+          "scalar": 6.875
+        },
+        {
+          "label": "iter06",
+          "meanNatsPerStep": 0.42000531796274304,
+          "promptCount": 4,
+          "scalar": 7.1875
+        },
+        {
+          "label": "iter08",
+          "meanNatsPerStep": 0.4316937850129321,
+          "promptCount": 4,
+          "scalar": 7.265625
+        },
+        {
+          "label": "iter10",
+          "meanNatsPerStep": 0.43419107411118424,
+          "promptCount": 4,
+          "scalar": 7.28515625
+        },
+        {
+          "label": "iter11",
+          "meanNatsPerStep": 0.4348574577013299,
+          "promptCount": 4,
+          "scalar": 7.294921875
+        },
+        {
+          "label": "iter16",
+          "meanNatsPerStep": 0.43507153910644886,
+          "promptCount": 4,
+          "scalar": 7.29522705078125
+        },
+        {
+          "label": "iter17",
+          "meanNatsPerStep": 0.43560027777119786,
+          "promptCount": 4,
+          "scalar": 7.295379638671875
+        },
+        {
+          "label": "iter15",
+          "meanNatsPerStep": 0.43546471656347635,
+          "promptCount": 4,
+          "scalar": 7.2955322265625
+        },
+        {
+          "label": "iter14",
+          "meanNatsPerStep": 0.436535601892687,
+          "promptCount": 4,
+          "scalar": 7.296142578125
+        },
+        {
+          "label": "iter13",
+          "meanNatsPerStep": 0.43607785049105713,
+          "promptCount": 4,
+          "scalar": 7.29736328125
+        },
+        {
+          "label": "iter12",
+          "meanNatsPerStep": 0.4364447090277878,
+          "promptCount": 4,
+          "scalar": 7.2998046875
+        },
+        {
+          "label": "iter09",
+          "meanNatsPerStep": 0.43741862330029413,
+          "promptCount": 4,
+          "scalar": 7.3046875
+        },
+        {
+          "label": "iter07",
+          "meanNatsPerStep": 0.443658491488404,
+          "promptCount": 4,
+          "scalar": 7.34375
+        },
+        {
+          "label": "iter03",
+          "meanNatsPerStep": 0.4694048700909843,
+          "promptCount": 4,
+          "scalar": 7.5
+        },
+        {
+          "label": "iter01",
+          "meanNatsPerStep": 0.8112251912033395,
+          "promptCount": 4,
+          "scalar": 10
+        },
+        {
+          "label": "iter00",
+          "meanNatsPerStep": 3.8763907543245795,
+          "promptCount": 4,
+          "scalar": 20
+        },
+        {
+          "label": "high",
+          "meanNatsPerStep": 7.31678380002935,
+          "promptCount": 4,
+          "scalar": 40
+        }
+      ],
+      "expectedMeanNatsPerStep": 0.43507153910644886,
+      "expectedScalar": 7.29522705078125,
+      "iterations": 18,
+      "method": "actadd",
+      "topic": "ocean",
+      "upperBracket": 40.0
+    },
+    {
+      "candidates": [
+        {
+          "label": "iter01",
+          "meanNatsPerStep": 0.019577813238875773,
+          "promptCount": 4,
+          "scalar": 5
+        },
+        {
+          "label": "iter02",
+          "meanNatsPerStep": 0.21756288757955336,
+          "promptCount": 4,
+          "scalar": 7.5
+        },
+        {
+          "label": "iter04",
+          "meanNatsPerStep": 0.34339169330000546,
+          "promptCount": 4,
+          "scalar": 8.125
+        },
+        {
+          "label": "iter05",
+          "meanNatsPerStep": 0.42099413202713654,
+          "promptCount": 4,
+          "scalar": 8.4375
+        },
+        {
+          "label": "iter08",
+          "meanNatsPerStep": 0.4314027805678455,
+          "promptCount": 4,
+          "scalar": 8.4765625
+        },
+        {
+          "label": "iter10",
+          "meanNatsPerStep": 0.4340297779228385,
+          "promptCount": 4,
+          "scalar": 8.486328125
+        },
+        {
+          "label": "iter12",
+          "meanNatsPerStep": 0.43468808181306096,
+          "promptCount": 4,
+          "scalar": 8.48876953125
+        },
+        {
+          "label": "iter13",
+          "meanNatsPerStep": 0.43501746703546745,
+          "promptCount": 4,
+          "scalar": 8.489990234375
+        },
+        {
+          "label": "iter14",
+          "meanNatsPerStep": 0.43518221797354806,
+          "promptCount": 4,
+          "scalar": 8.4906005859375
+        },
+        {
+          "label": "iter16",
+          "meanNatsPerStep": 0.4352234117841596,
+          "promptCount": 4,
+          "scalar": 8.490753173828125
+        },
+        {
+          "label": "iter17",
+          "meanNatsPerStep": 0.43524400960089443,
+          "promptCount": 4,
+          "scalar": 8.490829467773438
+        },
+        {
+          "label": "iter15",
+          "meanNatsPerStep": 0.43526460802527706,
+          "promptCount": 4,
+          "scalar": 8.49090576171875
+        },
+        {
+          "label": "iter11",
+          "meanNatsPerStep": 0.4353470077991254,
+          "promptCount": 4,
+          "scalar": 8.4912109375
+        },
+        {
+          "label": "iter09",
+          "meanNatsPerStep": 0.4366667266144429,
+          "promptCount": 4,
+          "scalar": 8.49609375
+        },
+        {
+          "label": "iter07",
+          "meanNatsPerStep": 0.44197051379565094,
+          "promptCount": 4,
+          "scalar": 8.515625
+        },
+        {
+          "label": "iter06",
+          "meanNatsPerStep": 0.46358559192836024,
+          "promptCount": 4,
+          "scalar": 8.59375
+        },
+        {
+          "label": "iter03",
+          "meanNatsPerStep": 0.5087542564965096,
+          "promptCount": 4,
+          "scalar": 8.75
+        },
+        {
+          "label": "iter00",
+          "meanNatsPerStep": 0.9798523855723934,
+          "promptCount": 4,
+          "scalar": 10
+        },
+        {
+          "label": "high",
+          "meanNatsPerStep": 18.18469707330353,
+          "promptCount": 4,
+          "scalar": 20
+        }
+      ],
+      "expectedMeanNatsPerStep": 0.43524400960089443,
+      "expectedScalar": 8.490829467773438,
+      "iterations": 18,
+      "method": "logit",
+      "topic": "ocean",
+      "upperBracket": 20.0
+    },
+    {
+      "candidates": [
+        {
+          "label": "iter02",
+          "meanNatsPerStep": 0.19566334919328632,
+          "promptCount": 4,
+          "scalar": 5
+        },
+        {
+          "label": "iter04",
+          "meanNatsPerStep": 0.3543560568818195,
+          "promptCount": 4,
+          "scalar": 6.25
+        },
+        {
+          "label": "iter06",
+          "meanNatsPerStep": 0.40106552543996193,
+          "promptCount": 4,
+          "scalar": 6.5625
+        },
+        {
+          "label": "iter07",
+          "meanNatsPerStep": 0.42475226689306234,
+          "promptCount": 4,
+          "scalar": 6.71875
+        },
+        {
+          "label": "iter09",
+          "meanNatsPerStep": 0.4318192696448876,
+          "promptCount": 4,
+          "scalar": 6.7578125
+        },
+        {
+          "label": "iter10",
+          "meanNatsPerStep": 0.4345104185035763,
+          "promptCount": 4,
+          "scalar": 6.77734375
+        },
+        {
+          "label": "iter12",
+          "meanNatsPerStep": 0.435236843732678,
+          "promptCount": 4,
+          "scalar": 6.7822265625
+        },
+        {
+          "label": "iter13",
+          "meanNatsPerStep": 0.43477367707994063,
+          "promptCount": 4,
+          "scalar": 6.78466796875
+        },
+        {
+          "label": "iter15",
+          "meanNatsPerStep": 0.4350030632563578,
+          "promptCount": 4,
+          "scalar": 6.7852783203125
+        },
+        {
+          "label": "iter17",
+          "meanNatsPerStep": 0.4356272683305774,
+          "promptCount": 4,
+          "scalar": 6.785430908203125
+        },
+        {
+          "label": "iter16",
+          "meanNatsPerStep": 0.4360251742260422,
+          "promptCount": 4,
+          "scalar": 6.78558349609375
+        },
+        {
+          "label": "iter14",
+          "meanNatsPerStep": 0.43608863289014665,
+          "promptCount": 4,
+          "scalar": 6.785888671875
+        },
+        {
+          "label": "iter11",
+          "meanNatsPerStep": 0.43620525339397426,
+          "promptCount": 4,
+          "scalar": 6.787109375
+        },
+        {
+          "label": "iter08",
+          "meanNatsPerStep": 0.43802781235043103,
+          "promptCount": 4,
+          "scalar": 6.796875
+        },
+        {
+          "label": "iter05",
+          "meanNatsPerStep": 0.45023650833169304,
+          "promptCount": 4,
+          "scalar": 6.875
+        },
+        {
+          "label": "iter03",
+          "meanNatsPerStep": 0.5528260739050608,
+          "promptCount": 4,
+          "scalar": 7.5
+        },
+        {
+          "label": "iter01",
+          "meanNatsPerStep": 0.9243219254152173,
+          "promptCount": 4,
+          "scalar": 10
+        },
+        {
+          "label": "iter00",
+          "meanNatsPerStep": 1.9708860761352378,
+          "promptCount": 4,
+          "scalar": 20
+        },
+        {
+          "label": "high",
+          "meanNatsPerStep": 3.102343872580822,
+          "promptCount": 4,
+          "scalar": 40
+        }
+      ],
+      "expectedMeanNatsPerStep": 0.435236843732678,
+      "expectedScalar": 6.7822265625,
+      "iterations": 18,
+      "method": "actadd",
+      "topic": "wedding",
+      "upperBracket": 40.0
+    },
+    {
+      "candidates": [
+        {
+          "label": "iter00",
+          "meanNatsPerStep": 0.20918564562164574,
+          "promptCount": 4,
+          "scalar": 10
+        },
+        {
+          "label": "iter04",
+          "meanNatsPerStep": 0.3147584379009115,
+          "promptCount": 4,
+          "scalar": 10.625
+        },
+        {
+          "label": "iter05",
+          "meanNatsPerStep": 0.3825339099411713,
+          "promptCount": 4,
+          "scalar": 10.9375
+        },
+        {
+          "label": "iter06",
+          "meanNatsPerStep": 0.4215975021701718,
+          "promptCount": 4,
+          "scalar": 11.09375
+        },
+        {
+          "label": "iter08",
+          "meanNatsPerStep": 0.4319953434905673,
+          "promptCount": 4,
+          "scalar": 11.1328125
+        },
+        {
+          "label": "iter10",
+          "meanNatsPerStep": 0.43463693499986633,
+          "promptCount": 4,
+          "scalar": 11.142578125
+        },
+        {
+          "label": "iter13",
+          "meanNatsPerStep": 0.4349683377694258,
+          "promptCount": 4,
+          "scalar": 11.143798828125
+        },
+        {
+          "label": "iter14",
+          "meanNatsPerStep": 0.4351341398420397,
+          "promptCount": 4,
+          "scalar": 11.1444091796875
+        },
+        {
+          "label": "iter15",
+          "meanNatsPerStep": 0.4352170660673187,
+          "promptCount": 4,
+          "scalar": 11.14471435546875
+        },
+        {
+          "label": "iter17",
+          "meanNatsPerStep": 0.43523780024832015,
+          "promptCount": 4,
+          "scalar": 11.144790649414062
+        },
+        {
+          "label": "iter16",
+          "meanNatsPerStep": 0.435258535479333,
+          "promptCount": 4,
+          "scalar": 11.144866943359375
+        },
+        {
+          "label": "iter12",
+          "meanNatsPerStep": 0.435300009091723,
+          "promptCount": 4,
+          "scalar": 11.14501953125
+        },
+        {
+          "label": "iter11",
+          "meanNatsPerStep": 0.43596415864007776,
+          "promptCount": 4,
+          "scalar": 11.1474609375
+        },
+        {
+          "label": "iter09",
+          "meanNatsPerStep": 0.4372956940874761,
+          "promptCount": 4,
+          "scalar": 11.15234375
+        },
+        {
+          "label": "iter07",
+          "meanNatsPerStep": 0.4426653553742993,
+          "promptCount": 4,
+          "scalar": 11.171875
+        },
+        {
+          "label": "iter03",
+          "meanNatsPerStep": 0.4648632797090558,
+          "promptCount": 4,
+          "scalar": 11.25
+        },
+        {
+          "label": "iter02",
+          "meanNatsPerStep": 1.0563049138709077,
+          "promptCount": 4,
+          "scalar": 12.5
+        },
+        {
+          "label": "iter01",
+          "meanNatsPerStep": 4.562555743834574,
+          "promptCount": 4,
+          "scalar": 15
+        },
+        {
+          "label": "high",
+          "meanNatsPerStep": 18.06467488323816,
+          "promptCount": 4,
+          "scalar": 20
+        }
+      ],
+      "expectedMeanNatsPerStep": 0.43523780024832015,
+      "expectedScalar": 11.144790649414062,
+      "iterations": 18,
+      "method": "logit",
+      "topic": "wedding",
+      "upperBracket": 20.0
+    }
+  ],
+  "generator": "Scripts/generate_calibration_fixture.py",
+  "selectionRule": "minimum absolute tested mean-KL error; ties choose lower scalar",
+  "source": "docs/phase6/teacher-forced-comparison/calibration-runs",
+  "target": 0.43523801873284795,
+  "tolerance": 0.002
+}

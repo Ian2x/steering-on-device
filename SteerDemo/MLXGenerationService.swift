@@ -130,6 +130,7 @@ actor MLXGenerationService {
         actAddLayer: Int,
         residualDirectionMode: ResidualDirectionMode,
         staticBiasMode: Bool,
+        discipline: KLDiscipline,
         maxTokens: Int,
         klBudget: Double,
         stopFlag: StopFlag,
@@ -138,6 +139,11 @@ actor MLXGenerationService {
         guard let container else {
             throw DemoError.missingResource("loaded MLX model")
         }
+
+        // `staticBiasMode` drives the frozen Phase 6 harness, whose protocol states that no
+        // cumulative cap or adaptive rescaling is active. It overrides the discipline selector so
+        // that no UI state can change what a committed protocol path does.
+        let capActive = !staticBiasMode && discipline.capsInterventions
 
         return try await container.perform { context in
             let input = try await context.processor.prepare(
@@ -157,6 +163,7 @@ actor MLXGenerationService {
                     coefficient: actAddCoefficient,
                     layer: actAddLayer,
                     directionMode: residualDirectionMode,
+                    capActive: capActive,
                     maxTokens: maxTokens,
                     klBudget: klBudget,
                     stopFlag: stopFlag,
@@ -176,11 +183,11 @@ actor MLXGenerationService {
             }
 
             let sink = KLMetricsSink(
-                budget: staticBiasMode ? Double.greatestFiniteMagnitude : klBudget
+                budget: capActive ? klBudget : Double.greatestFiniteMagnitude
             )
             let iterator: TokenIterator
             if pane == .steered {
-                if staticBiasMode {
+                if !capActive {
                     iterator = try TokenIterator(
                         input: input,
                         model: context.model,
@@ -298,6 +305,7 @@ actor MLXGenerationService {
         coefficient: Double,
         layer: Int,
         directionMode: ResidualDirectionMode,
+        capActive: Bool,
         maxTokens: Int,
         klBudget: Double,
         stopFlag: StopFlag,
@@ -352,11 +360,46 @@ actor MLXGenerationService {
             let baseValues = baseLogits.asArray(Float.self).map(Double.init)
             let editedValues = editedLogits.asArray(Float.self).map(Double.init)
             let inverseTemperature = 1 / Double(Self.samplingTemperature)
-            let divergence = try KLMeter.divergence(
-                biasedLogits: editedValues.map { $0 * inverseTemperature },
-                baseLogits: baseValues.map { $0 * inverseTemperature }
-            )
-            let sampled = sampler.sample(logits: editedLogits)
+
+            // Uncapped, the default: the configured coefficient is applied at every step and the
+            // meter only observes. Capped: the step is pulled back toward the base distribution
+            // until it fits whatever the one cumulative budget has left. The budget is spent
+            // first-come-first-served, which is what collapses nearly all of it into step one.
+            //
+            // The attenuation is in *logit space* — the residual edit stays baked into the prompt
+            // KV cache at full coefficient and the output distribution is interpolated toward the
+            // base. It is not the coefficient rescaling used by the historical runs in
+            // `docs/phase6/on-device-rho`, which re-ran the whole prefix uncached at every probe.
+            // This path reproduces the greedy *schedule*, which is the variable under
+            // demonstration; it does not reproduce those packets byte for byte, and it uses the
+            // remediated per-position direction rather than the superseded one they were run with.
+            let divergence: Double
+            let stepLogits: MLXArray
+            if capActive {
+                let remaining = max(0, klBudget - meter.cumulative)
+                let decision = remaining <= 1e-8
+                    ? BiasBudgetDecision(scale: 0, divergence: 0)
+                    : try BiasBudgetSelector.select(
+                        baseLogits: baseValues,
+                        remaining: remaining,
+                        temperature: Double(Self.samplingTemperature)
+                    ) { scale in
+                        zip(baseValues, editedValues).map { base, edited in
+                            base + scale * (edited - base)
+                        }
+                    }
+                divergence = decision.divergence
+                stepLogits = decision.scale >= 1
+                    ? editedLogits
+                    : baseLogits + (editedLogits - baseLogits) * Float(decision.scale)
+            } else {
+                divergence = try KLMeter.divergence(
+                    biasedLogits: editedValues.map { $0 * inverseTemperature },
+                    baseLogits: baseValues.map { $0 * inverseTemperature }
+                )
+                stepLogits = editedLogits
+            }
+            let sampled = sampler.sample(logits: stepLogits)
             eval(sampled)
             let token = sampled.item(Int.self)
             if token == context.tokenizer.unknownTokenId
@@ -514,6 +557,104 @@ actor MLXGenerationService {
                 throw DemoError.invalidKLDivergence("baseline has no intervention KL")
             }
         }
+    }
+
+    /// Bisects one arm's scalar until its mean teacher-forced KL per step lands as close to
+    /// `target` as the bracket allows, measured on a shared base-generated continuation.
+    ///
+    /// The algorithm is the frozen Phase 6 one: check that the upper bracket reaches the target,
+    /// run `iterations` midpoint steps, then apply Amendment 1's selection rule — minimum absolute
+    /// tested mean-KL error, ties choosing the lower scalar.
+    ///
+    /// It is **not** the frozen calibration. That averaged every candidate over four fixed prompts
+    /// before comparing it to the target, and its selected scalars are the four in
+    /// `docs/phase6/teacher-forced-comparison/results.md`. This runs on one prompt — whichever the
+    /// user typed — and will land somewhere else. Callers must say so.
+    ///
+    /// Teacher-forcing is the point. Both arms are scored on the *same* token sequence, so their
+    /// means are comparable. Averaging each arm's KL over its own free-running output would
+    /// compare two numbers taken over different sequences, which is not a match at all.
+    func calibrateScalar(
+        arm: GenerationPane,
+        prompt: String,
+        continuationTokens: [Int],
+        lexicon: SteeringLexicon,
+        actAddLayer: Int,
+        residualDirectionMode: ResidualDirectionMode,
+        target: Double,
+        tolerance: Double,
+        upperBracket: Double,
+        iterations: Int,
+        progress: @escaping @Sendable (Int, Int) -> Void
+    ) async throws -> CalibrationOutcome {
+        let armName = arm == .steered ? "static-bias" : "residual-edit"
+
+        func meanKL(at scalar: Double) async throws -> Double {
+            try await teacherForcedKL(
+                method: arm,
+                prompt: prompt,
+                continuationTokens: continuationTokens,
+                lexicon: lexicon,
+                strength: arm == .steered ? scalar : 0,
+                // Inert on the logit arm; the frozen runner passes 4 here for the same reason.
+                actAddCoefficient: arm == .actAdd ? scalar : 4,
+                actAddLayer: actAddLayer,
+                residualDirectionMode: residualDirectionMode
+            ).meanNatsPerStep
+        }
+
+        // The search itself lives in SteeringKit so this path and `swift test` run one
+        // implementation. `CalibrationSelectorTests` replays the four committed Phase 6 curves
+        // through it and requires the frozen scalars back, which is the only offline check that
+        // this button reproduces the published protocol rather than something that resembles it.
+        let selection: CalibrationSelection
+        do {
+            selection = try await CalibrationSelector.select(
+                target: target,
+                tolerance: tolerance,
+                upperBracket: upperBracket,
+                iterations: iterations,
+                onCandidate: { index, total, _ in progress(index, total) },
+                meanKL: { try await meanKL(at: $0) }
+            )
+        } catch let error as CalibrationSelectorError {
+            // Re-raise with the arm attached; the selector is arm-agnostic by design.
+            switch error {
+            case .bracketBelowTarget(let achieved, let target):
+                throw DemoError.calibrationBracketTooLow(
+                    arm: armName,
+                    achieved: achieved,
+                    target: target
+                )
+            case .nonFiniteMean(let achieved):
+                throw DemoError.calibrationBracketTooLow(
+                    arm: armName,
+                    achieved: achieved,
+                    target: target
+                )
+            case .toleranceExceeded(let achieved, let target, let tolerance):
+                throw DemoError.calibrationToleranceFailed(
+                    arm: armName,
+                    achieved: achieved,
+                    target: target,
+                    tolerance: tolerance
+                )
+            case .invalidBracket, .invalidIterations:
+                throw error
+            }
+        }
+
+        return CalibrationOutcome(
+            method: armName,
+            selectedScalar: selection.scalar,
+            achievedMeanNatsPerStep: selection.meanNatsPerStep,
+            target: target,
+            lowerBracket: selection.lowerBracket,
+            upperBracket: selection.upperBracket,
+            iterations: iterations,
+            promptCount: 1,
+            continuationTokenCount: continuationTokens.count
+        )
     }
 
     private nonisolated static func teacherForcedLogitKL(

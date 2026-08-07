@@ -11,8 +11,13 @@ final class DemoViewModel: ObservableObject {
         let actAddLayer: Int
         let residualDirectionMode: ResidualDirectionMode
         let staticBiasMode: Bool
+        let klDiscipline: KLDiscipline
         let maxTokens: Int
         let klBudget: Double
+
+        /// A cap is active only when the discipline asks for one *and* this is not a frozen Phase 6
+        /// harness run. The harness protocol says no cap is active; no UI state may change that.
+        var capActive: Bool { !staticBiasMode && klDiscipline.capsInterventions }
     }
 
     private struct RunReport: Encodable {
@@ -43,7 +48,11 @@ final class DemoViewModel: ObservableObject {
         let actAddDirectionDiagnostics: ResidualDirectionDiagnostics?
         let controlOnly: Bool
         let stage3RunMode: String?
+        let klDiscipline: String
         let staticBiasKLCapEnabled: Bool
+        let liveCalibrationTargetKL: Double?
+        let liveCalibrationLogit: CalibrationOutcome?
+        let liveCalibrationActAdd: CalibrationOutcome?
         let teacherForcedTargetKL: Double?
         let teacherForcedContinuationTokenIDs: [Int]
         let teacherForcedLogit: TeacherForcedKLResult?
@@ -98,6 +107,15 @@ final class DemoViewModel: ObservableObject {
     static let validatedLayer = 10
     static let validatedCoefficient = 4.0
 
+    /// The upstream audit's teacher-forced KL target, in nats per generation step. Every scalar in
+    /// `docs/phase6/teacher-forced-comparison` was calibrated to this number.
+    static let auditTargetKL = 0.435_238_018_732_847_95
+    /// The frozen protocol's brackets, iteration count, and tolerance, reused by live calibration.
+    static let logitScalarBracket = 20.0
+    static let residualScalarBracket = 40.0
+    static let calibrationIterations = 18
+    static let calibrationTolerance = 0.002
+
     @Published var prompt = "Describe a quiet morning routine in two short paragraphs."
     @Published var strength = 14.0
     @Published var actAddCoefficient = DemoViewModel.validatedCoefficient
@@ -105,6 +123,13 @@ final class DemoViewModel: ObservableObject {
     @Published var selectedLexiconID = "wedding"
     @Published var maxTokens = 96
     @Published var klBudget = 8.0
+    /// Defaults to the audit's discipline. The greedy cap is retained as a demonstration of the
+    /// confound recorded in `docs/phase6/on-device-rho`, not as a working mode.
+    @Published var klDiscipline = KLDiscipline.matchedPerStep
+    @Published private(set) var isCalibrating = false
+    @Published private(set) var calibrationProgress: String?
+    @Published private(set) var calibrationLogit: CalibrationOutcome?
+    @Published private(set) var calibrationActAdd: CalibrationOutcome?
     @Published private(set) var baseline = PaneState.empty
     @Published private(set) var steered = PaneState.empty
     @Published private(set) var actAdd = PaneState.empty
@@ -125,9 +150,78 @@ final class DemoViewModel: ObservableObject {
     private var teacherForcedContinuationTokenIDs: [Int] = []
     private var teacherForcedLogit: TeacherForcedKLResult?
     private var teacherForcedActAdd: TeacherForcedKLResult?
-    private let teacherForcedTargetKL = 0.435_238_018_732_847_95
+    private let teacherForcedTargetKL = DemoViewModel.auditTargetKL
+    private var calibrationTask: Task<Void, Never>?
 
     var usesStaticBias: Bool { staticBiasMode }
+
+    /// True when a cumulative budget is attenuating the live arms. False for every frozen Phase 6
+    /// replay, whose protocol declares no cap active.
+    var capActive: Bool { !staticBiasMode && klDiscipline.capsInterventions }
+
+    /// Mean KL per *returned* step, the quantity the audit matched on. Nil until an arm has run.
+    ///
+    /// Read this as a diagnostic, not as a match. Each arm's mean here is taken over its own
+    /// free-running output, so the two arms are averaging over different token sequences. Matching
+    /// these two numbers would not make the arms comparable; only the teacher-forced calibration,
+    /// which scores both on one shared continuation, does that.
+    var logitMeanNatsPerStep: Double? { Self.meanPerStep(klHistory) }
+    var actAddMeanNatsPerStep: Double? { Self.meanPerStep(actAddKLHistory) }
+
+    /// Everything a calibration result is only true of.
+    ///
+    /// Both sliders quantize on drag — bias strength to `0.5`, coefficient to `1` — so the first
+    /// nudge after calibrating snaps a scalar off its calibrated value and silently voids the
+    /// match. On the residual arm that rounds a calibrated `7.6` straight onto coefficient `8`,
+    /// a cell that failed the matched-random floor at all three tested depths. Exact equality is
+    /// the point: any change at all, in either direction, means these numbers no longer describe
+    /// the sliders.
+    private struct CalibrationContext: Equatable {
+        let prompt: String
+        let lexiconID: String
+        let actAddLayer: Int
+        let logitScalar: Double
+        let actAddScalar: Double
+    }
+
+    private var calibrationContext: CalibrationContext?
+
+    private var liveCalibrationContext: CalibrationContext {
+        CalibrationContext(
+            prompt: prompt,
+            lexiconID: selectedLexiconID,
+            actAddLayer: actAddLayer,
+            logitScalar: strength,
+            actAddScalar: actAddCoefficient
+        )
+    }
+
+    /// False once any input the calibration was computed under has moved. The UI says so and the
+    /// run report withholds the outcomes, because a report that carried them would be claiming a
+    /// match the run did not run under.
+    var calibrationIsCurrent: Bool {
+        calibrationContext != nil && calibrationContext == liveCalibrationContext
+    }
+
+    private static func meanPerStep(_ history: [KLReading]) -> Double? {
+        guard !history.isEmpty else { return nil }
+        return history.reduce(0.0) { $0 + $1.perStep } / Double(history.count)
+    }
+
+    /// Steps on which the intervention had effectively been switched off because the cumulative
+    /// budget was already spent. Only meaningful under the greedy cap; it is the collapse, counted.
+    func exhaustedStepCount(_ history: [KLReading]) -> Int {
+        history.filter { $0.perStep < 1e-6 }.count
+    }
+
+    /// The first step's share of everything the arm ever spent. On the eight committed
+    /// `docs/phase6/on-device-rho` packets this ran from 97.3620711503% to 99.8667704858%.
+    func firstStepShare(_ history: [KLReading]) -> Double? {
+        guard let first = history.first, let total = history.last?.cumulative, total > 0 else {
+            return nil
+        }
+        return first.perStep / total
+    }
 
     /// True when the residual arm sits on the blocking control's selected cell. Off it, the app is
     /// running a configuration that either failed the frozen gates or was never tested at all.
@@ -183,6 +277,11 @@ final class DemoViewModel: ObservableObject {
            let parsed = Double(value)
         {
             klBudget = min(20, max(0.1, parsed))
+        }
+        if let value = ProcessInfo.processInfo.environment["STEERDEMO_KL_DISCIPLINE"],
+           let parsed = KLDiscipline(rawValue: value)
+        {
+            klDiscipline = parsed
         }
         if let value = ProcessInfo.processInfo.environment["STEERDEMO_STOP_AFTER_TOKENS"],
            let parsed = Int(value), parsed > 0
@@ -244,6 +343,7 @@ final class DemoViewModel: ObservableObject {
             actAddLayer: actAddLayer,
             residualDirectionMode: residualDirectionMode,
             staticBiasMode: staticBiasMode,
+            klDiscipline: klDiscipline,
             maxTokens: maxTokens,
             klBudget: klBudget
         )
@@ -335,7 +435,9 @@ final class DemoViewModel: ObservableObject {
                     if !controlOnly, !stopFlag.isStopped(), !Task.isCancelled {
                         status = configuration.staticBiasMode
                             ? "Generating sustained calibrated static-bias pass"
-                            : "Generating logit-bias pass from the same prompt"
+                            : configuration.capActive
+                                ? "Generating logit-bias pass under a greedy cumulative cap"
+                                : "Generating logit-bias pass at a fixed scalar, uncapped"
                         steered.isActive = true
                         let steeredSummary = try await run(
                             pane: .steered,
@@ -347,7 +449,9 @@ final class DemoViewModel: ObservableObject {
                         try apply(summary: steeredSummary, lexicon: configuration.lexicon)
                     }
                     if !stopFlag.isStopped(), !Task.isCancelled {
-                        status = "Generating persistent residual prompt edit (direct coefficient; KL cap off)"
+                        status = configuration.capActive
+                            ? "Generating persistent residual prompt edit under a greedy cumulative cap"
+                            : "Generating persistent residual prompt edit (direct coefficient; KL cap off)"
                         actAdd.isActive = true
                         let actAddSummary = try await run(
                             pane: .actAdd,
@@ -385,9 +489,107 @@ final class DemoViewModel: ObservableObject {
         }
     }
 
+    /// Calibrates both live arms to the audit's teacher-forced KL target on the user's own prompt,
+    /// then writes the selected scalars into the sliders.
+    ///
+    /// This is the honest form of matching, and the reason it needs its own button rather than
+    /// happening during generation: the two arms are scored on one shared, base-generated
+    /// continuation. Their means are therefore comparable. Averaging each arm's KL over its own
+    /// free-running output — which is what a live "match the running means" control would do —
+    /// compares two averages taken over different token sequences and matches nothing.
+    ///
+    /// It is a single-prompt analogue of the frozen calibration, not the frozen calibration. The
+    /// four committed scalars averaged each candidate over four fixed prompts.
+    func calibrateToAuditTarget() {
+        guard !isGenerating, !isCalibrating, !staticBiasMode,
+              let lexicon = selectedLexicon,
+              !prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else { return }
+
+        isCalibrating = true
+        errorMessage = nil
+        calibrationLogit = nil
+        calibrationActAdd = nil
+        calibrationContext = nil
+        let capturedPrompt = prompt
+        let capturedLayer = actAddLayer
+        let capturedMode = residualDirectionMode
+
+        calibrationTask = Task {
+            do {
+                status = "Loading Qwen2.5 locally via MLX"
+                try await loadModel()
+                try Task.checkCancellation()
+
+                calibrationProgress = "Building the shared 64-step base continuation"
+                let continuation = try await service.fixedBaselineContinuation(
+                    prompt: capturedPrompt,
+                    steps: 64
+                )
+                try Task.checkCancellation()
+
+                // Both arms are calibrated before either scalar is written. A half-applied
+                // calibration would leave one arm on the audit's target and the other wherever the
+                // slider happened to be — the same asymmetry this whole change removed — and it
+                // would make `DemoError`'s "stopped without changing any scalar" a lie.
+                var outcomes: [GenerationPane: CalibrationOutcome] = [:]
+                for arm in [GenerationPane.steered, .actAdd] {
+                    let name = arm == .steered ? "static bias" : "residual edit"
+                    let bracket = arm == .steered
+                        ? Self.logitScalarBracket
+                        : Self.residualScalarBracket
+                    let outcome = try await service.calibrateScalar(
+                        arm: arm,
+                        prompt: capturedPrompt,
+                        continuationTokens: continuation,
+                        lexicon: lexicon,
+                        actAddLayer: capturedLayer,
+                        residualDirectionMode: capturedMode,
+                        target: Self.auditTargetKL,
+                        tolerance: Self.calibrationTolerance,
+                        upperBracket: bracket,
+                        iterations: Self.calibrationIterations
+                    ) { [weak self] done, total in
+                        Task { @MainActor in
+                            // The run may have finished or been cancelled between this candidate
+                            // and the hop to the main actor; without the guard a late update
+                            // reinstates "Calibrating..." over a completed run.
+                            guard let self, self.isCalibrating else { return }
+                            self.calibrationProgress =
+                                "Calibrating \(name): candidate \(done) of \(total)"
+                        }
+                    }
+                    try Task.checkCancellation()
+                    outcomes[arm] = outcome
+                }
+
+                if let logit = outcomes[.steered], let residual = outcomes[.actAdd] {
+                    strength = logit.selectedScalar
+                    actAddCoefficient = residual.selectedScalar
+                    calibrationLogit = logit
+                    calibrationActAdd = residual
+                    // Recorded after the writes so it matches the sliders exactly.
+                    calibrationContext = liveCalibrationContext
+                }
+                calibrationProgress = nil
+                status = "Both arms calibrated to \(Self.auditTargetKL.formatted(.number.precision(.fractionLength(5)))) nats/step on this prompt"
+            } catch is CancellationError {
+                calibrationProgress = nil
+                status = "Calibration stopped"
+            } catch {
+                calibrationProgress = nil
+                errorMessage = error.localizedDescription
+                status = "Calibration failed"
+            }
+            isCalibrating = false
+            calibrationTask = nil
+        }
+    }
+
     func stop() {
         stopFlag.stop()
         generationTask?.cancel()
+        calibrationTask?.cancel()
         status = modelProgress > 0 && modelProgress < 1
             ? "Cancelling model download"
             : "Stopping after the current token"
@@ -490,6 +692,7 @@ final class DemoViewModel: ObservableObject {
                     actAddLayer: configuration.actAddLayer,
                     residualDirectionMode: configuration.residualDirectionMode,
                     staticBiasMode: configuration.staticBiasMode,
+                    discipline: configuration.klDiscipline,
                     maxTokens: configuration.maxTokens,
                     klBudget: configuration.klBudget,
                     stopFlag: stopFlag
@@ -619,11 +822,22 @@ final class DemoViewModel: ObservableObject {
             actAddAppliedCoefficient: actAddAppliedCoefficient,
             actAddLayer: activeRun.actAddLayer,
             actAddDirectionMode: activeRun.residualDirectionMode.rawValue,
-            actAddKLCapEnabled: false,
+            // Both flags now report the same fact — whether a cumulative budget attenuated that
+            // arm — instead of one hardcoded `false` and one inferred from the harness mode. Every
+            // committed protocol path runs with the cap off, so both still emit `false` there,
+            // which is what `run_teacher_forced_comparison.py`, `run_blocking_control.sh`,
+            // `summarize_blocking_control.py`, and `verify_readme_claims.py` assert.
+            actAddKLCapEnabled: activeRun.capActive,
             actAddDirectionDiagnostics: actAddDirectionDiagnostics,
             controlOnly: controlOnly,
             stage3RunMode: stage3RunMode?.rawValue,
-            staticBiasKLCapEnabled: !activeRun.staticBiasMode,
+            klDiscipline: activeRun.klDiscipline.rawValue,
+            staticBiasKLCapEnabled: activeRun.capActive,
+            // Withheld unless the sliders still hold exactly what calibration put there. A stale
+            // outcome in a packet would assert a match that this run was not generated under.
+            liveCalibrationTargetKL: calibrationIsCurrent ? Self.auditTargetKL : nil,
+            liveCalibrationLogit: calibrationIsCurrent ? calibrationLogit : nil,
+            liveCalibrationActAdd: calibrationIsCurrent ? calibrationActAdd : nil,
             teacherForcedTargetKL: stage3RunMode == nil ? nil : teacherForcedTargetKL,
             teacherForcedContinuationTokenIDs: teacherForcedContinuationTokenIDs,
             teacherForcedLogit: teacherForcedLogit,

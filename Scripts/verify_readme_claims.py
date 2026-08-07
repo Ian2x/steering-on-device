@@ -110,6 +110,7 @@ ALLOWED_NUMERIC_CONTEXTS = {
     "Historical Phase 6 comparison invalidated": "project phase label, not a measurement",
     "historical Phase 6 protocol": "project phase label, not a measurement",
     "the stored 95% interval": "confidence level is not recorded in audit-reference.json; its bounds are pinned",
+    "Amendment 1's": "predeclaration document label, not a measurement; amendment-1.md is linked above",
 }
 ALLOWED_CONTEXT_MAX_LENGTH = 120
 
@@ -980,6 +981,49 @@ def main() -> None:
     require(f"runs {quantization.group(1)} ({quantization.group(2)}-bit) through MLX Swift")
     require(f"and {quantization.group(2)}-bit MLX model")
     print("PASS test count, pinned Qwen identity, and quantization label")
+
+    # The matched-per-step discipline is a live app control, so the README's description of it is
+    # pinned to the shipping constants rather than to any packet -- no committed packet was
+    # produced under it.
+    view_model = (ROOT / "SteerDemo/DemoViewModel.swift").read_text()
+
+    def swift_double(name: str) -> str:
+        match = re.search(rf"static let {name} = ([0-9_.]+)\b", view_model)
+        check(match is not None, f"could not parse {name} out of DemoViewModel.swift")
+        return match.group(1).replace("_", "")
+
+    calibration_target = swift_double("auditTargetKL")
+    calibration_tolerance = swift_double("calibrationTolerance")
+    frozen_target = json.loads(
+        (ROOT / "docs/phase6/teacher-forced-comparison/summary.json").read_text()
+    )["targetMeanTeacherForcedKL"]
+    check(
+        float(calibration_target) == frozen_target,
+        "the app's calibration target drifted from the frozen teacher-forced target",
+    )
+    require(f"within `{calibration_tolerance}` of the audit's `{calibration_target}` target")
+    fixture = json.loads(
+        (ROOT / "SteeringKit/Tests/SteeringKitTests/Fixtures/calibration_golden.json").read_text()
+    )
+    check(fixture["target"] == frozen_target, "calibration fixture target is not the frozen target")
+    check(
+        fixture["tolerance"] == float(calibration_tolerance),
+        "calibration fixture tolerance is not the app's tolerance",
+    )
+    # Spelled out in the README to match its house style, so the sweep does not reach it; the
+    # count is checked here instead of pinned there.
+    check(len(fixture["arms"]) == 4, "calibration fixture arm count changed")
+    require("replays all four committed teacher-forced calibration curves")
+    selector = (ROOT / "SteeringKit/Sources/SteeringKit/CalibrationSelector.swift").read_text()
+    check(
+        "CalibrationSelector.select(" in service_source,
+        "the app no longer shares SteeringKit's calibration search",
+    )
+    check(
+        "**not** assumed monotone" in selector,
+        "the selector no longer documents the non-monotone curve it was written for",
+    )
+    print("PASS calibration target, tolerance, shared selector, and fixture agreement")
 
     audit = json.loads((ROOT / "docs/audit-reference.json").read_text())
     point = audit["rho"]["point"]
