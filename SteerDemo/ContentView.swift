@@ -125,10 +125,14 @@ struct ContentView: View {
                         Spacer()
                         Text(model.actAddCoefficient, format: .number.precision(.fractionLength(1)))
                             .monospacedDigit()
+                            .foregroundStyle(model.actAddCoefficient == DemoViewModel.validatedCoefficient ? Color.primary : Color.orange)
                     }
                     Slider(value: $model.actAddCoefficient, in: 0 ... 40, step: 1)
                     .accessibilityLabel("Residual-edit coefficient")
                         .accessibilityValue(model.actAddCoefficient.formatted(.number.precision(.fractionLength(1))))
+                    Text("validated: \(DemoViewModel.validatedCoefficient, specifier: "%.0f")")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: 360)
                 .disabled(model.isGenerating)
@@ -139,6 +143,7 @@ struct ContentView: View {
                         Spacer()
                         Text("after block \(model.actAddLayer)")
                             .monospacedDigit()
+                            .foregroundStyle(model.actAddLayer == DemoViewModel.validatedLayer ? Color.primary : Color.orange)
                     }
                     Slider(
                         value: Binding(
@@ -150,14 +155,16 @@ struct ContentView: View {
                     )
                     .accessibilityLabel("Residual-edit residual layer")
                     .accessibilityValue("after block \(model.actAddLayer)")
+                    // Only 8, 10, and 12 were ever tested. The slider spans 0...23 because the
+                    // model has 24 blocks, not because the other 21 blocks mean anything here.
+                    Text("validated: block \(DemoViewModel.validatedLayer) — only blocks 8/10/12 were tested")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: 360)
                 .disabled(model.isGenerating)
 
-                Text("Blocking control passed in 2/15 cells. A later teacher-forced KL comparison was withheld because the residual arm failed its frozen base-model NLL gate; no controller ratio is reported.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                validatedCellNote
             }
 
             HStack(spacing: 8) {
@@ -203,6 +210,32 @@ struct ContentView: View {
         }
     }
 
+    private var validatedCellNote: some View {
+        // The grid was 3 layers x 5 coefficients and 13 of the 15 cells failed. Without this note
+        // the sliders imply the whole space is usable, and a viewer who drags them is generating
+        // gate-failing text with nothing on screen saying so.
+        Group {
+            if model.usesStaticBias {
+                // Replay of a frozen teacher-forced packet. These sit at block 10 but at the
+                // calibrated scalar rather than the blocking control's coefficient, so the
+                // live-run warning below would call a committed measurement a demonstration.
+                Text("Replaying a frozen teacher-forced packet: block \(model.actAddLayer) at the calibrated scalar that matched this arm to the audit's KL target, not the blocking control's selected coefficient. These are committed measurements. The comparison they belong to was withheld after the residual arm failed its frozen base-model NLL gate.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else if model.isOnValidatedCell {
+                Text("Residual arm is on the **validated cell** — block \(DemoViewModel.validatedLayer), coefficient \(DemoViewModel.validatedCoefficient, specifier: "%.0f"). It is the cell the predeclared tie-break selected from the 2/15 that cleared every frozen gate. A later teacher-forced KL comparison was still withheld, because the residual arm failed its frozen base-model NLL gate; no controller ratio is reported.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("**Off the validated cell.** Only block \(DemoViewModel.validatedLayer) / coefficient \(DemoViewModel.validatedCoefficient, specifier: "%.0f") cleared every frozen gate; 13 of the 15 tested cells failed and blocks other than 8/10/12 were never tested. Coefficient 8 failed the matched-random floor at all three tested depths, and coefficient 12 failed the base-model NLL gate at block 10 with a median semantic NLL of 3.6147 against a 0.9831 baseline. Output here is a live demonstration, not a measured result.")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            }
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     private var paneLegend: some View {
         // Without this line the two capsules read as a scoreboard: a viewer sees a higher topic
         // score on one arm and calls it the winner. Topic score rises when an arm emits lexicon
@@ -246,8 +279,19 @@ struct ContentView: View {
                     Spacer()
                     Text("\(actAddCumulative, specifier: "%.3f") nats")
                         .monospacedDigit()
+                        .foregroundStyle(!model.usesStaticBias && actAddCumulative > model.klBudget ? Color.red : Color.primary)
                 }
                 .font(.callout)
+                // In sparse mode the logit arm is held to the slider's cap and the residual arm is
+                // not held to anything. Nothing else on screen says so, and the two numbers sit
+                // one above the other inviting a straight comparison. A run at 8 nats against a
+                // run at 100 is not a comparison, and the viewer has to be told which one is free.
+                if !model.usesStaticBias, actAddCumulative > model.klBudget {
+                    Text("The residual arm spent \(actAddCumulative / max(model.klBudget, 0.0001), specifier: "%.1f")× the logit arm's cap. Only the logit arm is capped, so these two traces are not KL-matched and the panes are not a controlled comparison.")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 if !model.droppedTokenStrings.isEmpty {
                     Text("Dropped multi-token support: \(model.droppedTokenStrings.joined(separator: ", "))")
                         .font(.caption)

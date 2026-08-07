@@ -52,6 +52,10 @@ open SteerDemo.xcodeproj
 
 Select the `SteerDemo` scheme and **My Mac**, then press Run. The project pins its Swift package versions in `Package.resolved`.
 
+**Build Release before comparing anything to the speed figures below.** Every timing number in this README comes from a Release build, and no committed packet records a Debug build, so there is no Debug baseline here to compare against. Xcode's Run button uses Debug by default and its token rates are substantially lower for reasons unrelated to steering; treat them as uncomparable rather than as a measurement. Edit the scheme's Run configuration to Release, or use the `xcodebuild` invocation below. Token rates are the only thing affected — topic scores, KL, NLL, and generated text are identical across configurations.
+
+The app opens defaulted to the residual arm's **validated cell** — the layer and coefficient that the predeclared tie-break selected in the blocking control described above. The sliders still span the full model depth and a wider coefficient range, so the failing region stays reachable; the app names the validated cell on screen and warns when you leave it. Output generated off that cell is a live demonstration, not a measured result.
+
 The pure-Swift math core can be checked without launching the app:
 
 ```bash

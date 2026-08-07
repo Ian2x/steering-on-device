@@ -89,10 +89,19 @@ final class DemoViewModel: ObservableObject {
         let droppedTokenStrings: [String]
     }
 
+    /// The one layer/coefficient cell that cleared every frozen gate in the 180-packet blocking
+    /// control (`docs/phase6/blocking-control`). The app ships defaulted here. It previously
+    /// shipped at coefficient 12, which is a *tested and failed* cell — the worst semantic
+    /// base-model NLL of all fifteen, 3.6147 against a 0.9831 baseline. Anyone who opened the app
+    /// and pressed Generate saw gate-failing output. Do not move these defaults off the validated
+    /// cell without moving the blocking control with them.
+    static let validatedLayer = 10
+    static let validatedCoefficient = 4.0
+
     @Published var prompt = "Describe a quiet morning routine in two short paragraphs."
     @Published var strength = 14.0
-    @Published var actAddCoefficient = 12.0
-    @Published var actAddLayer = 10
+    @Published var actAddCoefficient = DemoViewModel.validatedCoefficient
+    @Published var actAddLayer = DemoViewModel.validatedLayer
     @Published var selectedLexiconID = "wedding"
     @Published var maxTokens = 96
     @Published var klBudget = 8.0
@@ -119,6 +128,13 @@ final class DemoViewModel: ObservableObject {
     private let teacherForcedTargetKL = 0.435_238_018_732_847_95
 
     var usesStaticBias: Bool { staticBiasMode }
+
+    /// True when the residual arm sits on the blocking control's selected cell. Off it, the app is
+    /// running a configuration that either failed the frozen gates or was never tested at all.
+    var isOnValidatedCell: Bool {
+        actAddLayer == DemoViewModel.validatedLayer
+            && actAddCoefficient == DemoViewModel.validatedCoefficient
+    }
 
     private let service = MLXGenerationService()
     private let stopFlag = StopFlag()
