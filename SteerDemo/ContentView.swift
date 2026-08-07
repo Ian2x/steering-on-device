@@ -11,6 +11,7 @@ struct ContentView: View {
                 header
                 promptCard
                 panes
+                paneLegend
                 meters
                 explanation
                 footer
@@ -31,8 +32,10 @@ struct ContentView: View {
                 Text("On-device steering, made visible")
                     .font(.system(size: 28, weight: .semibold, design: .rounded))
                 Text(model.usesStaticBias
-                    ? "One prompt. Three fixed-seed passes. Sustained static bias plus a direct residual control."
-                    : "One prompt. Three fixed-seed passes. Sparse KL-capped bias plus a direct residual control.")
+                    // "a direct residual control" used to name the ActAdd arm here, which reads as
+                    // though ActAdd were the control condition. The control is the logit bias.
+                    ? "One prompt. Three fixed-seed passes. A sustained static-bias control against a direct residual ActAdd edit."
+                    : "One prompt. Three fixed-seed passes. A sparse KL-capped bias control against a direct residual ActAdd edit.")
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -176,21 +179,39 @@ struct ContentView: View {
                 title: "Baseline",
                 subtitle: "Unmodified logits",
                 tint: .blue,
-                state: model.baseline
+                state: model.baseline,
+                baselineNLL: nil
             )
+            // The arms are named for their ROLE first and their mechanism second. They used to read
+            // "Logit bias" and "Residual edit (controlled)", which never said which arm was the
+            // control and put the word "controlled" on the ActAdd pane, where it invites the exact
+            // opposite reading. Keep the role prefixes.
             GenerationPaneView(
-                title: "Logit bias",
+                title: "Control — logit bias",
                 subtitle: model.usesStaticBias ? "Sustained static topic-token bias" : "Sparse topic-token bias",
                 tint: .orange,
-                state: model.steered
+                state: model.steered,
+                baselineNLL: model.baseline.baseModelNLL
             )
             GenerationPaneView(
-                title: "Residual edit (controlled)",
+                title: "ActAdd — residual edit",
                 subtitle: "Persistent prompt edit after block \(model.actAddLayer)",
                 tint: .purple,
-                state: model.actAdd
+                state: model.actAdd,
+                baselineNLL: model.baseline.baseModelNLL
             )
         }
+    }
+
+    private var paneLegend: some View {
+        // Without this line the two capsules read as a scoreboard: a viewer sees a higher topic
+        // score on one arm and calls it the winner. Topic score rises when an arm emits lexicon
+        // words; NLL rises when the text stops being something the unmodified model would say.
+        // An arm can win the first while destroying the second, and that is the usual outcome here.
+        Text("**topic** is a Core ML cosine diagnostic, not a preference judgment — it rises when the arm emits lexicon words. **NLL** is the unmodified model's mean token surprise at the arm's own output: higher means less fluent. Read them together. The frozen teacher-forced gate allowed a *median* of +1.00 nat/token over baseline; a single run above that is flagged here but is not by itself a gate failure.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     private var meters: some View {
@@ -289,6 +310,17 @@ private struct GenerationPaneView: View {
     let subtitle: String
     let tint: Color
     let state: PaneState
+    /// Baseline mean token NLL, or nil on the baseline pane itself. Supplied so an intervention
+    /// pane can show its delta: the raw NLL alone is not interpretable without the arm it moved from.
+    let baselineNLL: Double?
+
+    /// The frozen teacher-forced gate's ceiling, in nats per token, over the baseline median.
+    /// Applied here to a single run only as a visual flag — the gate itself is on medians.
+    private static let nllDeltaCeiling = 1.0
+
+    private var nllFormat: FloatingPointFormatStyle<Double> {
+        .number.precision(.fractionLength(3))
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -311,6 +343,24 @@ private struct GenerationPaneView: View {
                         .background(tint.opacity(0.13), in: Capsule())
                         .accessibilityLabel("\(title) topic score")
                         .accessibilityValue(score.formatted(.number.precision(.fractionLength(3))))
+                }
+                if let nll = state.baseModelNLL {
+                    let delta = baselineNLL.map { nll - $0 }
+                    let overCeiling = (delta ?? 0) > Self.nllDeltaCeiling
+                    Text(delta.map { "NLL \(nll.formatted(nllFormat)) \($0 > 0 ? "+" : "")\($0.formatted(nllFormat))" }
+                        ?? "NLL \(nll.formatted(nllFormat))")
+                        .font(.caption.monospacedDigit())
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .foregroundStyle(overCeiling ? Color.red : Color.primary)
+                        .background((overCeiling ? Color.red : Color.secondary).opacity(0.13), in: Capsule())
+                        .accessibilityLabel("\(title) base-model mean token NLL")
+                        .accessibilityValue(
+                            delta.map {
+                                "\(nll.formatted(nllFormat)), \($0.formatted(nllFormat)) over baseline"
+                                    + (overCeiling ? ", above the frozen gate's one nat per token ceiling" : "")
+                            } ?? nll.formatted(nllFormat)
+                        )
                 }
             }
             ScrollView {
@@ -364,7 +414,7 @@ private struct KLChartView: View {
                     LineMark(
                         x: .value("Step", reading.step),
                         y: .value("KL", reading.perStep),
-                        series: .value("Intervention", "Logit bias")
+                        series: .value("Intervention", "Control — logit bias")
                     )
                     .foregroundStyle(.orange)
                     PointMark(
@@ -393,7 +443,7 @@ private struct KLChartView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Per-step KL chart")
             .accessibilityValue(chartAccessibilityValue)
-                Text(logitHistory.isEmpty && actAddHistory.isEmpty ? "Traces start with the intervention passes." : "Orange: logit bias. Purple: residual control. Returned tokens only; cap status is shown alongside the chart.")
+                Text(logitHistory.isEmpty && actAddHistory.isEmpty ? "Traces start with the intervention passes." : "Orange: the logit-bias control. Purple: the ActAdd residual edit. Returned tokens only; cap status is shown alongside the chart.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
