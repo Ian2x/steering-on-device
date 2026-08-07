@@ -214,6 +214,50 @@ def main() -> None:
     check(f"replaying {hero_name}," in readme, "hero alt text does not name the rendered packet")
     print("PASS hero screenshot matches final frame, discloses the NLL gate, and names the packet")
 
+    # Scripts/run_final_demo.sh used to write all four committed demo artifacts and `rm -f` three
+    # of them first, so one run destroyed evidence README.md cites numerically and replaced the
+    # hero above with a live wedding run while the caption still named ocean-library. It also
+    # pinned STEERDEMO_ACTADD_COEFFICIENT=12 and STEERDEMO_ACTADD_LAYER=3 -- the cell b4a137e moved
+    # the app off because it fails the frozen NLL gate -- and kept working after that commit
+    # precisely because the values were duplicated out of the app. These pins keep both dead.
+    def shell_code(path: Path) -> str:
+        """Script text minus whole-line comments, so header prose does not count as a reference."""
+        return "\n".join(
+            line for line in path.read_text().splitlines() if not line.lstrip().startswith("#")
+        )
+
+    scripts = sorted((ROOT / "Scripts").glob("*.sh"))
+    # Committed artifact -> the one script allowed to write it, or None for "no script may".
+    artifact_owners = {
+        "docs/final-demo-run.json": None,
+        "docs/steerdemo.gif": None,
+        "docs/steerdemo.png": "Scripts/render_preserved_demo.sh",
+        "docs/demo-frames": "Scripts/render_preserved_demo.sh",
+    }
+    for artifact, owner in artifact_owners.items():
+        writers = [
+            path.relative_to(ROOT).as_posix() for path in scripts if artifact in shell_code(path)
+        ]
+        expected = [owner] if owner else []
+        check(
+            writers == expected,
+            f"committed artifact {artifact} is written by {writers or ['nothing']}, "
+            f"expected {expected or ['nothing']}",
+        )
+
+    live_code = shell_code(ROOT / "Scripts/run_final_demo.sh")
+    for knob in ("STEERDEMO_ACTADD_COEFFICIENT", "STEERDEMO_ACTADD_LAYER", "STEERDEMO_KL_BUDGET"):
+        check(
+            knob not in live_code,
+            f"run_final_demo.sh pins {knob}; it must inherit the app's validated-cell defaults so "
+            f"the two cannot drift apart again",
+        )
+    check(
+        "ls-files" in live_code,
+        "run_final_demo.sh lost the guard that refuses to write into a git-tracked directory",
+    )
+    print("PASS live-run script writes no committed artifact and pins no controller knob")
+
     required_fragments: list[str] = []
 
     def require(fragment: str, count: int = 1) -> None:

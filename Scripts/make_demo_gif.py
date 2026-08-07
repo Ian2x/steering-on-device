@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
 from PIL import Image
@@ -11,6 +12,16 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 FRAME_DIR = ROOT / "docs" / "demo-frames"
 OUTPUT = ROOT / "docs" / "steerdemo.gif"
+
+# The defaults are the committed paths, so an argument-free run behaves exactly as before. The
+# overrides exist for Scripts/run_final_demo.sh, which captures a live run into an untracked
+# directory and must not write committed evidence -- see the header of that script.
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--frames", type=Path, default=FRAME_DIR, help="directory of *.png frames")
+parser.add_argument("--output", type=Path, default=OUTPUT, help="path of the .gif to write")
+args = parser.parse_args()
+FRAME_DIR = args.frames
+OUTPUT = args.output
 
 paths = sorted(FRAME_DIR.glob("*.png"))
 if not paths:
