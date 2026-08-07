@@ -117,6 +117,47 @@ Whatever such a mean measures on this set, it is not the static controller's top
 stays withheld on the independent base-model NLL gate, and no point ratio is reported here, in the
 README, or in [`summary.json`](summary.json).
 
+## Post-hoc note — the two inert arms carried the static arm's repetition gate
+
+This section was written after the result and is not part of any predeclaration. It follows directly
+from the note above: once two of the eight static-bias arms are known to have returned the baseline
+continuation, the gates computed over that arm have to be re-read.
+
+Gate 5 caps the **median** repeated-trigram fraction at `0.25` for all four arms. Per packet, the
+static-bias arm scored:
+
+| packet | repeated-trigram fraction | |
+|---|---:|---|
+| [`ocean-bookshelf`](runs/ocean-bookshelf.json) | `0.000000` | inert arm — identical to baseline |
+| [`ocean-library`](runs/ocean-library.json) | `0.435484` | over the ceiling |
+| [`ocean-lunch`](runs/ocean-lunch.json) | `0.000000` | |
+| [`ocean-rainwalk`](runs/ocean-rainwalk.json) | `0.419355` | over the ceiling |
+| [`wedding-bookshelf`](runs/wedding-bookshelf.json) | `0.000000` | |
+| [`wedding-library`](runs/wedding-library.json) | `0.774194` | over the ceiling |
+| [`wedding-lunch`](runs/wedding-lunch.json) | `0.000000` | inert arm — identical to baseline |
+| [`wedding-rainwalk`](runs/wedding-rainwalk.json) | `0.612903` | over the ceiling |
+
+**Four of the eight are individually over the ceiling**, the worst at three times it. The gate passed
+anyway, because it is a median: `0.209677`, clearing `0.25` by `0.040323`.
+
+Two of the four zeros holding that median down are the inert arms. They are zero because they emitted
+the baseline continuation, not because the static controller avoided looping. Excluding only those
+two — on the grounds given in the note above, that they record no intervention effect at all — the
+median of the six live arms is `0.427419`, which **exceeds the ceiling by `0.177419`**.
+
+**No rule was broken.** Gate 5 says median over the arm, the summarizer computes exactly that, and all
+eight packets are legitimate members of the arm under the protocol as frozen. The gate is reported as
+passing in [`summary.json`](summary.json) and that reporting is correct. What is disclosed here is that
+the pass depended on two packets in which the controller did nothing, and that a reader who takes
+`repetitionPass: true` as evidence the static arm produced non-degenerate text would be wrong on this
+set.
+
+This changes no outcome. The comparison was already withheld on the independent base-model NLL gate,
+and it remains withheld. It is recorded because it is a second, independent reason not to read the
+static arm's output on these eight packets as a clean controller measurement, and because the
+degeneracy is now plainly visible in the repository's own hero screenshot, whose static-bias pane is
+[`ocean-library`](runs/ocean-library.json) at `0.435484`.
+
 ## Reproduction
 
 ```bash
